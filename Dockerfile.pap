@@ -1,0 +1,43 @@
+FROM php:8.0-apache
+
+ARG WWWGROUP
+
+# If more GD features are needed, consider adding the specific flags such as:
+# --enable-gd-native-ttf --with-freetype --with-gd --with-jpeg --with-png --with-webp --with-xpm --with-zlib
+RUN apt-get update \
+    && apt-get install -y \
+        git \
+        libpng-dev \
+        libpq-dev \
+        libzip-dev \
+        unzip \
+        zlib1g-dev \
+        libgmp-dev \
+    && docker-php-ext-configure gd \
+    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+    && docker-php-ext-install \
+        gmp \
+        gd \
+        pdo \
+        pdo_pgsql\
+        pgsql \
+        zip \
+    && apt-get -y autoremove \
+    && apt-get clean \
+    && rm -rf \
+        /tmp/* \
+        /var/lib/apt/lists/* \
+        /var/tmp/*
+
+RUN a2enmod rewrite \
+    && a2enmod ssl
+
+# Laravel Sail compatibility
+RUN groupadd --force -g "${WWWGROUP}" sail \
+    && useradd -ms /bin/bash --no-user-group -g "${WWWGROUP}" -u 1337 sail \
+    && groupmod --gid "${WWWGROUP}" --non-unique www-data
+
+RUN mkdir /etc/apache2/ssl \
+ && rm /etc/apache2/sites-enabled/000-default.conf
+
+RUN pecl install xdebug

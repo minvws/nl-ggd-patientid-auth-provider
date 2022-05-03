@@ -1,0 +1,7 @@
+resources/js/pdf-assets.js
+vendor/
+dist/
+docs/
+*.yml
+*.md
+*.lock
