@@ -1,6 +1,6 @@
 # GGD PatientId Auth Provider
 
-TODO: Algemen verhaaltje en install dingen toevogen etc
+TODO: Algemeen verhaaltje en install dingen toevoegen etc
 
 References:
 
