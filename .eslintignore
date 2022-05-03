@@ -1,0 +1,4 @@
+/vendor
+/dist
+/docs
+/public/js/*.js

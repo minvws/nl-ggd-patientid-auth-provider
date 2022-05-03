@@ -1,0 +1,7 @@
+{
+    "extends": ["plugin:compat/recommended"],
+    "parser": "esprima",
+    "settings": {
+        "polyfills": ["TextDecoder", "navigator"]
+    }
+}

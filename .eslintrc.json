@@ -1,0 +1,40 @@
+{
+    "plugins": ["prettier"],
+    "extends": [
+        "eslint:recommended",
+        "plugin:prettier/recommended"
+    ],
+    "parser": "esprima",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    },
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "globals": {
+        "__ENV": true,
+        "__VU": true,
+        "global": true,
+        "Buffer": true
+    },
+    "settings": {
+        "polyfills": ["TextDecoder", "navigator"]
+    },
+    "overrides": [
+        {
+            "files": "*.test.js",
+            "env": {
+                "jest": true,
+                "node": true
+            }
+        },
+        {
+            "files": ["*.config.js", "jest/*.js", "scripts/*.js"],
+            "env": {
+                "node": true
+            }
+        }
+    ]
+}

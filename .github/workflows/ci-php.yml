@@ -1,0 +1,135 @@
+name: PHP Linting
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  composer-install:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: vendor/
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: zip
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    strategy:
+      max-parallel: 3
+      matrix:
+        php-versions: [ '8.0', '8.1' ]
+
+  php-linting-psalm:
+    needs:
+      - composer-install
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: vendor/
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php-versions }}
+      - name: Generate _ide_helper file
+        run: php artisan ide-helper:generate
+      - name: Static analysis with Psalm
+        run: vendor/bin/psalm
+    strategy:
+      max-parallel: 3
+      matrix:
+        php-versions: [ '8.0', '8.1' ]
+
+  php-linting-psr12:
+    needs:
+      - composer-install
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: vendor/
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php-versions }}
+      - name: Coding style PSR12 Check
+        run: vendor/bin/phpcs
+    strategy:
+      max-parallel: 3
+      matrix:
+        php-versions: [ '8.0', '8.1' ]
+
+  php-linting-stan:
+    needs:
+      - composer-install
+    runs-on: ubuntu-20.04
+    services:
+      postgres:
+        image: postgres:12.5
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ci_db_test
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: vendor/
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php-versions }}
+      - name: use .env.testing
+        run: cp .env.testing .env
+      - name: Generate key
+        run: php artisan key:generate --env=testing
+      - name: Static analysis with PHPStan
+        run: vendor/bin/phpstan analyse
+    strategy:
+      max-parallel: 3
+      matrix:
+        php-versions: [ '8.0', '8.1' ]
+
+  php-linting-cve:
+    needs:
+      - composer-install
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: vendor/
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php-versions }}
+      - name: Check for known CVE vulnerabilities
+        run: php artisan security-check:now
+    strategy:
+      max-parallel: 3
+      matrix:
+        php-versions: [ '8.0', '8.1' ]
