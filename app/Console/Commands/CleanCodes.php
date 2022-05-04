@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -26,9 +28,11 @@ class CleanCodes extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $deleted = DB::table('codes')->where('expires_at', '<', time())->delete();
         print "Deleted $deleted expired codes\n";
+
+        return 0;
     }
 }
