@@ -198,6 +198,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         App\Providers\GatewayProvider::class,
+        App\Providers\CodeGeneratorProvider::class,
     ],
 
     /*
