@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  pap:
+    build:
+      context: '.'
+      dockerfile: Dockerfile.pap
+      args:
+        WWWGROUP: '${WWWGROUP}'
+    environment:
+      APP_PORT: 444
+      APP_SERVICE: pap
+    hostname: pap.localdev
+    ports:
+      - '${APP_PORT:-444}:443'
+    tty: true
+    volumes:
+      - './pap.conf:/etc/apache2/sites-enabled/pap.conf'
+      - './xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini'
+      - './ssl/:/etc/apache2/ssl/'
+      - '.:/var/www/html'
