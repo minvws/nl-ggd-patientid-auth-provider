@@ -27,16 +27,14 @@ class CodeGeneratorService
     {
         $hash = $this->createHash($patientId, $birthDate);
 
-        $record = Code::whereHash($hash)->first();
-        if (!$record) {
-            $record = Code::create([
+        return Code::firstOrCreate(
+            [ 'hash' => $hash ],
+            [
                 'hash' => $hash,
                 'code' => $this->generateCode(self::MAX_DIGITS),
                 'expires_at' => Carbon::now()->addSeconds($this->expiry)->timestamp,
-            ]);
-        }
-
-        return $record;
+            ]
+        );
     }
 
     /**
