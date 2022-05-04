@@ -6,7 +6,7 @@ namespace App\Providers;
 
 use App\Services\EmailGateway\Dummy as EmailDummy;
 use App\Services\EmailService;
-use App\Services\SmsGateway\Dummy as SmsDummy;
+use App\Services\SmsGateway\MessageBird;
 use App\Services\SmsService;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
@@ -15,7 +15,9 @@ class GatewayProvider extends ServiceProvider
     public function boot(): void
     {
         $this->app->singleton(SmsService::class, function () {
-            return new SmsService(new SmsDummy());
+            return new SmsService(
+                new MessageBird(config('messagebird.api_key'))
+            );
         });
 
         $this->app->singleton(EmailService::class, function () {
