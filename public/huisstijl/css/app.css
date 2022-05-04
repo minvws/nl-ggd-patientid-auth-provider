@@ -1,0 +1,73 @@
+@import 'manon-ruby-red.css'; /* v.3.0.3 */
+
+/* Overrides - additional styling */
+@import 'top-level-notification.css';
+
+
+/* Additional styling for using div as explanation instead of p, not tested in manon yet */
+form div.explanation {
+  margin-left: auto;
+  margin-top: 0;
+}
+
+body > header > section > div > div > form {
+  margin-bottom: 0;
+}
+
+/* Overrides on Manon */
+.auth h2 {
+  margin: 2rem 0;
+}
+
+.column-2 img  {
+  min-height: auto; 
+  margin-bottom: 0
+}
+
+.instructions {
+  background-color: #f3f3f3;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.instructions h1 {
+    margin: 2rem 0;
+    font-size: 1.60181rem;
+}
+
+.instructions button,
+.instructions a.button,
+.instructions input[type="button"],
+.instructions input[type="submit"],
+.instructions input[type="reset"] {
+  line-height: 1.5rem;
+}
+
+.instructions button:last-child,
+.instructions a.button:last-child,
+.instructions input[type="button"]:last-child,
+.instructions input[type="submit"]:last-child,
+.instructions input[type="reset"]:last-child {
+  margin-top: auto;
+}
+
+button > img,
+a.button > img,
+input[type="button"] > img,
+input[type="submit"] > img,
+input[type="reset"] > img {
+  max-height: 2.5rem;
+  margin: -0.5rem 1rem -0.5rem 0; /* Negative margin to allow the images to take up more space within the default button */
+}
+
+template {
+    display: none;
+}
+
+@media print {
+  .no-print {
+    display:none;
+  }
+}

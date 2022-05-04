@@ -44,8 +44,8 @@ jobs:
       run: php artisan key:generate --env=testing
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
-    - name: Create SSL dir
-      run: mkdir ssl
+    - name: Generate SSL certs
+      run: sh ./ssl/generate-certs.sh
     - name: Execute tests (Unit and Feature)
       run: vendor/bin/phpunit --printer \\Tests\\ResultFilePrinter --coverage-clover pap_php_clover.xml
     - name: 'Comment PR'
