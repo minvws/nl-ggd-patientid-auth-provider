@@ -18,21 +18,6 @@
                 @if ($errors->has('patient_id')) <p class="help-block">{{ $errors->first('patient_id') }}</p> @endif
             </div>
 
-            <div class="">
-                <label for="phone_nr">@lang('form.phoneNr')</label>
-                <div>
-                    <input type="tel" name="phone_nr" id="phone_nr" autocomplete="off">
-                    @if ($errors->has('phone_nr')) <p class="help-block">{{ $errors->first('phone_nr') }}</p> @endif
-                </div>
-            </div>
-            <div class="">
-                <label for="email">@lang('form.emailAddress')</label>
-                <div>
-                    <input type="email" name="email" id="email" autocomplete="off">
-                    @if ($errors->has('email')) <p class="help-block">{{ $errors->first('email') }}</p> @endif
-                </div>
-            </div>
-
         <div id="submit-button-container">
             <input type="submit" value=" @lang("Submit") ">
         </div>

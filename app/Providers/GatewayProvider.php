@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Services\EmailGateway\Dummy as EmailDummy;
+use App\Services\InfoRetrievalGateway\Dummy as InfoRetrievalGatewayDummy;
 use App\Services\EmailService;
+use App\Services\InfoRetrievalService;
 use App\Services\SmsGateway\MessageBird;
 use App\Services\SmsService;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -22,6 +24,10 @@ class GatewayProvider extends ServiceProvider
 
         $this->app->singleton(EmailService::class, function () {
             return new EmailService(new EmailDummy());
+        });
+
+        $this->app->singleton(InfoRetrievalService::class, function () {
+            return new InfoRetrievalService(new InfoRetrievalGatewayDummy());
         });
     }
 }
