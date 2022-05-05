@@ -51,6 +51,10 @@ class FormController extends BaseController
         return view('confirmation')->with('hash', $hash);
     }
 
+    /**
+     * @param ConfirmationRequest $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
     public function confirmationSubmit(ConfirmationRequest $request)
     {
         $v = Validator::make([], []);
