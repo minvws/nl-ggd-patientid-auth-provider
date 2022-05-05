@@ -38,12 +38,10 @@ class CodeGeneratorService
     }
 
     /**
-     * Validates a code for the given patientid/birthdate
+     * Validates a code for the given patientid/birthdate hash
      */
-    public function validate(string $patientId, string $birthDate, string $code): bool
+    public function validate(string $hash, string $code): bool
     {
-        $hash = $this->createHash($patientId, $birthDate);
-
         $record = Code::whereHash($hash)->first();
         if (! $record) {
             return false;
@@ -59,7 +57,7 @@ class CodeGeneratorService
     /**
      * Generates unique hash from patient-id and birthdate
      */
-    protected function createHash(string $patientId, string $birthDate): string
+    public function createHash(string $patientId, string $birthDate): string
     {
         return hash_hmac('sha256', $patientId . $birthDate, $this->hmacKey);
     }
