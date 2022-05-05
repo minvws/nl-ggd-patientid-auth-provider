@@ -42,7 +42,7 @@ class FormController extends BaseController
 
     /**
      * @param FormRequest $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function submit(FormRequest $request)
     {
@@ -53,7 +53,7 @@ class FormController extends BaseController
         $v = Validator::make([], []);
         if (count($info) == 0) {
             $v->getMessageBag()->add('patient_id', 'Patient ID / birthdate combo not found');
-            return Redirect::route("form")->withErrors($v);
+                return Redirect::route("form")->withErrors($v);
         }
 
         // Send code when info is found
