@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ConfirmationRequest;
 use App\Http\Requests\FormRequest;
 use App\Services\CodeGeneratorService;
 use App\Services\EmailService;
@@ -12,6 +13,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Validator;
 
 class FormController extends BaseController
 {
@@ -33,13 +35,38 @@ class FormController extends BaseController
         $this->codeGeneratorService = $codeGeneratorService;
     }
 
-    public function submit(FormRequest $request): void
+    /**
+     * @param FormRequest $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function submit(FormRequest $request)
     {
-        // @TODO: check if patient-id / birthdate is valid
+        // @TODO: goto yenlo
 
         $code = $this->codeGeneratorService->generate($request->get('patient_id'), $request->get('birthdate'));
-
         $this->sendCode($request->get('phone_nr', '') ?? '', $request->get('email', '') ?? '', $code->code);
+
+        $hash = $this->codeGeneratorService->createHash($request->get('patient_id'), $request->get('birthdate'));
+
+        return view('confirmation')->with('hash', $hash);
+    }
+
+    /**
+     * @param ConfirmationRequest $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function confirmationSubmit(ConfirmationRequest $request)
+    {
+        $v = Validator::make([], []);
+
+        if ($this->codeGeneratorService->validate($request->get('hash', ''), $request->get('code', ''))) {
+            // do stuff when all is ok
+            // @TODO: jwt dingetje maken
+            dd("Code is ok!");
+        }
+        $v->getMessageBag()->add('code', 'This code is not correct');
+
+        return view('confirmation')->with('hash', $request->get('hash', ''))->with('errors', $v->getMessageBag());
     }
 
     protected function sendCode(string $phoneNr, string $emailAddr, string $code): void

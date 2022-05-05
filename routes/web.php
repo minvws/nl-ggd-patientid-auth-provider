@@ -21,3 +21,5 @@ Route::get('/', function () {
 })->name('form');
 
 Route::post('/', [FormController::class, 'submit'])->name('form.submit');
+
+Route::post('/confirm', [FormController::class, 'confirmationSubmit'])->name('confirmation.submit');
