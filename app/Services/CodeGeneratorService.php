@@ -59,7 +59,7 @@ class CodeGeneratorService
      */
     public function createHash(string $patientId, string $birthDate): string
     {
-        return hash_hmac('sha256', $patientId . $birthDate, $this->hmacKey);
+        return hash_hmac('sha256', $patientId . '-' . $birthDate, $this->hmacKey);
     }
 
     /**
