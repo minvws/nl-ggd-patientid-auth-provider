@@ -16,7 +16,7 @@ class JsonClientResolver implements ClientResolverInterface
         $content = file_get_contents($clientConfigPath);
 
         $this->clients = [];
-        foreach (json_decode($content, true) as $clientId => $clientData) {
+        foreach (json_decode((string)$content, true) as $clientId => $clientData) {
             $this->clients[$clientId] = new Client($clientId, $clientData['redirect_uris'] ?? []);
         }
     }

@@ -287,5 +287,4 @@ class OidcServiceTest extends TestCase
 
         return new OidcService($this->clientResolver, $this->storageMock);
     }
-
 }

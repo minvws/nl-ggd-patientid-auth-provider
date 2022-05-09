@@ -10,7 +10,8 @@ use Tests\TestCase;
 
 class ArrayClientResolverTest extends TestCase
 {
-    public function testResolver() {
+    public function testResolver()
+    {
         $resolver = new ArrayClientResolver([
             'client_123' => [
                 'redirect_uris' => [

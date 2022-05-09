@@ -44,6 +44,9 @@ class FormController extends BaseController
         $this->oidcService = $oidcService;
     }
 
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View\
+     */
     public function entryPoint()
     {
         return view('form');
@@ -69,7 +72,11 @@ class FormController extends BaseController
         $code = $this->codeGeneratorService->generate($request->get('patient_id'), $request->get('birthdate'));
         $this->sendCode($info['phoneNumber'] ?? '', $info['email'] ?? '', $code->code);
 
-        return view('confirmation')->with('hash', $hash)->with('code', $code->code)->with('errors', $v->getMessageBag());
+        return view('confirmation')
+            ->with('hash', $hash)
+            ->with('code', $code->code)
+            ->with('errors', $v->getMessageBag())
+        ;
     }
 
     /**
@@ -89,8 +96,7 @@ class FormController extends BaseController
 
         return view('confirmation')
             ->with('hash', $request->get('hash', ''))
-            ->with('errors', $v->getMessageBag()
-        );
+            ->with('errors', $v->getMessageBag());
     }
 
     protected function sendCode(string $phoneNr, string $emailAddr, string $code): void

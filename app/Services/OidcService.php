@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Http\Requests\OidcAccessTokenRequest;
-use App\Http\Requests\OidcAuthorizeRequest;
 use App\Services\Oidc\ClientResolverInterface;
 use App\Services\Oidc\StorageInterface;
 use Illuminate\Http\JsonResponse;
@@ -58,7 +56,7 @@ class OidcService
         // Check if the client-id matches something we can accept, and check if
         // the redirect_uri is valid for the client_id
         $client = $this->clientResolver->resolve($request->get('client_id'));
-        if (!in_array($request->get('redirect_uri'), $client->getRedirectUris())) {
+        if (!$client || !in_array($request->get('redirect_uri'), $client->getRedirectUris())) {
             throw new BadRequestHttpException("invalid redirect uri specified");
         }
 
@@ -72,7 +70,7 @@ class OidcService
             'code' => $authCode,
         ]);
 
-        return new RedirectResponse($request->get('redirect_uri').'?'.$qs);
+        return new RedirectResponse($request->get('redirect_uri') . '?' . $qs);
     }
 
     public function accessToken(Request $request): JsonResponse

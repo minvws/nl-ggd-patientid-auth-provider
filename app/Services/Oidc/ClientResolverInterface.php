@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Oidc;
 
-interface ClientResolverInterface {
+interface ClientResolverInterface
+{
     /**
      * Resolves a client id to a client object or null when client id is not found
      */

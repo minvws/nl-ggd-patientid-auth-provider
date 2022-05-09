@@ -13,21 +13,21 @@ class CacheStorage implements StorageInterface
 {
     public function saveAuthData(string $code, array $authData): void
     {
-        Cache::set('ac_'.$code, $authData, 60 * 10);
+        Cache::put('ac_' . $code, $authData, 60 * 10);
     }
 
     /**
      * @param string $code
      * @return array|mixed
      */
-    public function fetchAuthData(string $code)
+    public function fetchAuthData(string $code): mixed
     {
         return Cache::get('ac_' . $code);
     }
 
     public function saveAccessToken(string $accessToken): void
     {
-        Cache::set('at_' . $accessToken, $accessToken, 3600);
+        Cache::put('at_' . $accessToken, $accessToken, 3600);
     }
 
     public function accessTokenExists(string $accessToken): bool
