@@ -199,6 +199,7 @@ return [
 
         App\Providers\GatewayProvider::class,
         App\Providers\CodeGeneratorProvider::class,
+        App\Providers\OidcProvider::class,
     ],
 
     /*

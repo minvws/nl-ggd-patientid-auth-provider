@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\FormController;
+use App\Services\OidcService;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,10 +18,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('form');
-})->name('form');
+Route::middleware('auth.bearer')->group(function () {
+    Route::get('/', [FormController::class, 'entrypoint'])->name('entrypoint');
+    Route::post('/', [FormController::class, 'submit'])->name('form.submit');
+    Route::post('/confirm', [FormController::class, 'confirmationSubmit'])->name('confirmation.submit');
+});
 
-Route::post('/', [FormController::class, 'submit'])->name('form.submit');
+Route::get('/unauthenticated', function () {
+    return view('unauthenticated');
+})->name('login');
 
-Route::post('/confirm', [FormController::class, 'confirmationSubmit'])->name('confirmation.submit');
+
+/*
+ * OIDC endpoints
+ */
+Route::get('/oidc/authorize', function (Request $request, OidcService $oidcService) {
+    return $oidcService->authorize($request);
+});
+
+Route::post('/oidc/accesstoken', function (Request $request, OidcService $oidcService) {
+    return $oidcService->accessToken($request);
+});

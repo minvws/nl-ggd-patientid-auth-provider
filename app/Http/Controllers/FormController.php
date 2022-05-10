@@ -9,6 +9,7 @@ use App\Http\Requests\FormRequest;
 use App\Services\CodeGeneratorService;
 use App\Services\EmailService;
 use App\Services\InfoRetrievalService;
+use App\Services\OidcService;
 use App\Services\SmsService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -27,17 +28,28 @@ class FormController extends BaseController
     protected SmsService $smsService;
     protected CodeGeneratorService $codeGeneratorService;
     protected InfoRetrievalService $infoRetrievalService;
+    protected OidcService $oidcService;
 
     public function __construct(
         EmailService $emailService,
         SmsService $smsService,
         CodeGeneratorService $codeGeneratorService,
-        InfoRetrievalService $infoRetrievalService
+        InfoRetrievalService $infoRetrievalService,
+        OidcService $oidcService
     ) {
         $this->emailService = $emailService;
         $this->smsService = $smsService;
         $this->codeGeneratorService = $codeGeneratorService;
         $this->infoRetrievalService = $infoRetrievalService;
+        $this->oidcService = $oidcService;
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function entryPoint()
+    {
+        return view('form');
     }
 
     /**
@@ -60,7 +72,11 @@ class FormController extends BaseController
         $code = $this->codeGeneratorService->generate($request->get('patient_id'), $request->get('birthdate'));
         $this->sendCode($info['phoneNumber'] ?? '', $info['email'] ?? '', $code->code);
 
-        return view('confirmation')->with('hash', $hash)->with('errors', $v->getMessageBag());
+        return view('confirmation')
+            ->with('hash', $hash)
+            ->with('code', $code->code)
+            ->with('errors', $v->getMessageBag())
+        ;
     }
 
     /**
@@ -78,7 +94,9 @@ class FormController extends BaseController
         }
         $v->getMessageBag()->add('code', 'This code is not correct');
 
-        return view('confirmation')->with('hash', $request->get('hash', ''))->with('errors', $v->getMessageBag());
+        return view('confirmation')
+            ->with('hash', $request->get('hash', ''))
+            ->with('errors', $v->getMessageBag());
     }
 
     protected function sendCode(string $phoneNr, string $emailAddr, string $code): void
