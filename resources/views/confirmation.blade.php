@@ -5,7 +5,7 @@
     We have send you a code via email or text message. Please enter the code below. Note that
     this code is only valid for 5 minutes.
 
-    <form method="POST" action="{{ route('confirmation.submit') }}?access_token={{ $access_token }}" class="horizontal-view help">
+    <x-confirmation-form :url="route('confirmation.submit')">
         @csrf
         <input type="hidden" name="hash" value="{{ $hash }}">
 
@@ -23,7 +23,6 @@
         <div id="submit-button-container">
             <input type="submit" value=" @lang("Submit") ">
         </div>
-
-    </form>
+    </x-confirmation-form>
 
 @endsection
