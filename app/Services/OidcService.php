@@ -28,6 +28,14 @@ class OidcService
         return $this->storage->accessTokenExists($accessToken);
     }
 
+    public function generateToken(): string
+    {
+        $token = $this->generateAccessToken();
+        $this->storage->saveAccessToken($token);
+
+        return $token;
+    }
+
     public function authorize(Request $request): RedirectResponse
     {
         // Validate request for needed parameters

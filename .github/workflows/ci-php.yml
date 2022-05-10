@@ -45,6 +45,10 @@ jobs:
         uses: shivammathur/setup-php@master
         with:
           php-version: ${{ matrix.php-versions }}
+      - name: Copy clients.json
+        run: cp clients.json.example clients.json
+      - name: ls -la
+        run: ls -la
       - name: Generate _ide_helper file
         run: php artisan ide-helper:generate
       - name: Static analysis with Psalm
@@ -103,6 +107,8 @@ jobs:
           php-version: ${{ matrix.php-versions }}
       - name: use .env.testing
         run: cp .env.testing .env
+      - name: Copy clients.json
+        run: cp clients.json.example clients.json
       - name: Generate key
         run: php artisan key:generate --env=testing
       - name: Static analysis with PHPStan
@@ -127,6 +133,8 @@ jobs:
         uses: shivammathur/setup-php@master
         with:
           php-version: ${{ matrix.php-versions }}
+      - name: Copy clients.json
+        run: cp clients.json.example clients.json
       - name: Check for known CVE vulnerabilities
         run: php artisan security-check:now
     strategy:
