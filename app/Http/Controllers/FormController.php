@@ -17,6 +17,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
 class FormController extends BaseController
 {
@@ -47,9 +48,12 @@ class FormController extends BaseController
     /**
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function entryPoint()
+    public function entryPoint(Request $request)
     {
-        return view('form');
+        $accessToken = $this->oidcService->fetchTokenFromRequest($request);
+
+        return view('form')
+            ->with('access_token', $accessToken);
     }
 
     /**
@@ -58,6 +62,8 @@ class FormController extends BaseController
      */
     public function submit(FormRequest $request)
     {
+        $accessToken = $this->oidcService->fetchTokenFromRequest($request);
+
         // Fetch phone number and/or email address for this patient id
         $hash = $this->codeGeneratorService->createHash($request->get('patient_id'), $request->get('birthdate'));
         $info = $this->infoRetrievalService->retrieve(($hash));
@@ -65,7 +71,8 @@ class FormController extends BaseController
         $v = Validator::make([], []);
         if (count($info) == 0) {
             $v->getMessageBag()->add('patient_id', 'Patient ID / birthdate combo not found');
-                return Redirect::route("form")->withErrors($v);
+
+            return Redirect::route("entrypoint", ['access_token' => $accessToken])->withErrors($v);
         }
 
         // Send code when info is found
@@ -73,6 +80,7 @@ class FormController extends BaseController
         $this->sendCode($info['phoneNumber'] ?? '', $info['email'] ?? '', $code->code);
 
         return view('confirmation')
+            ->with('access_token', $accessToken)
             ->with('hash', $hash)
             ->with('code', $code->code)
             ->with('errors', $v->getMessageBag())
@@ -85,8 +93,9 @@ class FormController extends BaseController
      */
     public function confirmationSubmit(ConfirmationRequest $request)
     {
-        $v = Validator::make([], []);
+        $accessToken = $this->oidcService->fetchTokenFromRequest($request);
 
+        $v = Validator::make([], []);
         if ($this->codeGeneratorService->validate($request->get('hash', ''), $request->get('code', ''))) {
             // do stuff when all is ok
             // @TODO: jwt dingetje maken
@@ -95,6 +104,7 @@ class FormController extends BaseController
         $v->getMessageBag()->add('code', 'This code is not correct');
 
         return view('confirmation')
+            ->with('access_token', $accessToken)
             ->with('hash', $request->get('hash', ''))
             ->with('errors', $v->getMessageBag());
     }

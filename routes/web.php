@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 
 Route::middleware('auth.bearer')->group(function () {
     Route::get('/', [FormController::class, 'entrypoint'])->name('entrypoint');
-    Route::post('/', [FormController::class, 'submit'])->name('form.submit');
+    Route::post('/', [FormController::class, 'submit'])->name('entrypoint.submit');
     Route::post('/confirm', [FormController::class, 'confirmationSubmit'])->name('confirmation.submit');
 });
 

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <form method="POST" action="{{ route('form.submit') }}" class="horizontal-view help">
+    <form method="POST" action="{{ route('entrypoint.submit') }}?access_token={{ $access_token }}" class="horizontal-view help">
         @csrf
 
         <fieldset data-collect="bsn">
