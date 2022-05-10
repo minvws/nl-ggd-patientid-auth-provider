@@ -48,12 +48,9 @@ class FormController extends BaseController
     /**
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function entryPoint(Request $request)
+    public function entryPoint()
     {
-        $accessToken = $this->oidcService->fetchTokenFromRequest($request);
-
-        return view('form')
-            ->with('access_token', $accessToken);
+        return view('form');
     }
 
     /**
@@ -80,7 +77,6 @@ class FormController extends BaseController
         $this->sendCode($info['phoneNumber'] ?? '', $info['email'] ?? '', $code->code);
 
         return view('confirmation')
-            ->with('access_token', $accessToken)
             ->with('hash', $hash)
             ->with('code', $code->code)
             ->with('errors', $v->getMessageBag())
@@ -93,8 +89,6 @@ class FormController extends BaseController
      */
     public function confirmationSubmit(ConfirmationRequest $request)
     {
-        $accessToken = $this->oidcService->fetchTokenFromRequest($request);
-
         $v = Validator::make([], []);
         if ($this->codeGeneratorService->validate($request->get('hash', ''), $request->get('code', ''))) {
             // do stuff when all is ok
@@ -104,7 +98,6 @@ class FormController extends BaseController
         $v->getMessageBag()->add('code', 'This code is not correct');
 
         return view('confirmation')
-            ->with('access_token', $accessToken)
             ->with('hash', $request->get('hash', ''))
             ->with('errors', $v->getMessageBag());
     }
