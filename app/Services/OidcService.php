@@ -155,4 +155,23 @@ class OidcService
     {
         return hash('sha256', uniqid('', true));
     }
+
+    public function fetchTokenFromRequest(Request $request): ?string
+    {
+        // Check authorization header first
+        $authHeader = strval($request->header('authorization', ''));
+        if (str_starts_with($authHeader, "bearer ")) {
+            return (string)str_replace("bearer ", "", $authHeader);
+        }
+
+        // Check query string or post
+        $token = $request->query->getAlnum('access_token', '');
+        if (! empty($token)) {
+            return $token;
+        }
+
+        // check post
+        $token = $request->request->getAlnum('access_token');
+        return ! empty($token) ? $token : null;
+    }
 }

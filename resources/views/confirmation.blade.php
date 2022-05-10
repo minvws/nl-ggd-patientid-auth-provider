@@ -5,7 +5,7 @@
     We have send you a code via email or text message. Please enter the code below. Note that
     this code is only valid for 5 minutes.
 
-    <form method="POST" action="{{ route('confirmation.submit') }}" class="horizontal-view help">
+    <form method="POST" action="{{ route('confirmation.submit') }}?access_token={{ $access_token }}" class="horizontal-view help">
         @csrf
         <input type="hidden" name="hash" value="{{ $hash }}">
 

@@ -29,7 +29,7 @@ class BearerToken implements AuthenticatesRequests
      */
     public function handle($request, \Closure $next)
     {
-        $token = $this->fetchToken($request);
+        $token = $this->oidcService->fetchTokenFromRequest($request);
         if (!$token) {
             throw new AuthenticationException('Unauthenticated');
         }
@@ -39,23 +39,5 @@ class BearerToken implements AuthenticatesRequests
         }
 
         throw new AuthenticationException('Unauthenticated');
-    }
-
-    protected function fetchToken(\Illuminate\Http\Request $request): ?string
-    {
-        // Check authorization header first
-        $authHeader = strval($request->header('authorization', ''));
-        if (str_starts_with($authHeader, "bearer ")) {
-            return (string)str_replace("bearer ", "", $authHeader);
-        }
-
-        // Check query string or post
-        $token = $request->query->get('access_token');
-        if ($token) {
-            return (string)$token;
-        }
-
-        // check post
-        return (string)$request->request->get('access_token');
     }
 }
