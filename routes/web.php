@@ -17,10 +17,16 @@ use Illuminate\Http\Request;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', [FormController::class, 'entrypoint'])->name('entrypoint');
 
-Route::post('/', [FormController::class, 'submit'])->name('form.submit');
-Route::post('/confirm', [FormController::class, 'confirmationSubmit'])->name('confirmation.submit');
+Route::middleware('auth.bearer')->group(function () {
+    Route::get('/', [FormController::class, 'entrypoint'])->name('entrypoint');
+    Route::post('/', [FormController::class, 'submit'])->name('form.submit');
+    Route::post('/confirm', [FormController::class, 'confirmationSubmit'])->name('confirmation.submit');
+});
+
+Route::get('/unauthenticated', function () {
+    return view('unauthenticated');
+})->name('login');
 
 
 /*

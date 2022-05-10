@@ -23,6 +23,11 @@ class OidcService
         $this->storage = $storage;
     }
 
+    public function tokenExists(string $accessToken): bool
+    {
+        return $this->storage->accessTokenExists($accessToken);
+    }
+
     public function authorize(Request $request): RedirectResponse
     {
         // Validate request for needed parameters
