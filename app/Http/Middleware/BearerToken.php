@@ -27,7 +27,7 @@ class BearerToken implements AuthenticatesRequests
      * @param  \Illuminate\Http\Request  $request
      * @return string|null
      */
-    public function handle($request, \Closure $next, ...$guards)
+    public function handle($request, \Closure $next)
     {
         $token = $this->fetchToken($request);
         if (!$token) {
@@ -44,18 +44,18 @@ class BearerToken implements AuthenticatesRequests
     protected function fetchToken(\Illuminate\Http\Request $request): ?string
     {
         // Check authorization header first
-        $authHeader = $request->header('authorization', '');
+        $authHeader = strval($request->header('authorization', ''));
         if (str_starts_with($authHeader, "bearer ")) {
-            return str_replace("bearer ", "", $authHeader);
+            return (string)str_replace("bearer ", "", $authHeader);
         }
 
         // Check query string or post
         $token = $request->query->get('access_token');
         if ($token) {
-            return $token;
+            return (string)$token;
         }
 
         // check post
-        return $request->request->get('access_token');
+        return (string)$request->request->get('access_token');
     }
 }
