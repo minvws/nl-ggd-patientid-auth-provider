@@ -9,11 +9,14 @@ use App\Http\Requests\FormRequest;
 use App\Services\CodeGeneratorService;
 use App\Services\EmailService;
 use App\Services\InfoRetrievalService;
+use App\Services\JwtService;
 use App\Services\OidcService;
 use App\Services\SmsService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
@@ -29,26 +32,34 @@ class FormController extends BaseController
     protected CodeGeneratorService $codeGeneratorService;
     protected InfoRetrievalService $infoRetrievalService;
     protected OidcService $oidcService;
+    protected JwtService $jwtService;
 
     public function __construct(
         EmailService $emailService,
         SmsService $smsService,
         CodeGeneratorService $codeGeneratorService,
         InfoRetrievalService $infoRetrievalService,
-        OidcService $oidcService
+        OidcService $oidcService,
+        JwtService $jwtService
     ) {
         $this->emailService = $emailService;
         $this->smsService = $smsService;
         $this->codeGeneratorService = $codeGeneratorService;
         $this->infoRetrievalService = $infoRetrievalService;
         $this->oidcService = $oidcService;
+        $this->jwtService = $jwtService;
     }
 
     /**
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function entryPoint()
+    public function entryPoint(Request $request)
     {
+        // Store redirect URI when given
+        if ($request->query->get('redirect_uri')) {
+            $request->session()->put('redirect_uri', $request->query->get('redirect_uri'));
+        }
+
         return view('form');
     }
 
@@ -84,16 +95,23 @@ class FormController extends BaseController
 
     /**
      * @param ConfirmationRequest $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|RedirectResponse
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function confirmationSubmit(ConfirmationRequest $request)
     {
-        $v = Validator::make([], []);
-        if ($this->codeGeneratorService->validate($request->get('hash', ''), $request->get('code', ''))) {
-            // do stuff when all is ok
-            // @TODO: jwt dingetje maken
-            dd("Code is ok!");
+        $code = $this->codeGeneratorService->fetchCodeByHash($request->get('hash', ''));
+
+        if ($code && $this->codeGeneratorService->validate($request->get('hash', ''), $request->get('code', ''))) {
+            // code is ok, generate jwt token and redirect (back) to corona check site/app
+            $jwt = $this->jwtService->generate($code);
+
+            $redirectUri = session()->get('redirect_uri', config('app.default_redirect_uri'));
+            return new RedirectResponse($redirectUri . '?token=' . urlencode($jwt));
         }
+
+        $v = Validator::make([], []);
         $v->getMessageBag()->add('code', 'This code is not correct');
 
         return view('confirmation')
