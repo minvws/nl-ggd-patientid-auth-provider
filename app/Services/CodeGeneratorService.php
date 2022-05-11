@@ -55,6 +55,14 @@ class CodeGeneratorService
     }
 
     /**
+     * Returns a code object based on the hash
+     */
+    public function fetchCodeByHash(string $hash): ?Code
+    {
+        return Code::whereHash($hash)->first();
+    }
+
+    /**
      * Generates unique hash from patient-id and birthdate
      */
     public function createHash(string $patientId, string $birthDate): string

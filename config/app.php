@@ -201,6 +201,7 @@ return [
         App\Providers\GatewayProvider::class,
         App\Providers\CodeGeneratorProvider::class,
         App\Providers\OidcProvider::class,
+        App\Providers\JwtProvider::class,
     ],
 
     /*
@@ -218,4 +219,6 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
+    // @TODO: check default redirection URI
+    'default_redirect_uri' => 'https://coronacheck.app',
 ];

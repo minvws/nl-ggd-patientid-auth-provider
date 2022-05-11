@@ -10,7 +10,7 @@ use App\Services\EmailService;
 use App\Services\InfoRetrievalService;
 use App\Services\SmsGateway\MessageBird;
 use App\Services\SmsService;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
 class GatewayProvider extends ServiceProvider
 {
