@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-    <form method="POST" action="{{ route('entrypoint.submit') }}?access_token={{ $access_token }}" class="horizontal-view help">
+
+    <x-confirmation-form :url="route('entrypoint.submit')">
         @csrf
 
         <fieldset data-collect="bsn">
@@ -22,6 +23,9 @@
             <input type="submit" value=" @lang("Submit") ">
         </div>
 
-    </form>
+        </fieldset>
+
+    </x-confirmation-form>
+
 
 @endsection
