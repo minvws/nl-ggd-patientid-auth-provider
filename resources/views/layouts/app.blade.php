@@ -19,6 +19,9 @@
     </head>
     <body>
         <main id="main-content" tabindex="-1">
+
+            <h1>{{__("hello world") }}</h1>
+
             @yield('content')
         </main>
     </body>
