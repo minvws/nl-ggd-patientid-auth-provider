@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class FormController extends BaseController
 {
@@ -55,10 +56,12 @@ class FormController extends BaseController
      */
     public function entryPoint(Request $request)
     {
-        // Store redirect URI when given
-        if ($request->query->get('redirect_uri')) {
-            $request->session()->put('redirect_uri', $request->query->get('redirect_uri'));
+        // Fetch redirect URI and store in session for later use
+        $redirectUri = $request->query->get('redirect_uri');
+        if (!in_array($redirectUri, config('app.redirect_uris'))) {
+            throw new BadRequestHttpException("incorrect redirect uri");
         }
+        $request->session()->put('redirect_uri', $redirectUri);
 
         return view('form');
     }
@@ -107,7 +110,7 @@ class FormController extends BaseController
             // code is ok, generate jwt token and redirect (back) to corona check site/app
             $jwt = $this->jwtService->generate($code);
 
-            $redirectUri = session()->get('redirect_uri', config('app.default_redirect_uri'));
+            $redirectUri = session()->get('redirect_uri', '');
             return new RedirectResponse($redirectUri . '?token=' . urlencode($jwt));
         }
 
