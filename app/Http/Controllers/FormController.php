@@ -128,6 +128,8 @@ class FormController extends BaseController
         $v->getMessageBag()->add('code', 'This code is not correct');
 
         return view('confirmation')
+            ->with('patient_id', $request->get('patient_id'))
+            ->with('birthdate', $request->get('birthdate'))
             ->with('hash', $request->get('hash', ''))
             ->with('errors', $v->getMessageBag());
     }
