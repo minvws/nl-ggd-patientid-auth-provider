@@ -219,6 +219,5 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
-    // @TODO: check default redirection URI
-    'default_redirect_uri' => 'https://coronacheck.app',
+    'redirect_uris' => explode(",", env('REDIRECT_URIS', '')),
 ];
