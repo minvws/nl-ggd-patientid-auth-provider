@@ -86,11 +86,21 @@ class FormController extends BaseController
         }
 
         // Send code when info is found
-        $code = $this->codeGeneratorService->generate($request->get('patient_id'), $request->get('birthdate'));
+        $code = $this->codeGeneratorService->generate($request->get('patient_id'), $request->get('birthdate'), false);
+        if ($code->isExpired()) {
+            // When expired (when we asked to resend the code again for instance), generate a new code
+            $code = $this->codeGeneratorService->generate(
+                $request->get('patient_id'),
+                $request->get('birthdate'),
+                true
+            );
+        }
         $this->sendCode($info['phoneNumber'] ?? '', $info['email'] ?? '', $code->code);
 
         return view('confirmation')
             ->with('hash', $hash)
+            ->with('patient_id', $request->get('patient_id'))
+            ->with('birthdate', $request->get('birthdate'))
             ->with('code', $code->code)
             ->with('errors', $v->getMessageBag())
         ;

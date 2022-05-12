@@ -25,4 +25,15 @@
         </div>
     </x-confirmation-form>
 
+    <x-confirmation-form :url="route('entrypoint.submit')">
+        @csrf
+
+        Click here to resend your confirmation code
+
+        <input type="hidden" name="patient_id" value="{{ $patient_id }}">
+        <input type="hidden" name="birthdate" value="{{ $birthdate }}">
+
+        <input type="submit" value=" @lang("Submit") ">
+    </x-confirmation-form>
+
 @endsection
