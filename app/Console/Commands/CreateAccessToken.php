@@ -56,7 +56,8 @@ class CreateAccessToken extends Command
         return 0;
     }
 
-    private function entrypointUri(string $token): string {
+    private function entrypointUri(string $token): string
+    {
         $redirect_uris = config('app.redirect_uris');
         $redirect_uri = is_array($redirect_uris) ? $redirect_uris[0] : '';
         $params = ['access_token' => $token, 'redirect_uri' => $redirect_uri];
