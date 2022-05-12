@@ -47,8 +47,19 @@ class CreateAccessToken extends Command
 
         $token = $this->oidcService->generateToken();
 
-        print "Token: " . $token . "\n";
+        if (stream_isatty(STDOUT)) {
+            print $this->entrypointUri($token) . "\n";
+        } else {
+            print $token . "\n";
+        }
 
         return 0;
+    }
+
+    private function entrypointUri(string $token): string {
+        $redirect_uris = config('app.redirect_uris');
+        $redirect_uri = is_array($redirect_uris) ? $redirect_uris[0] : '';
+        $params = ['access_token' => $token, 'redirect_uri' => $redirect_uri];
+        return route('entrypoint', $params);
     }
 }
