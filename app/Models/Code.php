@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,4 +32,9 @@ class Code extends Model
         'code',
         'expires_at',
     ];
+
+    public function isExpired(): bool
+    {
+        return (Carbon::now()->timestamp > $this->expires_at);
+    }
 }

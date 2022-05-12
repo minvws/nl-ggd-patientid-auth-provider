@@ -23,9 +23,13 @@ class CodeGeneratorService
     /**
      * Generates a new code or return a current code for the patientid/birthdate
      */
-    public function generate(string $patientId, string $birthDate): Code
+    public function generate(string $patientId, string $birthDate, bool $regenerate = false): Code
     {
         $hash = $this->createHash($patientId, $birthDate);
+
+        if ($regenerate) {
+            Code::whereHash($hash)->delete();
+        }
 
         return Code::firstOrCreate(
             [ 'hash' => $hash ],
@@ -51,7 +55,7 @@ class CodeGeneratorService
             return false;
         }
 
-        return ($record->expires_at > Carbon::now()->timestamp);
+        return ! $record->isExpired();
     }
 
     /**
