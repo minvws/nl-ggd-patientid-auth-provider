@@ -20,8 +20,10 @@ use Illuminate\Http\Request;
 
 Route::middleware('auth.bearer')->group(function () {
     Route::get('/', [FormController::class, 'entrypoint'])->name('entrypoint');
-    Route::post('/', [FormController::class, 'submit'])->name('entrypoint.submit');
-    Route::post('/confirm', [FormController::class, 'confirmationSubmit'])->name('confirmation.submit');
+    Route::middleware('throttle:3,10')->group(function () {
+        Route::post('/', [FormController::class, 'submit'])->name('entrypoint.submit');
+        Route::post('/confirm', [FormController::class, 'confirmationSubmit'])->name('confirmation.submit');
+    });
 });
 
 Route::get('/unauthenticated', function () {
