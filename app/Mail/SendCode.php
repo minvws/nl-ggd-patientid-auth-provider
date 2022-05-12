@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
 class SendCode extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     public string $code;
 
@@ -18,9 +20,8 @@ class SendCode extends Mailable
         $this->code = $code;
     }
 
-    public function build()
+    public function build(): self
     {
-
         return $this
             ->view('emails.code')
             ->text('emails.code_plain')
