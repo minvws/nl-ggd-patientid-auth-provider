@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Services\EmailGateway\Dummy as EmailDummy;
+use App\Services\EmailGateway\Native;
 use App\Services\InfoRetrievalGateway\Dummy as InfoRetrievalGatewayDummy;
 use App\Services\EmailService;
 use App\Services\InfoRetrievalService;
@@ -23,7 +23,7 @@ class GatewayProvider extends ServiceProvider
         });
 
         $this->app->singleton(EmailService::class, function () {
-            return new EmailService(new EmailDummy());
+            return new EmailService(new Native());
         });
 
         $this->app->singleton(InfoRetrievalService::class, function () {
