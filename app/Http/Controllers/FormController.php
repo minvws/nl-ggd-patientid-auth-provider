@@ -89,7 +89,11 @@ class FormController extends BaseController
         $code = $this->codeGeneratorService->generate($request->get('patient_id'), $request->get('birthdate'), false);
         if ($code->isExpired()) {
             // When expired (when we asked to resend the code again for instance), generate a new code
-            $code = $this->codeGeneratorService->generate($request->get('patient_id'), $request->get('birthdate'), true);
+            $code = $this->codeGeneratorService->generate(
+                $request->get('patient_id'),
+                $request->get('birthdate'),
+                true
+            );
         }
         $this->sendCode($info['phoneNumber'] ?? '', $info['email'] ?? '', $code->code);
 
