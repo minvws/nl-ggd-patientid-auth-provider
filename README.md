@@ -36,7 +36,7 @@ Short list of some important variables.
 
 ```
 APP_NAME=
-APP_ENV=			         # E.g. production
+APP_ENV=			                     # E.g. production
 APP_KEY=                                 # Can be generated with `php artisan key:generate`
 CODEGEN_HMAC_KEY=                        # HMAC key for patient hash generation function
 CODEGEN_EXPIRY=900                       # Number of seconds before expiring authentication codes
@@ -47,7 +47,7 @@ REDIRECT_URIS=                           # Allowlist of redirects
 
 ## Installation production / acceptance
 
-Environment variablesi via webserver or `.env` file.
+Environment variables via webserver or `.env` file.
 Unpack release artifact, webroot should be the `public` folder within.
 
 
