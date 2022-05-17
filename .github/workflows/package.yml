@@ -32,10 +32,6 @@ jobs:
         run: npm run build
       - name: Clean build
         run: rm -r node_modules .git
-      - name: Clear config cache
-        run: php artisan config:clear
-      - name: Clear route cache
-        run: php artisan route:clear
       - run: 'echo "{ \"version\": \"${{ env.RELEASE_VERSION }}\", \"git_ref\": \"$GITHUB_SHA\"}" > public/version.json'
         shell: bash
       - name: Make ./storage group writable for, code_owner != run_user
