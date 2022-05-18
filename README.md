@@ -28,6 +28,16 @@ Change config variables.
 
 Can be ran with internal webserver via `php artisan serve`
 
+## JWT configuration
+
+`cp clients.json.example clients.json` 
+
+Change client variables.
+
+Create an RSA JWT key in `secrets/jwt.key` 
+
+`openssl genrsa 2048 -out secrets/jwt.key`
+
 ## Configuration variables
 
 See [.env.example](.env.example)
