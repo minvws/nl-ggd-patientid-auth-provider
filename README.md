@@ -36,7 +36,7 @@ Change client variables.
 
 Create an RSA JWT key in `secrets/jwt.key` 
 
-`openssl genrsa 2048 -out secrets/jwt.key`
+`openssl genrsa -out secrets/jwt.key`
 
 ## Configuration variables
 
