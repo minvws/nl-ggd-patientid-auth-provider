@@ -6,5 +6,5 @@ namespace App\Services\InfoRetrievalGateway;
 
 interface InfoRetrievalGateway
 {
-    public function retrieve(string $hash): array;
+    public function retrieve(string $userHash): array;
 }

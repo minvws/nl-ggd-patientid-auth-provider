@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Services\EmailGateway\Native;
-use App\Services\InfoRetrievalGateway\Dummy as InfoRetrievalGatewayDummy;
 use App\Services\EmailService;
+use App\Services\InfoRetrievalGateway\Dummy as InfoRetrievalGatewayDummy;
+use App\Services\InfoRetrievalGateway\Yenlo;
 use App\Services\InfoRetrievalService;
 use App\Services\SmsGateway\MessageBird;
 use App\Services\SmsService;
@@ -26,10 +27,21 @@ class GatewayProvider extends ServiceProvider
             return new EmailService(new Native());
         });
 
+        $this->app->singleton(Yenlo::class, function () {
+            return new Yenlo(
+                config('yenlo.client_id'),
+                config('yenlo.client_secret'),
+                config('yenlo.token_url'),
+                config('yenlo.userinfo_url')
+            );
+        });
+
         $this->app->singleton(InfoRetrievalService::class, function () {
             return new InfoRetrievalService(
                 new InfoRetrievalGatewayDummy(config('codegenerator.hmac_key', ''))
             );
+
+//            return new InfoRetrievalService($this->app->get(Yenlo::class)));
         });
     }
 }
