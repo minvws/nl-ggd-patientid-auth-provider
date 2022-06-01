@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace App\View\Components;
 
 use App\Services\OidcService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class ConfirmationForm extends Component
@@ -21,7 +25,7 @@ class ConfirmationForm extends Component
     }
 
     /**
-     * @return \Closure|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Support\Htmlable|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|string
+     * @return \Closure|Application|Htmlable|Factory|View|string
      */
     public function render()
     {

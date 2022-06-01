@@ -7,6 +7,7 @@ namespace App\Http\Middleware;
 use App\Services\OidcService;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
+use Illuminate\Http\Request;
 
 class BearerToken implements AuthenticatesRequests
 {
@@ -24,10 +25,11 @@ class BearerToken implements AuthenticatesRequests
     /**
      * Get the path the user should be redirected to when they are not authenticated.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return string|null
+     * @throws AuthenticationException
      */
-    public function handle($request, \Closure $next)
+    public function handle(Request $request, \Closure $next)
     {
         $token = $this->oidcService->fetchTokenFromRequest($request);
         if (!$token) {
