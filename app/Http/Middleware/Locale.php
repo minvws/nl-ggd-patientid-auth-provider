@@ -17,14 +17,14 @@ class Locale
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @param  \Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
     {
         $rawLocale = $request->query->get('lang');
-        if ($rawLocale && in_array($rawLocale, Config::get('app.locales'))) {
+        if ($rawLocale && in_array($rawLocale, Config::get('app.locales'), true)) {
             $locale = $rawLocale;
 
             $request->session()->put('locale', $locale);

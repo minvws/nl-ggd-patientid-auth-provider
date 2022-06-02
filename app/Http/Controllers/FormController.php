@@ -12,6 +12,9 @@ use App\Services\InfoRetrievalService;
 use App\Services\JwtService;
 use App\Services\OidcService;
 use App\Services\SmsService;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -20,6 +23,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class FormController extends BaseController
@@ -52,13 +57,13 @@ class FormController extends BaseController
     }
 
     /**
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return Application|Factory|View
      */
     public function entryPoint(Request $request)
     {
         // Fetch redirect URI and store in session for later use
         $redirectUri = $request->query->get('redirect_uri');
-        if (!in_array($redirectUri, config('app.redirect_uris'))) {
+        if (!in_array($redirectUri, config('app.redirect_uris'), true)) {
             throw new BadRequestHttpException("incorrect redirect uri");
         }
         $request->session()->put('redirect_uri', $redirectUri);
@@ -68,7 +73,7 @@ class FormController extends BaseController
 
     /**
      * @param FormRequest $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
+     * @return Application|Factory|View|RedirectResponse
      */
     public function submit(FormRequest $request)
     {
@@ -79,7 +84,7 @@ class FormController extends BaseController
         $info = $this->infoRetrievalService->retrieve(($hash));
 
         $v = Validator::make([], []);
-        if (count($info) == 0) {
+        if (count($info) === 0) {
             $v->getMessageBag()->add('patient_id', 'Patient ID / birthdate combo not found');
 
             return Redirect::route("entrypoint", ['access_token' => $accessToken])->withErrors($v);
@@ -108,9 +113,9 @@ class FormController extends BaseController
 
     /**
      * @param ConfirmationRequest $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|RedirectResponse
-     * @throws \Psr\Container\ContainerExceptionInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @return Application|Factory|View|RedirectResponse
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function confirmationSubmit(ConfirmationRequest $request)
     {
