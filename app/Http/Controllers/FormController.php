@@ -139,12 +139,6 @@ class FormController extends BaseController
             ->with('errors', $v->getMessageBag());
     }
 
-    /**
-     * @param string $phoneNr
-     * @param string $emailAddr
-     * @param string $code
-     * @return void
-     */
     protected function sendCode(string $phoneNr, string $emailAddr, string $code): void
     {
         // Phone has priority
