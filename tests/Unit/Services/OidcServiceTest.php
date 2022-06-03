@@ -7,6 +7,7 @@ namespace Tests\Unit\Services;
 use App\Services\Oidc\ArrayClientResolver;
 use App\Services\Oidc\StorageInterface;
 use App\Services\OidcService;
+use App\Services\JwtService;
 use Illuminate\Http\Request;
 use Mockery;
 use Spatie\Url\Url;
@@ -17,6 +18,7 @@ class OidcServiceTest extends TestCase
 {
     protected Mockery\LegacyMockInterface|StorageInterface|Mockery\MockInterface $storageMock;
     protected ArrayClientResolver $clientResolver;
+    protected JwtService $jwtService;
 
     public function testMissingValues()
     {
@@ -284,7 +286,16 @@ class OidcServiceTest extends TestCase
                 ]
             ]
         ]);
+        $this->jwtService = new JwtService(
+            config('jwt.private_key_path'),
+            config('jwt.iss'),
+            config('jwt.aud'),
+        );
 
-        return new OidcService($this->clientResolver, $this->storageMock);
+        return new OidcService(
+            $this->clientResolver,
+            $this->storageMock,
+            $this->jwtService
+        );
     }
 }
