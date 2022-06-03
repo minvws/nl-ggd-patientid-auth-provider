@@ -40,7 +40,7 @@ class OidcService
             $request->session()->put($key, $value);
         }
 
-        return Redirect::route('login');
+        return Redirect::route('start_auth');
     }
 
     public function finishAuthorize(Request $request, string $hash): RedirectResponse

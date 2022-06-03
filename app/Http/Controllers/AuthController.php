@@ -67,7 +67,7 @@ class AuthController extends BaseController
         } catch (ContactInfoNotFound $e) {
             $v = Validator::make([], []);
             $v->getMessageBag()->add('patient_id', 'Patient ID / birthdate combo not found');
-            return Redirect::route('login')->withErrors($v);
+            return Redirect::route('start_auth')->withErrors($v);
         }
 
         // Store hash in session
@@ -81,7 +81,7 @@ class AuthController extends BaseController
         $confirmationType = $request->session()->get('confirmation_type');
 
         if (!$confirmationType) {
-            return Redirect::route('login');
+            return Redirect::route('start_auth');
         }
 
         return view('confirm', ['confirmationType' => $confirmationType]);
@@ -93,7 +93,7 @@ class AuthController extends BaseController
         $hash = $request->session()->get('hash');
         \Log::debug('hash');
         if (!$hash) {
-            return Redirect::route('login');
+            return Redirect::route('start_auth');
         }
 
         if ($this->codeGeneratorService->validate($hash, $request->get('code', ''))) {
@@ -106,7 +106,7 @@ class AuthController extends BaseController
         \Log::debug($confirmationType);
 
         if (!$confirmationType) {
-            return Redirect::route('login');
+            return Redirect::route('start_auth');
         }
 
         $v = Validator::make([], []);
@@ -123,7 +123,7 @@ class AuthController extends BaseController
         $confirmationType = $request->session()->get('confirmation_type');
 
         if (!$confirmationType) {
-            return Redirect::route('login');
+            return Redirect::route('start_auth');
         }
 
         return view('resend', ['confirmationType' => $confirmationType]);
@@ -134,7 +134,7 @@ class AuthController extends BaseController
         $hash = $request->session()->get('hash');
 
         if (!$hash) {
-            return Redirect::route('login');
+            return Redirect::route('start_auth');
         }
 
         // Send confirmation code
@@ -143,7 +143,7 @@ class AuthController extends BaseController
         } catch (ContactInfoNotFound $e) {
             $v = Validator::make([], []);
             $v->getMessageBag()->add('patient_id', 'Patient ID / birthdate combo not found');
-            return Redirect::route('login')->withErrors($v);
+            return Redirect::route('start_auth')->withErrors($v);
         }
 
         return Redirect::route('confirm');

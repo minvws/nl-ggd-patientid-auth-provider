@@ -16,7 +16,7 @@ Route::post('/oidc/accesstoken', function (Request $request, OidcService $oidcSe
 });
 
 Route::middleware('oidc.session')->group(function () {
-    Route::get('/login', [AuthController::class, 'login'])->name('login');
+    Route::get('/login', [AuthController::class, 'login'])->name('start_auth');
     Route::get('/confirm', [AuthController::class, 'confirm'])->name('confirm');
     Route::get('/resend', [AuthController::class, 'resend'])->name('resend');
 
@@ -29,4 +29,4 @@ Route::middleware('oidc.session')->group(function () {
 
 Route::get('/unauthenticated', function () {
     return view('unauthenticated');
-})->name('unauthenticated');
+})->name('login');
