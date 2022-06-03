@@ -1,0 +1,19 @@
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--application-base-background-color, white);
+  color: var(--text-base-text-color, black);
+  font-family: var(--text-base-font-family, sans-serif);
+  font-size: var(--text-base-font-size);
+  line-height: var(--text-base-font-size);
+  font-weight: var(--text-base-font-weight);
+
+  > main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+}

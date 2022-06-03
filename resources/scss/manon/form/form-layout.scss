@@ -1,0 +1,191 @@
+/*---------------------------------------------------------------*/
+/*---------------- components/form-layout.scss ------------------*/
+/*---------------------------------------------------------------*/
+form.horizontal-view {
+	/* Grouped form elements */
+	> div,
+	%grouped-form-elements {
+		/* Group behaviour */
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		margin-top: $form-element-gap;
+		width: 100%;
+		position: relative;
+
+		&:first-child {
+			margin-top: 0;
+		}
+
+		&:last-of-type + button {
+			margin-top: 1.5rem;
+		}
+
+		@media (min-width: $form-breakpoint) {
+			input {
+				width: auto;
+			}
+
+			&.required {
+				label {
+					padding-top: 1.5rem; /* Reserving space for the nota bene text */
+				}
+			}
+
+			label {
+				width: 33.33%;
+			}
+
+			a,
+			p,
+			span {
+				text-align: left;
+				margin-left: 33.33%;
+
+				&.error,
+				&.warning,
+				&.confirmation,
+				&.explanation,
+				&.primary {
+					> span {
+						float: none;
+						margin-left: 0;
+					}
+				}
+			}
+
+			/* Aligning button with the inputfields if there are grouped input fields */
+			& + button,
+			& + a.button,
+			& + input[type="button"],
+			& + input[type="submit"],
+			& + input[type="reset"] {
+				margin-left: 33.33%;
+			}
+		}
+
+		/* Grouped elements within the grouped form elements */
+		> div {
+			display: flex;
+			flex-direction: column;
+			flex: 1;
+			position: relative;
+			min-height: 2.75rem;
+
+			@media (min-width: $form-breakpoint) {
+				max-width: 66.66%;
+			}
+
+			/* Grouped checkboxes with a label */
+			.checkbox {
+				padding-left: 0;
+				flex-direction: column;
+
+				label {
+					width: 100%;
+				}
+			}
+
+			/* Grouped input fields with an additional element. eg cancel or retrieve data button */
+			> div {
+				display: flex;
+
+				button,
+				a.button,
+				input[type="button"],
+				input[type="submit"],
+				input[type="reset"] {
+					margin: 0 0 0 1rem;
+				}
+			}
+
+			a,
+			p,
+			span,
+			button {
+				text-align: left;
+				margin-left: 0;
+			}
+		}
+	}
+
+	@media (min-width: $form-breakpoint) {
+		/* Checkbox alignment when grouped */
+		> div {
+			> input[type="checkbox"],
+			> input[type="radio"] {
+				margin-left: 33.33%;
+
+				& + label {
+					padding-top: 0;
+					max-width: calc(66.66% - 2rem);
+				}
+
+				& ~ p {
+					margin-left: 33.33%;
+				}
+			}
+		}
+
+		> div {
+			& + a,
+			& + p,
+			& + span {
+				margin-left: 33%;
+				text-align: left;
+			}
+		}
+
+		/* Aligning button with the inputfields if there are grouped input fields */
+
+		@media (min-width: $form-breakpoint) {
+			> button,
+			> input[type="button"],
+			> input[type="submit"],
+			> input[type="reset"],
+			> a,
+			> p,
+			> span {
+				margin-left: 33.33%;
+			}
+		}
+	}
+
+	> fieldset {
+		> label,
+		> div {
+			float: left;
+			margin-top: 1rem;
+			width: 100%;
+		}
+
+		@media (min-width: $form-breakpoint) {
+			> label {
+				width: 33.33%;
+
+				& + div {
+					max-width: 66.66%;
+
+					> div {
+						max-width: 100%;
+						width: 100%;
+
+						input[type="radio"],
+						input[type="checkbox"] {
+							& + label {
+								width: calc(100% - 2.2rem);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	&.help {
+		button.ro-icon {
+			min-width: 2.75rem;
+			justify-content: center;
+		}
+	}
+}

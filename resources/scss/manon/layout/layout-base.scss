@@ -1,0 +1,64 @@
+/*---------------------------------------------------------------*/
+/*----------------- components/layout-base.scss -----------------*/
+/*---------------------------------------------------------------*/
+@import "layout-base-breakpoints";
+@import "layout-base-variables";
+
+main > section,
+main > article,
+header nav,
+footer {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-width: var(--layout-base-max-width);
+	align-items: var(--layout-base-align-items);
+	justify-content: var(--layout-base-justify-content);
+	padding: var(--layout-base-padding);
+	gap: var(--layout-base-gap);
+
+	@media (min-width: $layout-base-breakpoint-1) {
+		max-width: var(--layout-base-after-breakpoint-1-max-width);
+		padding: var(--layout-base-after-breakpoint-1-padding);
+		margin: var(--layout-base-after-breakpoint-1-margin);
+	}
+
+	@media (min-width: $layout-base-breakpoint-2) {
+		max-width: var(--layout-base-after-breakpoint-2-max-width);
+		padding: var(--layout-base-after-breakpoint-2-padding);
+		margin: var(--layout-base-after-breakpoint-2-margin);
+	}
+
+	> div {
+		display: flex;
+		flex-direction: column;
+		align-items: var(--layout-base-content-block-align-items);
+		flex-grow: 1;
+		width: 100%;
+		padding: var(--layout-base-content-block-padding);
+		box-sizing: border-box;
+		max-width: var(--layout-base-content-block-max-width);
+		margin: 0 auto;
+		gap: var(--layout-base-content-block-gap);
+		margin: var(--layout-base-content-block-margin);
+
+		> * {
+			width: 100%;
+		}
+
+		> section {
+			display: flex;
+			flex-direction: column;
+			align-items: var(--layout-base-content-block-align-items);
+			gap: var(--layout-base-content-block-gap);
+		}
+
+		@media (min-width: $layout-base-breakpoint-1) {
+			padding: var(--layout-base-content-block-breakpoint-1-padding);
+		}
+
+		@media (min-width: $layout-base-breakpoint-2) {
+			padding: var(--layout-base-content-block-breakpoint-2-padding);
+		}
+	}
+}

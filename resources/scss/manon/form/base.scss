@@ -1,0 +1,81 @@
+/*---------------------------------------------------------------*/
+/*-------------------- components/form.scss ---------------------*/
+/*---------------------------------------------------------------*/
+/* Form variables */
+$form-element-gap: 2rem;
+
+/* Form styling */
+form {
+	display: flex;
+	flex-wrap: wrap;
+	font-size: var(--font-size-text);
+	font-family: inherit;
+	padding: 2rem;
+	background-color: var(--grey-1);
+	margin: 2rem 0;
+	flex-direction: column;
+	box-sizing: border-box;
+
+	/* state exceptions */
+	*:focus,
+	*:focus + label:before {
+		outline-offset: 0;
+	}
+
+	> * {
+		margin-top: 1.5rem;
+		max-width: 100%;
+
+		&:first-child {
+			margin-top: 0;
+		}
+	}
+
+	> label + div {
+		margin-top: 0.5rem;
+	}
+
+	p {
+		margin: 0;
+	}
+
+	> p {
+		margin: 1rem 0 0 0;
+	}
+
+	> div {
+		line-height: 1.5rem;
+	}
+
+	&.line-form {
+		padding: 0;
+		background-color: unset;
+	}
+}
+
+/* General form styling for forms within other elements */
+header form,
+table form,
+.hero form {
+	padding: 0;
+	margin: 0;
+	background-color: transparent;
+	flex-direction: row;
+
+	input {
+		border: 0;
+	}
+
+	button,
+	a.button,
+	input[type="button"],
+	input[type="submit"],
+	input[type="reset"] {
+		&:last-child {
+			/* witin a table the button doesn't need to be aligned with the bottom of the form. 
+			Therefor the default styling can be overwritten when inside a table. */
+			margin-bottom: 0;
+			margin-top: 0;
+		}
+	}
+}

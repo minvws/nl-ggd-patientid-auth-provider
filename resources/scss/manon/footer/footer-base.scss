@@ -1,0 +1,75 @@
+/*---------------------------------------------------------------*/
+/*--------------- components/footer-base.scss -------------------*/
+/*---------------------------------------------------------------*/
+@import "../layout/layout-base-breakpoints";
+@import "footer-base-variables";
+
+body > footer,
+%footer-base-style {
+	display: flex;
+	justify-content: var(--footer-base-justify-content);
+	align-items: center;
+	min-height: var(--footer-base-min-height);
+	width: 100%;
+	max-width: var(--footer-base-max-width);
+	gap: var(--footer-base-gap);
+	box-sizing: border-box;
+	margin: 0 auto;
+	padding: var(--footer-base-padding);
+	background-color: var(--footer-base-background-color);
+	color: var(--footer-base-text-color);
+	font-size: var(--footer-base-font-size);
+	font-family: var(--footer-base-font-family);
+	line-height: var(--footer-base-line-height);
+
+	> div {
+		align-items: var(--footer-base-align-content);
+		max-width: var(--footer-base-max-width);
+		padding: var(--footer-base-padding);
+	}
+
+	@media (min-width: $footer-base-content-block-breakpoint-1) {
+		padding: var(--footer-base-breakpoint-1-padding);
+	}
+
+	@media (min-width: $footer-base-content-block-breakpoint-2) {
+		padding: var(--footer-base-breakpoint-2-padding);
+	}
+
+	a,
+	a:visited {
+		color: var(--footer-base-link-text-color, inherit);
+		text-decoration: var(--footer-base-link-text-decoration);
+
+		&:before,
+		&:hover {
+			color: var(--footer-base-link-hover-text-color);
+		}
+
+		&:hover {
+			text-decoration: var(--footer-base-link-hover-text-decoration);
+		}
+	}
+
+	ul {
+		display: flex;
+		flex-direction: var(--footer-base-list-flex-direction);
+		align-items: var(--footer-base-list-align-items);
+		justify-content: var(--footer-base-list-justify-content);
+		flex-wrap: var(--footer-base-list-flex-wrap);
+		padding: var(--footer-base-list-padding);
+		gap: var(--footer-base-list-gap);
+		line-height: var(--footer-base-list-line-height, inherit);
+		font-size: var(--footer-base-list-font-size, inherit);
+		font-weight: var(--footer-base-list-font-weight, inherit);
+		color: var(--footer-base-list-text-color, inherit);
+
+		li {
+			list-style: var(--footer-base-list-item-list-style);
+			line-height: var(--footer-base-list-line-height, inherit);
+			font-size: var(--footer-base-list-font-size, inherit);
+			font-weight: var(--footer-base-list-font-weight, inherit);
+			color: var(--footer-base-list-text-color, inherit);
+		}
+	}
+}

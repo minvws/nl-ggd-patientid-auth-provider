@@ -1,0 +1,24 @@
+/*---------------------------------------------------------------*/
+/*---------------- components/form-label.scss -------------------*/
+/*---------------------------------------------------------------*/
+form {
+	label {
+		width: 100%;
+		margin-top: $form-element-gap;
+		padding-right: 1rem;
+		box-sizing: border-box;
+		word-break: break-word;
+		display: inline-block;
+
+		&:first-child {
+			margin-top: 0;
+		}
+	}
+
+	/* grouped input styling if the form doesn't use columns, but contains a group with a input field and help buttons or messages */
+	> label {
+		& + div + button {
+			margin-left: 0;
+		}
+	}
+}

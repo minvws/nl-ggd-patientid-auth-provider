@@ -1,4 +1,6 @@
 /node_modules
+/public/js
+/public/css
 /public/hot
 /public/storage
 /storage/*.key
@@ -12,8 +14,8 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
-/public/js/*
 /ssl/*.crt
 /ssl/*.key
 /secrets/*.key
 clients.json
+/tmp

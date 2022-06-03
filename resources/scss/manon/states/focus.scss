@@ -1,0 +1,17 @@
+/*---------------------------------------------------------------*/
+/*---------------------- states/focus.scss ----------------------*/
+/*---------------------------------------------------------------*/
+*:focus,
+*.focus,
+.outline-dotted {
+	outline: 2px dotted #000;
+	outline-offset: 0.25rem; /* Adding some spacing between the content and the outline */
+	z-index: 1; /* Laying the focussed area on top of any follow up messages */
+	position: relative;
+
+	+ label:before {
+		outline: 2px dotted #000;
+		z-index: 1; /* Laying the focussed area on top of any follow up messages */
+		position: relative;
+	}
+}
