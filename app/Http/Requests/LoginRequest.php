@@ -6,12 +6,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest as BaseRequest;
 
-class ConfirmationRequest extends BaseRequest
+class LoginRequest extends BaseRequest
 {
     public function rules(): array
     {
+        // TODO
         return [
-            'code' => ['string'],
+            'birthdate' => ['string'],
+            'patient_id' => ['string'],
         ];
     }
 

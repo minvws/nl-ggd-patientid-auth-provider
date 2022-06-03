@@ -20,15 +20,15 @@ class JwtService
         $this->aud = $aud;
     }
 
-    public function generate(Code $code): string
+    public function generate(string $userHash): string
     {
         $payload = array(
             "iss" => $this->iss,
             "aud" => $this->aud,
             "iat" => time(),
             "nbf" => time(),
-            "userHash" => $code->hash,
-            "nonce" => hash('sha256', uniqid($code->hash, true)),
+            "userHash" => $userHash,
+            "nonce" => hash('sha256', uniqid($userHash, true)),
         );
 
         return JWT::encode($payload, $this->privateKey, 'RS256');

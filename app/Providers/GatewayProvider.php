@@ -27,7 +27,9 @@ class GatewayProvider extends ServiceProvider
         });
 
         $this->app->singleton(InfoRetrievalService::class, function () {
-            return new InfoRetrievalService(new InfoRetrievalGatewayDummy());
+            return new InfoRetrievalService(
+                new InfoRetrievalGatewayDummy(config('codegenerator.hmac_key', ''))
+            );
         });
     }
 }

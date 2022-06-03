@@ -23,10 +23,8 @@ class CodeGeneratorService
     /**
      * Generates a new code or return a current code for the patientid/birthdate
      */
-    public function generate(string $patientId, string $birthDate, bool $regenerate = false): Code
+    public function generate(string $hash, bool $regenerate = false): Code
     {
-        $hash = $this->createHash($patientId, $birthDate);
-
         if ($regenerate) {
             Code::whereHash($hash)->delete();
         }
@@ -47,6 +45,7 @@ class CodeGeneratorService
     public function validate(string $hash, string $code): bool
     {
         $record = Code::whereHash($hash)->first();
+        \Log::debug($record);
         if (! $record) {
             return false;
         }
@@ -54,6 +53,8 @@ class CodeGeneratorService
         if ($record->code != $code) {
             return false;
         }
+
+        \Log::debug('Expired: ' . $record->isExpired());
 
         return ! $record->isExpired();
     }
