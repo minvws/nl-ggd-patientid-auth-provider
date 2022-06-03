@@ -181,5 +181,4 @@ class AuthController extends BaseController
         $request->session()->put('confirmation_type', $confirmationType);
         // TODO add censored "sent to"
     }
-
 }

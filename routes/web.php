@@ -20,7 +20,7 @@ Route::middleware('oidc.session')->group(function () {
     Route::get('/confirm', [AuthController::class, 'confirm'])->name('confirm');
     Route::get('/resend', [AuthController::class, 'resend'])->name('resend');
 
-    Route::middleware('throttle:'.config('throttle.requests').','.config('throttle.period'))->group(function () {
+    Route::middleware('throttle:' . config('throttle.requests') . ',' . config('throttle.period'))->group(function () {
         Route::post('/login', [AuthController::class, 'loginSubmit'])->name('login.submit');
         Route::post('/confirm', [AuthController::class, 'confirmationSubmit'])->name('confirmation.submit');
         Route::post('/resend', [AuthController::class, 'resendSubmit'])->name('resend.submit');
