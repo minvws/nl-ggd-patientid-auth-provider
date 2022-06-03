@@ -42,17 +42,18 @@ CODEGEN_HMAC_KEY=                        # HMAC key for patient hash generation 
 CODEGEN_EXPIRY=900                       # Number of seconds before expiring authentication codes
 SMS_GATEWAY_MESSAGEBIRD_API_KEY=         # Api key for message bird text messaging
 OIDC_CLIENT_CONFIG_JSON=                 # Configuraiton file for oidc clients
-REDIRECT_URIS=                           # Allowlist of redirects
 ```
+
+## Keys and certs
+
+Use `scripts/generate-certs.sh` and `scripts/generate-jwt-key.sh` to generate the localdev ssl cert and the JWT key, respectively.
 
 ## Installation production / acceptance
 
 Environment variables via webserver or `.env` file.
 Unpack release artifact, webroot should be the `public` folder within.
 
-
 ## References
 
 * https://github.com/minvws/nl-covid19-coronacheck-provider-docs/blob/main/docs/providing-events-by-patient-id.md
 * https://github.com/minvws/nl-covid19-coronacheck-app-coordination/blob/main/architecture/GGD%20PatientID%20Authentication%20Provider.md
-

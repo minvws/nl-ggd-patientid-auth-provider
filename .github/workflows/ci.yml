@@ -49,7 +49,9 @@ jobs:
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
     - name: Generate SSL certs
-      run: sh ./ssl/generate-certs.sh
+      run: sh ./scripts/generate-certs.sh
+    - name: Generate JWT key
+      run: sh ./scripts/generate-jwt-key.sh
     - name: Execute tests (Unit and Feature)
       run: vendor/bin/phpunit --printer \\Tests\\ResultFilePrinter --coverage-clover pap_php_clover.xml
     - name: 'Comment PR'
