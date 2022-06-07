@@ -51,12 +51,13 @@ class OidcServiceTest extends TestCase
         $oidcService->authorize($request);
     }
 
-    public function testIncorrectHashingMethod()
+    public function testIncorrectCodeChallengeMethod()
     {
         $oidcService = $this->setupService();
 
         $request = new Request();
         $request = $request->replace([
+            // data from original /authorize
             'response_type' => 'code',
             'client_id' => 'foo',
             'state' => 'state',
@@ -64,6 +65,9 @@ class OidcServiceTest extends TestCase
             'redirect_uri' => 'https://',
             'code_challenge' => '8juoLS5oOXU8-tJzjQdAHrqrl7QF6LlnPoC6uRtPNuE',
             'code_challenge_method' => 'plain',
+
+            // user hash, added in finishAuthorize
+            'hash' => 'asdfasdfasdfasdf',
         ]);
 
         $this->expectExceptionObject(new BadRequestHttpException());
@@ -77,6 +81,7 @@ class OidcServiceTest extends TestCase
 
         $request = new Request();
         $request = $request->replace([
+            // data from original /authorize
             'response_type' => 'code',
             'client_id' => 'unknown',
             'state' => 'state',
@@ -84,6 +89,9 @@ class OidcServiceTest extends TestCase
             'redirect_uri' => 'https://',
             'code_challenge' => '8juoLS5oOXU8-tJzjQdAHrqrl7QF6LlnPoC6uRtPNuE',
             'code_challenge_method' => 'S256',
+
+            // user hash, added in finishAuthorize
+            'hash' => 'asdfasdfasdfasdf',
         ]);
 
         $this->expectExceptionObject(new BadRequestHttpException());
@@ -97,6 +105,7 @@ class OidcServiceTest extends TestCase
 
         $request = new Request();
         $request = $request->replace([
+            // data from original /authorize
             'response_type' => 'code',
             'client_id' => 'client_123',
             'state' => 'state',
@@ -104,6 +113,9 @@ class OidcServiceTest extends TestCase
             'redirect_uri' => 'https://not-correct',
             'code_challenge' => '8juoLS5oOXU8-tJzjQdAHrqrl7QF6LlnPoC6uRtPNuE',
             'code_challenge_method' => 'S256',
+
+            // user hash, added in finishAuthorize
+            'hash' => 'asdfasdfasdfasdf',
         ]);
 
         $this->expectExceptionObject(new BadRequestHttpException());
@@ -111,30 +123,15 @@ class OidcServiceTest extends TestCase
         $oidcService->authorize($request);
     }
 
-    public function testCorrectData()
-    {
-        $oidcService = $this->setupService();
+    // TODO implement or move OidcService::authorize to a controller
+    /* public function testAuthorizationFlowStart() */
+    /* { */
+    /* } */
 
-        $request = new Request();
-        $request = $request->replace([
-            'response_type' => 'code',
-            'client_id' => 'client_123',
-            'state' => 'the-state',
-            'scope' => 'scope',
-            'redirect_uri' => 'https://foo',
-            'code_challenge' => '8juoLS5oOXU8-tJzjQdAHrqrl7QF6LlnPoC6uRtPNuE',
-            'code_challenge_method' => 'S256',
-        ]);
-
-        $this->storageMock->shouldReceive('saveAuthData')->once();
-
-        $response = $oidcService->authorize($request);
-
-        $url = Url::fromString($response->getTargetUrl());
-        $queryParams = $url->getAllQueryParameters();
-        $this->assertEquals($queryParams['state'], 'the-state');
-        $this->assertNotEmpty($queryParams['code']);
-    }
+    // TODO implement
+    /* public function testAuthorizationFlowFinish() */
+    /* { */
+    /* } */
 
     public function testAccessTokenAuthorizationCode()
     {
@@ -169,7 +166,7 @@ class OidcServiceTest extends TestCase
             'client_id' => 'another-client-id',
         ]);
 
-        $this->storageMock->shouldReceive('fetchAuthData')->with('0000000000000000000')->once()->andReturnFalse();
+        $this->storageMock->shouldReceive('fetchAuthData')->with('0000000000000000000')->once()->andReturnNull();
 
         $this->expectExceptionObject(new BadRequestHttpException());
         $this->expectExceptionMessage('code not found or expired');
@@ -246,6 +243,7 @@ class OidcServiceTest extends TestCase
             'code_verifier' => 'ps0xAme1TcZTOTZD1Nx85DWZZWIzhMAIcll84BbGK2o',
             'code_challenge_method' => 'S256',
             'client_id' => 'client_123',
+            'hash' => 'asdfasdfasdf',
         ]);
 
         $this->storageMock->shouldReceive('fetchAuthData')->with('0000000000000000000')->once()->andReturns([
@@ -256,9 +254,8 @@ class OidcServiceTest extends TestCase
             'redirect_uri' => 'https://foo',
             'code_challenge' => '8juoLS5oOXU8-tJzjQdAHrqrl7QF6LlnPoC6uRtPNuE',
             'code_challenge_method' => 'S256',
+            'hash' => 'asdfasdfasdf',
         ]);
-
-        $this->storageMock->shouldReceive('saveAccessToken')->once();
 
         $response = $oidcService->accessToken($request);
 
