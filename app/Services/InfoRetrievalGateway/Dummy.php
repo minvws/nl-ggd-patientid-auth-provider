@@ -23,16 +23,16 @@ class Dummy implements InfoRetrievalGateway
     }
 
 
-    public function retrieve(string $hash): array
+    public function retrieve(string $userHash): array
     {
-        if (! isset($this->dummyData[$hash])) {
+        if (! isset($this->dummyData[$userHash])) {
             return [];
         }
 
         return array_merge([
             'protocolVersion' => '3.0',
             'providerIdentifier' => 'xxx',
-        ], $this->dummyData[$hash]);
+        ], $this->dummyData[$userHash]);
     }
 
     protected function createHash(string $patientId, string $birthDate): string
