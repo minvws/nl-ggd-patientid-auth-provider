@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
-class Anonimizer
+class Anonymizer
 {
     public function email(string $email): string
     {

@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use App\Anonimizer;
+use App\Anonymizer;
 use PHPUnit\Framework\TestCase;
 
-class AnonimizerTest extends TestCase
+class AnonymizerTest extends TestCase
 {
     /**
      * @dataProvider emails
      */
     public function testEmail(string $has, string $want)
     {
-        $anonimizer = new Anonimizer();
+        $anonymizer = new Anonymizer();
 
-        $this->assertEquals($want, $anonimizer->email($has));
+        $this->assertEquals($want, $anonymizer->email($has));
     }
 
     /**
@@ -24,9 +24,9 @@ class AnonimizerTest extends TestCase
      */
     public function testPhoneNr(string $has, string $want)
     {
-        $anonimizer = new Anonimizer();
+        $anonymizer = new Anonymizer();
 
-        $this->assertEquals($want, $anonimizer->phoneNr($has));
+        $this->assertEquals($want, $anonymizer->phoneNr($has));
     }
 
     public function emails()

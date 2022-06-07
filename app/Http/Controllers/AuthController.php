@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Anonymizer;
 use App\Http\Requests\ConfirmationRequest;
 use App\Http\Requests\LoginRequest;
 use App\Services\CodeGeneratorService;
@@ -179,12 +180,14 @@ class AuthController extends BaseController
             $confirmationType = 'sms';
             $this->smsService->send($contactInfo['phoneNumber'], 'template', ['code' => $code]);
 
-            $request->session()->put('confirmation_sent_to', $this->anonymize($contactInfo['phoneNumber']));
+            $anonymizer = new Anonymizer();
+            $request->session()->put('confirmation_sent_to', $anonymizer->phoneNr($contactInfo['phoneNumber']));
         } else {
             $confirmationType = 'email';
             $this->emailService->send($contactInfo['email'], 'template', ['code' => $code]);
 
-            $request->session()->put('confirmation_sent_to', $this->anonymize($contactInfo['email']));
+            $anonymizer = new Anonymizer();
+            $request->session()->put('confirmation_sent_to', $this->email($contactInfo['email']));
         }
 
         // Store confirmation type so the view can tell the user where to look for the code
