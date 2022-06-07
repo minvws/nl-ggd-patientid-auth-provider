@@ -61,8 +61,6 @@ class OidcService
         ]);
         $redirectUri = $authData['redirect_uri'] . '?' . $qs;
 
-        \Log::debug($redirectUri);
-
         // TODO: reset auth code expiry?
 
         return new RedirectResponse($redirectUri);

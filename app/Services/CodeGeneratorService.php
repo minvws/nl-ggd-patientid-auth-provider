@@ -45,7 +45,6 @@ class CodeGeneratorService
     public function validate(string $hash, string $code): bool
     {
         $record = Code::whereHash($hash)->first();
-        \Log::debug(json_encode($record, JSON_THROW_ON_ERROR));
         if (! $record) {
             return false;
         }
@@ -53,8 +52,6 @@ class CodeGeneratorService
         if ($record->code != $code) {
             return false;
         }
-
-        \Log::debug('Expired: ' . $record->isExpired());
 
         return ! $record->isExpired();
     }
