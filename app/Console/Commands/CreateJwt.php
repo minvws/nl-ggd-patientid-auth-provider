@@ -49,8 +49,8 @@ class CreateJwt extends Command
      */
     public function handle(): int
     {
-        $code = $this->codeGeneratorService->generate('12345678', '1980-01-01');
-        $this->yenlo->retrieve($code->hash);
+        $hash = $this->codeGeneratorService->createHash('12345678', '1980-01-01');
+        $this->yenlo->retrieve($hash);
 
         return 0;
     }
