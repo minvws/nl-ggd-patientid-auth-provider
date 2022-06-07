@@ -10,7 +10,6 @@ use App\Services\OidcService;
 use App\Services\JwtService;
 use Illuminate\Http\Request;
 use Mockery;
-use Spatie\Url\Url;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Tests\TestCase;
 

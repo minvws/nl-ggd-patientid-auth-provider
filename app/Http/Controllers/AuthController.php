@@ -118,7 +118,7 @@ class AuthController extends BaseController
         ]);
     }
 
-    public function resend(Request $request): View
+    public function resend(Request $request): View|RedirectResponse
     {
         $confirmationType = $request->session()->get('confirmation_type');
 
@@ -153,7 +153,7 @@ class AuthController extends BaseController
     {
         // Fetch phone number and/or email address
         $contactInfo = $this->infoRetrievalService->retrieve($hash);
-        \Log::debug($contactInfo);
+        \Log::debug(json_encode($contactInfo, JSON_THROW_ON_ERROR));
 
         // If not contact info is found, redirect back to login form
         if (count($contactInfo) === 0) {

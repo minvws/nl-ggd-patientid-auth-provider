@@ -45,7 +45,7 @@ class CodeGeneratorService
     public function validate(string $hash, string $code): bool
     {
         $record = Code::whereHash($hash)->first();
-        \Log::debug($record);
+        \Log::debug(json_encode($record, JSON_THROW_ON_ERROR));
         if (! $record) {
             return false;
         }
