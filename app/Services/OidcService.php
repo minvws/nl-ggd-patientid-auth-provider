@@ -56,7 +56,7 @@ class OidcService
         $request->session()->flush();
 
         $qs = http_build_query([
-            'state' => $request->get('state'),
+            'state' => $authData['state'],
             'code' => $authCode,
         ]);
         $redirectUri = $authData['redirect_uri'] . '?' . $qs;
