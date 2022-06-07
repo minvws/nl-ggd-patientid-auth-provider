@@ -8,8 +8,4 @@ use Exception;
 
 class ContactInfoNotFound extends Exception
 {
-    public function report(): void
-    {
-        \Log::debug('Contact info not found');
-    }
 }

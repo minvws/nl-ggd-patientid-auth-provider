@@ -58,10 +58,6 @@ class AuthController extends BaseController
     {
         $hash = $this->codeGeneratorService->createHash($request->get('patient_id'), $request->get('birthdate'));
 
-        \Log::debug($request->get('patient_id'));
-        \Log::debug($request->get('birthdate'));
-        \Log::debug($hash);
-
         // Send confirmation code
         try {
             $this->sendConfirmationCode($request, $hash);
@@ -94,21 +90,17 @@ class AuthController extends BaseController
 
     public function confirmationSubmit(ConfirmationRequest $request): RedirectResponse | View
     {
-        \Log::debug('confirmationSubmit');
         $hash = $request->session()->get('hash');
-        \Log::debug('hash');
         if (!$hash) {
             return Redirect::route('start_auth');
         }
 
         if ($this->codeGeneratorService->validate($hash, $request->get('code', ''))) {
-            \Log::debug('Auth successful, redirecting back to client application');
             // Authorization successful, redirect back to client application with auth code
             return $this->oidcService->finishAuthorize($request, $hash);
         }
 
         $confirmationType = $request->session()->get('confirmation_type');
-        \Log::debug($confirmationType);
         $sentTo = $request->session()->get('confirmation_sent_to');
 
         if (!$confirmationType) {
@@ -160,7 +152,6 @@ class AuthController extends BaseController
     {
         // Fetch phone number and/or email address
         $contactInfo = $this->infoRetrievalService->retrieve($hash);
-        \Log::debug(json_encode($contactInfo, JSON_THROW_ON_ERROR));
 
         // If not contact info is found, redirect back to login form
         if (count($contactInfo) === 0) {
@@ -169,7 +160,6 @@ class AuthController extends BaseController
 
         // Generate confirmation code
         $code = $this->codeGeneratorService->generate($hash, false);
-        \Log::debug($code);
         if ($code->isExpired()) {
             // When expired (when we asked to resend the code again for instance), generate a new code
             $code = $this->codeGeneratorService->generate($hash, true);
