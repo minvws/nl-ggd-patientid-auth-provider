@@ -148,12 +148,12 @@ class OidcService
 
     protected function generateAccessToken(): string
     {
-        return hash('sha256', uniqid('', true));
+        return hash('sha256', random_bytes(32));
     }
 
     protected function generateAuthCode(): string
     {
-        return hash('sha256', uniqid('', true));
+        return hash('sha256', random_bytes(32));
     }
 
     public function fetchTokenFromRequest(Request $request): ?string
