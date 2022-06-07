@@ -5,7 +5,7 @@
         <div>
             <h1>@lang('confirmation.header')</h1>
 
-            <p>@lang('confirmation.explanation.' . $confirmationType, ['sent_to' => '******'])</p>
+            <p>@lang('confirmation.explanation.' . $confirmationType, ['sent_to' => $sentTo])</p>
 
             <form method="POST" action="{{ route('confirmation.submit') }}">
                 @csrf
