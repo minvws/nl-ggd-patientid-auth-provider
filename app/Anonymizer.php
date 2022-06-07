@@ -17,15 +17,15 @@ class Anonymizer
         // Too small, only show asterisks
         if (strlen($parts[0]) <= 4) {
             return
-                str_repeat('*', strlen($parts[0])).
-                '@'.$parts[1];
+                str_repeat('*', strlen($parts[0])) .
+                '@' . $parts[1];
         }
 
         return
-            substr($parts[0], 0, 2).
-            str_repeat('*', strlen($parts[0]) - 4).
-            substr($parts[0], -2).
-            '@'.$parts[1];
+            substr($parts[0], 0, 2) .
+            str_repeat('*', strlen($parts[0]) - 4) .
+            substr($parts[0], -2) .
+            '@' . $parts[1];
     }
 
     public function phoneNr(string $phoneNr): string

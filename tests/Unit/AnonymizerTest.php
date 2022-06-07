@@ -54,5 +54,4 @@ class AnonymizerTest extends TestCase
             [ '0612345678', '********78' ],
         ];
     }
-
 }
