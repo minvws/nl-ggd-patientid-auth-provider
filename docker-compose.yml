@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile.pap
       args:
         WWWGROUP: '${WWWGROUP}'
+    depends_on:
+      - pap_db
     environment:
       APP_PORT: 444
       APP_SERVICE: pap
@@ -19,3 +21,13 @@ services:
       - './xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini'
       - './ssl/:/etc/apache2/ssl/'
       - '.:/var/www/html'
+
+  pap_db:
+    container_name: pap_db
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: pap
+    image: 'postgres:12'
+    ports:
+      - '5552:5432'

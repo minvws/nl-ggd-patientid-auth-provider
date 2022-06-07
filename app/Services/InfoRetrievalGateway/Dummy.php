@@ -6,16 +6,22 @@ namespace App\Services\InfoRetrievalGateway;
 
 class Dummy implements InfoRetrievalGateway
 {
-    protected array $dummyData = [
-        // 12345678 - 1976-10-16
-        'cc0187181eedbfd169fb5e2ce60392da6916282fc60d01b403a1649525054d61' => [
-            'phoneNumber' => '06-123456789',
-        ],
-        // 12345678 - 1980-01-01
-        'a8864cfd4a3c47a38bce983065af651b8a9c8e656b4902860e24d9ea18aee57a' => [
-            'email' => 'user@example.org',
-        ],
-    ];
+    protected string $hmacKey;
+    protected array $dummyData;
+
+    public function __construct(string $hmacKey)
+    {
+        $this->hmacKey = $hmacKey;
+        $this->dummyData = [
+            $this->createHash('12345678', '1976-10-16') => [
+                'phoneNumber' => '06-123456789',
+            ],
+            $this->createHash('12345678', '1980-01-01') => [
+                'email' => 'user@example.org',
+            ],
+        ];
+    }
+
 
     public function retrieve(string $hash): array
     {
@@ -27,5 +33,10 @@ class Dummy implements InfoRetrievalGateway
             'protocolVersion' => '3.0',
             'providerIdentifier' => 'xxx',
         ], $this->dummyData[$hash]);
+    }
+
+    protected function createHash(string $patientId, string $birthDate): string
+    {
+        return hash_hmac('sha256', $patientId . '-' . $birthDate, $this->hmacKey);
     }
 }

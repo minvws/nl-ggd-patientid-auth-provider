@@ -219,5 +219,4 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
-    'redirect_uris' => explode(",", env('REDIRECT_URIS', '')),
 ];

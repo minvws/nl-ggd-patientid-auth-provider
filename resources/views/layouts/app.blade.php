@@ -10,19 +10,18 @@
         @else
         <title>{{ config('app.name', '') }}</title>
         @endif
-        <link rel="preload" media="screen and (min-width: 768px)" href="/huisstijl/img/ro-logo.svg" as="image">
-        <link rel="preload" href="/huisstijl/fonts/RO-SansWebText-Regular.woff2" as="font" type="font/woff2" crossorigin>
-        <link rel="preload" href="/huisstijl/fonts/RO-SansWebText-Bold.woff2" as="font" type="font/woff2" crossorigin>
-        <link rel="stylesheet" href="{{ url('huisstijl/css/app.css') }}">
-        <link rel="stylesheet" href="{{ url('/css/app.css') }}">
-        <link href="/huisstijl/img/favicon.ico" rel="shortcut icon">
+        <link rel="stylesheet" href="/css/app.css">
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+        <link rel="mask-icon" href="/mask-icon.svg" color="#000099">
+        <link rel="shortcut icon" href="/favicon.ico">
+        <meta name="theme-color" content="#ffffff">
     </head>
     <body>
-        <main id="main-content" tabindex="-1">
-
-            <h1>{{__("hello world") }}</h1>
-
+        <x-header/>
+        <main tabindex="-1">
             @yield('content')
         </main>
+        <x-footer/>
     </body>
 </html>

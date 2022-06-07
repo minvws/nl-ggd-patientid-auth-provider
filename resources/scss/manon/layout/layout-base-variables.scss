@@ -1,0 +1,45 @@
+/*------------------------------------------------------------------------*/
+/*----------------- components/layout-base-variables.scss ----------------*/
+/*------------------------------------------------------------------------*/
+:root {
+	--layout-base-max-width: 100%;
+	--layout-base-padding:0;
+	--layout-base-margin: 0;
+	--layout-base-align-items: center;
+	--layout-base-justify-content: center;
+	/*--layout-base-gap: ; */
+
+	/* After breakpoint 1 */
+	--layout-base-after-breakpoint-1-max-width: var(--layout-base-max-width);
+	--layout-base-after-breakpoint-1-padding: var(--layout-base-padding);
+	--layout-base-after-breakpoint-1-margin: var(--layout-base-margin);
+
+	/* After breakpoint 2 */
+	--layout-base-after-breakpoint-2-max-width: var(--layout-base-max-width);
+	--layout-base-after-breakpoint-2-padding: var(--layout-base-after-breakpoint-1-padding);
+	--layout-base-after-breakpoint-2-margin: var(--layout-base-margin);
+
+	/* Content blocks (div within article, section, header nav and footer) */
+	--layout-base-content-block-padding: 0;
+	--layout-base-content-block-max-width: 73rem;
+	--layout-base-content-block-align-items: flex-start;
+	--layout-base-content-block-gap: 1.5rem;
+
+	/* Content block title */
+	--layout-base-content-block-title-margin: 0;
+
+	/* Content block subtitle */
+	--layout-base-content-block-subtitle-margin: 1.5rem 0;
+
+	/* After breakpoint 1 */
+	--layout-base-content-block-breakpoint-1-padding: var(
+		--layout-base-content-block-padding,
+		var(--layout-base-content-block-padding)
+	);
+
+	/* After breakpoint 2 */
+	--layout-base-content-block-breakpoint-2-padding: var(
+		--layout-base-content-block-breakpoint-1-padding,
+		var(--layout-base-content-block-breakpoint-1-padding)
+	);
+}

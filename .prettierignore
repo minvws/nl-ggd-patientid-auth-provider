@@ -1,4 +1,9 @@
-resources/js/pdf-assets.js
+resources/scss/manon/
+package-lock.json
+.github/
+clients.json
+composer.json
+public/
 vendor/
 dist/
 docs/
