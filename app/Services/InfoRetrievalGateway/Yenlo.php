@@ -80,13 +80,13 @@ class Yenlo implements InfoRetrievalGateway
                 ]
             ]);
 
-            $response = $client->post($this->userinfoUrl, [
+            $response = $client->post($this->tokenUrl, [
                 RequestOptions::FORM_PARAMS => [
                     'grant_type' => 'client_credentials',
                 ]
             ]);
 
-            $jwt = json_decode((string)$response->getBody(), true);
+            $jwt = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
             Cache::put(self::CACHE_KEY, $jwt, $jwt['expires_in'] - 10);
         } catch (\Throwable $e) {
             return "";
