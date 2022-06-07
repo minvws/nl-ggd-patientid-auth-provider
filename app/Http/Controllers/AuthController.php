@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Anonymizer;
 use App\Http\Requests\ConfirmationRequest;
 use App\Http\Requests\LoginRequest;
 use App\Services\CodeGeneratorService;
@@ -79,12 +80,16 @@ class AuthController extends BaseController
     public function confirm(Request $request): RedirectResponse | View
     {
         $confirmationType = $request->session()->get('confirmation_type');
+        $sentTo = $request->session()->get('confirmation_sent_to');
 
         if (!$confirmationType) {
             return Redirect::route('start_auth');
         }
 
-        return view('confirm', ['confirmationType' => $confirmationType]);
+        return view('confirm', [
+            'confirmationType' => $confirmationType,
+            'sent_to' => $sentTo,
+        ]);
     }
 
     public function confirmationSubmit(ConfirmationRequest $request): RedirectResponse | View
@@ -104,6 +109,7 @@ class AuthController extends BaseController
 
         $confirmationType = $request->session()->get('confirmation_type');
         \Log::debug($confirmationType);
+        $sentTo = $request->session()->get('confirmation_sent_to');
 
         if (!$confirmationType) {
             return Redirect::route('start_auth');
@@ -114,6 +120,7 @@ class AuthController extends BaseController
 
         return view('confirm', [
             'confirmationType' => $confirmationType,
+            'sent_to' => $sentTo,
             'errors' => $v->getMessageBag()
         ]);
     }
@@ -172,13 +179,18 @@ class AuthController extends BaseController
         if (!empty($contactInfo['phoneNumber'] ?? '')) {
             $confirmationType = 'sms';
             $this->smsService->send($contactInfo['phoneNumber'], 'template', ['code' => $code]);
+
+            $anonymizer = new Anonymizer();
+            $request->session()->put('confirmation_sent_to', $anonymizer->phoneNr($contactInfo['phoneNumber']));
         } else {
             $confirmationType = 'email';
             $this->emailService->send($contactInfo['email'], 'template', ['code' => $code]);
+
+            $anonymizer = new Anonymizer();
+            $request->session()->put('confirmation_sent_to', $anonymizer->email($contactInfo['email']));
         }
 
         // Store confirmation type so the view can tell the user where to look for the code
         $request->session()->put('confirmation_type', $confirmationType);
-        // TODO add censored "sent to"
     }
 }
