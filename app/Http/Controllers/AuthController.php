@@ -187,7 +187,7 @@ class AuthController extends BaseController
             $this->emailService->send($contactInfo['email'], 'template', ['code' => $code]);
 
             $anonymizer = new Anonymizer();
-            $request->session()->put('confirmation_sent_to', $this->email($contactInfo['email']));
+            $request->session()->put('confirmation_sent_to', $anonymizer->email($contactInfo['email']));
         }
 
         // Store confirmation type so the view can tell the user where to look for the code
