@@ -84,7 +84,7 @@ class AuthController extends BaseController
 
         return view('confirm', [
             'confirmationType' => $confirmationType,
-            'sent_to' => $sentTo,
+            'sentTo' => $sentTo,
         ]);
     }
 
@@ -112,7 +112,7 @@ class AuthController extends BaseController
 
         return view('confirm', [
             'confirmationType' => $confirmationType,
-            'sent_to' => $sentTo,
+            'sentTo' => $sentTo,
             'errors' => $v->getMessageBag()
         ]);
     }
