@@ -1640,17 +1640,6 @@
             "time": "2022-03-04T07:29:01+00:00"
         },
         {
-<<<<<<< HEAD
-            "name": "monolog/monolog",
-            "version": "2.7.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "5579edf28aee1190a798bfa5be8bc16c563bd524"
-            },
-            "dist": {
-                "type": "zip",
-=======
             "name": "minvws/laravel-crypto",
             "version": "v1.3.0",
             "source": {
@@ -1741,7 +1730,6 @@
             },
             "dist": {
                 "type": "zip",
->>>>>>> main
                 "url": "https://api.github.com/repos/Seldaek/monolog/zipball/5579edf28aee1190a798bfa5be8bc16c563bd524",
                 "reference": "5579edf28aee1190a798bfa5be8bc16c563bd524",
                 "shasum": ""
@@ -10480,5 +10468,5 @@
     "platform-overrides": {
         "php": "8.0.2"
     },
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.1.0"
 }
