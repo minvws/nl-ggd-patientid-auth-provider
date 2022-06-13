@@ -154,7 +154,7 @@ class AuthController extends BaseController
         $contactInfo = $this->infoRetrievalService->retrieve($hash);
 
         // If not contact info is found, redirect back to login form
-        if (count($contactInfo) === 0) {
+        if ($contactInfo->isEmpty()) {
             throw new ContactInfoNotFound();
         }
 
@@ -166,18 +166,18 @@ class AuthController extends BaseController
         }
 
         // Sending to phone has priority, fallback to email if necessary
-        if (!empty($contactInfo['phoneNumber'] ?? '')) {
+        if ($contactInfo->phoneNumber) {
             $confirmationType = 'sms';
-            $this->smsService->send($contactInfo['phoneNumber'], 'template', ['code' => $code]);
+            $this->smsService->send($contactInfo->phoneNumber, 'template', ['code' => $code]);
 
             $anonymizer = new Anonymizer();
-            $request->session()->put('confirmation_sent_to', $anonymizer->phoneNr($contactInfo['phoneNumber']));
+            $request->session()->put('confirmation_sent_to', $anonymizer->phoneNr($contactInfo->phoneNumber));
         } else {
             $confirmationType = 'email';
-            $this->emailService->send($contactInfo['email'], 'template', ['code' => $code]);
+            $this->emailService->send($contactInfo->email, 'template', ['code' => $code]);
 
             $anonymizer = new Anonymizer();
-            $request->session()->put('confirmation_sent_to', $anonymizer->email($contactInfo['email']));
+            $request->session()->put('confirmation_sent_to', $anonymizer->email($contactInfo->email));
         }
 
         // Store confirmation type so the view can tell the user where to look for the code

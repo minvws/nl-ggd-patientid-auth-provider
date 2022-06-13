@@ -51,6 +51,8 @@ jobs:
         run: cp clients.json.example clients.json
       - name: Generate JWT key
         run: sh ./scripts/generate-jwt-key.sh
+      - name: Generate SSl cert
+        run: sh ./scripts/generate-certs.sh
       - name: Generate _ide_helper file
         run: php artisan ide-helper:generate
       - name: Static analysis with Psalm
@@ -113,6 +115,8 @@ jobs:
         run: cp clients.json.example clients.json
       - name: Generate JWT key
         run: sh ./scripts/generate-jwt-key.sh
+      - name: Generate SSl cert
+        run: sh ./scripts/generate-certs.sh
       - name: Generate key
         run: php artisan key:generate --env=testing
       - name: Static analysis with PHPStan
@@ -143,6 +147,8 @@ jobs:
         run: cp clients.json.example clients.json
       - name: Generate JWT key
         run: sh ./scripts/generate-jwt-key.sh
+      - name: Generate SSl cert
+        run: sh ./scripts/generate-certs.sh
       - name: Check for known CVE vulnerabilities
         run: php artisan security-check:now
     strategy:

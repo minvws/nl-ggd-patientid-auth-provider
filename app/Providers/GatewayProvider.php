@@ -12,6 +12,7 @@ use App\Services\InfoRetrievalService;
 use App\Services\SmsGateway\MessageBird;
 use App\Services\SmsService;
 use Illuminate\Support\ServiceProvider;
+use MinVWS\Crypto\Laravel\SignatureCryptoInterface;
 
 class GatewayProvider extends ServiceProvider
 {
@@ -32,7 +33,8 @@ class GatewayProvider extends ServiceProvider
                 config('yenlo.client_id'),
                 config('yenlo.client_secret'),
                 config('yenlo.token_url'),
-                config('yenlo.userinfo_url')
+                config('yenlo.userinfo_url'),
+                $this->app->make(SignatureCryptoInterface::class),
             );
         });
 
