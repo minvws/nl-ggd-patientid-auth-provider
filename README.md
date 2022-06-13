@@ -48,6 +48,14 @@ OIDC_CLIENT_CONFIG_JSON=                 # Configuraiton file for oidc clients
 
 Use `scripts/generate-certs.sh` and `scripts/generate-jwt-key.sh` to generate the localdev ssl cert and the JWT key, respectively.
 
+### JWT key + certificate for production environment
+
+`openssl req -x509 -nodes -newkey rsa:4096 -keyout jwt.key -out cert.pem -sha256 -days 365 -subj '/CN=full.sub.domain.tld'`
+
+Where `full.sub.domain.tld` is the desired authentication app FQDN.
+
+This generates a `jwt.key` and a `cert.pem` file, note these have a 1 year validity. 
+
 ## Installation production / acceptance
 
 Environment variables via webserver or `.env` file.

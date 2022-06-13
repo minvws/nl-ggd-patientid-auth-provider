@@ -15,6 +15,10 @@ Route::post('/oidc/accesstoken', function (Request $request, OidcService $oidcSe
     return $oidcService->accessToken($request);
 });
 
+Route::get('/', function () {
+    return 'GGD PatientId Auth Provider';
+});
+
 Route::middleware('oidc.session')->group(function () {
     Route::get('/login', [AuthController::class, 'login'])->name('start_auth');
     Route::get('/confirm', [AuthController::class, 'confirm'])->name('confirm');

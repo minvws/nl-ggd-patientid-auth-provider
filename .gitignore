@@ -17,5 +17,6 @@ yarn-error.log
 /ssl/*.crt
 /ssl/*.key
 /secrets/*.key
+/secrets/*.pem
 clients.json
 /tmp
