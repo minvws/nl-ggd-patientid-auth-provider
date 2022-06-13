@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services\InfoRetrievalGateway;
 
+use App\Services\UserInfo;
 use App\Services\JwtService;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use MinVWS\Crypto\Laravel\SignatureCryptoInterface;
 
 class Yenlo implements InfoRetrievalGateway
 {
@@ -18,20 +21,23 @@ class Yenlo implements InfoRetrievalGateway
     protected string $clientSecret;
     protected string $tokenUrl;
     protected string $userinfoUrl;
+    protected SignatureCryptoInterface $signatureService;
 
     public function __construct(
         string $clientId,
         string $clientSecret,
         string $tokenUrl,
-        string $userinfoUrl
+        string $userinfoUrl,
+        SignatureCryptoInterface $signatureService
     ) {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->tokenUrl = $tokenUrl;
         $this->userinfoUrl = $userinfoUrl;
+        $this->signatureService = $signatureService;
     }
 
-    public function retrieve(string $userHash): array
+    public function retrieve(string $userHash): UserInfo
     {
         $accessToken = $this->fetchAccessToken();
 
@@ -52,15 +58,23 @@ class Yenlo implements InfoRetrievalGateway
                 ]
             ]);
 
-            // @TODO: Retrieved info.. do something with it
-            print_r($response->getStatusCode());
-            var_dump((string)$response->getBody());
+            $data = $this->decodeAndVerifyResponse((string)$response->getBody());
+
+            $info = new UserInfo();
+            if (isset($data['email'])) {
+                $info->withEmail($data['email']);
+            }
+            if (isset($data['phoneNr'])) {
+                $info->withPhonenr($data['phoneNr']);
+            }
+
+            return $info;
         } catch (\Throwable $e) {
             // error
-            var_dump($e->getMessage());
+            Log::error("Error while receiving data from yenlo: " . $e->getMessage());
         }
 
-        return [];
+        return new UserInfo();
     }
 
     // Retrieves a new access token, or uses a cached one if available and not expired
@@ -93,5 +107,17 @@ class Yenlo implements InfoRetrievalGateway
         }
 
         return $jwt['access_token'];
+    }
+
+    protected function decodeAndVerifyResponse(string $body): array
+    {
+        $json = json_decode($body, true, JSON_THROW_ON_ERROR);
+
+        $verified = $this->signatureService->verify($json['payload']);
+        if (!$verified) {
+            return [];
+        }
+
+        return json_decode($json['payload'], false, JSON_THROW_ON_ERROR);
     }
 }

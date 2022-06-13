@@ -16,7 +16,7 @@ class InfoRetrievalService
     }
 
 
-    public function retrieve(string $hash): array
+    public function retrieve(string $hash): UserInfo
     {
         return $this->gateway->retrieve($hash);
     }
