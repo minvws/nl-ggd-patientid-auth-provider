@@ -15,9 +15,7 @@ class ExampleTest extends TestCase
      */
     public function testApplication()
     {
-        $this->assertTrue(true);
-//        $response = $this->get('/');
-//
-//        $response->assertStatus(200);
+        $response = $this->get('/');
+        $response->assertStatus(200)->assertSeeText('GGD PatientId Auth Provider');
     }
 }
