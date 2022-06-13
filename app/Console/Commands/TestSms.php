@@ -41,7 +41,7 @@ class TestSms extends Command
     public function handle()
     {
         return (int) $this->smsService->send(
-            $this->argument('phoneNumber'),
+            (string) $this->argument('phoneNumber'),
             'template',
             ['code' => $this->argument('code')]
         );

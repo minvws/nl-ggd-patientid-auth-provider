@@ -41,7 +41,7 @@ class TestEmail extends Command
     public function handle()
     {
         return (int) $this->emailService->send(
-            $this->argument('email'),
+            (string) $this->argument('email'),
             'template',
             ['code' => $this->argument('code')]
         );
