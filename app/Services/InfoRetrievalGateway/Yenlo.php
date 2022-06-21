@@ -119,6 +119,7 @@ class Yenlo implements InfoRetrievalGateway
 
         $verified = $this->signatureService->verify($json['payload']);
         if (!$verified) {
+            Log::error("Yenlo signature verification failed");
             return [];
         }
 
