@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Services\CmsService;
 use App\Services\EmailGateway\Native;
 use App\Services\EmailService;
 use App\Services\InfoRetrievalGateway\Dummy as InfoRetrievalGatewayDummy;
@@ -29,6 +30,10 @@ class GatewayProvider extends ServiceProvider
 
         $this->app->singleton(Yenlo::class, function () {
             return new Yenlo(
+                new CmsService(
+                    config('cms.cert'),
+                    config('cms.chain'),
+                ),
                 config('yenlo.client_id'),
                 config('yenlo.client_secret'),
                 config('yenlo.token_url'),

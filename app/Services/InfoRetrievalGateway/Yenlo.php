@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\InfoRetrievalGateway;
 
+use App\Services\CmsService;
 use App\Services\UserInfo;
 use App\Exceptions\CmsValidationException;
 use GuzzleHttp\Client;
@@ -17,17 +18,20 @@ class Yenlo implements InfoRetrievalGateway
 {
     protected const CACHE_KEY = 'yenlo_accesstoken';
 
+    protected CmsService $cmsService;
     protected string $clientId;
     protected string $clientSecret;
     protected string $tokenUrl;
     protected string $userinfoUrl;
 
     public function __construct(
+        CmsService $cmsService,
         string $clientId,
         string $clientSecret,
         string $tokenUrl,
         string $userinfoUrl,
     ) {
+        $this->cmsService = $cmsService;
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->tokenUrl = $tokenUrl;
@@ -117,7 +121,7 @@ class Yenlo implements InfoRetrievalGateway
         $signature = base64_decode($json['signature']);
         $payload = base64_decode($json['payload']);
 
-        $this->checkCmsSignature($payload, $signature);
+        $this->cmsService->verify($payload, $signature);
 
         return json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
     }
