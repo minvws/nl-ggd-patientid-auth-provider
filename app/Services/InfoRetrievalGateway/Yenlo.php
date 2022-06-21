@@ -5,36 +5,33 @@ declare(strict_types=1);
 namespace App\Services\InfoRetrievalGateway;
 
 use App\Services\UserInfo;
-use App\Services\JwtService;
+use App\Exceptions\CmsValidationException;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use MinVWS\Crypto\Laravel\SignatureCryptoInterface;
+use Symfony\Component\Process\Process;
+use Exception;
 
 class Yenlo implements InfoRetrievalGateway
 {
     protected const CACHE_KEY = 'yenlo_accesstoken';
 
-    protected JwtService $jwtService;
     protected string $clientId;
     protected string $clientSecret;
     protected string $tokenUrl;
     protected string $userinfoUrl;
-    protected SignatureCryptoInterface $signatureService;
 
     public function __construct(
         string $clientId,
         string $clientSecret,
         string $tokenUrl,
         string $userinfoUrl,
-        SignatureCryptoInterface $signatureService
     ) {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->tokenUrl = $tokenUrl;
         $this->userinfoUrl = $userinfoUrl;
-        $this->signatureService = $signatureService;
     }
 
     public function retrieve(string $userHash): UserInfo
@@ -112,17 +109,69 @@ class Yenlo implements InfoRetrievalGateway
 
     /**
      * @throws \JsonException
+     * @throws CmsValidationException
      */
     protected function decodeAndVerifyResponse(string $body): array
     {
         $json = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+        $signature = base64_decode($json['signature']);
+        $payload = base64_decode($json['payload']);
 
-        $verified = $this->signatureService->verify($json['payload']);
-        if (!$verified) {
-            Log::error("Yenlo signature verification failed");
-            return [];
+        $this->checkCmsSignature($payload, $signature);
+
+        return json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * @throws CmsValidationException
+     */
+    private function checkCmsSignature(string $payload, string $signature): void
+    {
+
+        $tmpFilePayload = tmpfile();
+        $tmpFileSignature = tmpfile();
+
+        if (!$tmpFilePayload || !$tmpFileSignature) {
+            throw new CmsValidationException('Cannot create temp file on disk');
         }
 
-        return json_decode(base64_decode($json['payload']), true, 512, JSON_THROW_ON_ERROR);
+        // Locate CMS public key
+        $cmsCertPath = config('cms.cert');
+        $cmsChainPath = config('cms.chain');
+
+        // Init files
+        $tmpFilePayloadPath = stream_get_meta_data($tmpFilePayload)['uri'];
+        $tmpFileSignaturePath = stream_get_meta_data($tmpFileSignature)['uri'];
+
+        // Place data in files
+        file_put_contents($tmpFilePayloadPath, $payload);
+        file_put_contents($tmpFileSignaturePath, $signature);
+
+        $args = [
+            'openssl', 'cms', '-verify', '-nointern', '-content', $tmpFilePayloadPath, '-inform', 'DER', '-binary',
+            '-in', $tmpFileSignaturePath,
+            '-CAfile', $cmsChainPath,
+            '-certfile', $cmsCertPath,
+            '-no-CAfile','-no-CApath',
+            '-purpose', 'any'
+        ];
+
+        $process = new Process($args);
+
+        try {
+            $process->run();
+        } catch (Exception $exception) {
+            Log::error((string)$exception);
+            throw new CmsValidationException('Signature invalid');
+        }
+
+        $errOutput = $process->getErrorOutput();
+        if ($errOutput !== "") {
+            Log::info($errOutput);
+        }
+
+        if ($process->getExitCode() !== 0) {
+            throw new CmsValidationException('Signature does not match payload');
+        }
     }
 }

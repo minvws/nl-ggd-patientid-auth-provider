@@ -12,7 +12,6 @@ use App\Services\InfoRetrievalService;
 use App\Services\SmsGateway\MessageBird;
 use App\Services\SmsService;
 use Illuminate\Support\ServiceProvider;
-use MinVWS\Crypto\Laravel\SignatureCryptoInterface;
 
 class GatewayProvider extends ServiceProvider
 {
@@ -34,7 +33,6 @@ class GatewayProvider extends ServiceProvider
                 config('yenlo.client_secret'),
                 config('yenlo.token_url'),
                 config('yenlo.userinfo_url'),
-                $this->app->make(SignatureCryptoInterface::class),
             );
         });
 
@@ -43,7 +41,7 @@ class GatewayProvider extends ServiceProvider
                 new InfoRetrievalGatewayDummy(config('codegenerator.hmac_key', ''))
             );
 
-//            return new InfoRetrievalService($this->app->get(Yenlo::class)));
+//            return new InfoRetrievalService($this->app->get(Yenlo::class));
         });
     }
 }

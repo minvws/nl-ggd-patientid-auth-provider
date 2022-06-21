@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3432b6c08d53fe3e4e8d52ecea12946c",
+    "content-hash": "36dd8ad7995d8df7ab573b46ce29a64e",
     "packages": [
         {
             "name": "brick/math",
@@ -1638,87 +1638,6 @@
                 "source": "https://github.com/messagebird/php-rest-api"
             },
             "time": "2022-03-04T07:29:01+00:00"
-        },
-        {
-            "name": "minvws/laravel-crypto",
-            "version": "v1.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/minvws/laravel-crypto.git",
-                "reference": "741637d94a66c6c399ac44998c74089bb8f2e062"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/minvws/laravel-crypto/zipball/741637d94a66c6c399ac44998c74089bb8f2e062",
-                "reference": "741637d94a66c6c399ac44998c74089bb8f2e062",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/framework": "^7.30.6|^8.31.0|^9.0",
-                "php": "^7.3|^7.4|^8.0|^8.1"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.4.3",
-                "orchestra/testbench": "^6.0",
-                "phpstan/phpstan": "^1.4",
-                "phpunit/phpunit": "^9.5",
-                "squizlabs/php_codesniffer": "^3.6",
-                "vimeo/psalm": "^4.4"
-            },
-            "suggest": {
-                "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations."
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "MinVWS\\Crypto\\Laravel\\CryptoServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "MinVWS\\Crypto\\Laravel\\": "src/"
-                },
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "EUPL-1.2"
-            ],
-            "authors": [
-                {
-                    "name": "Anne Jan Brouwer",
-                    "email": "brouwer@annejan.com"
-                },
-                {
-                    "name": "Nick ten Cate",
-                    "email": "nick@nicktencate.com"
-                },
-                {
-                    "name": "Mendel Mobach",
-                    "email": "mendel@mobach.nl"
-                },
-                {
-                    "name": "Joshua Thijssen",
-                    "email": "jthijssen@noxlogic.nl"
-                }
-            ],
-            "description": "Laravel provider for crypto functionality",
-            "keywords": [
-                "crypto",
-                "cryptography",
-                "laravel",
-                "security",
-                "signature"
-            ],
-            "support": {
-                "issues": "https://github.com/minvws/laravel-crypto/issues",
-                "source": "https://github.com/minvws/laravel-crypto/tree/v1.3.0"
-            },
-            "time": "2022-03-14T07:46:23+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -10468,5 +10387,5 @@
     "platform-overrides": {
         "php": "8.0.2"
     },
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.3.0"
 }
