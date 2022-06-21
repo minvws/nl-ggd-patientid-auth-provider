@@ -15,7 +15,7 @@ class RetrieveUserInfo extends Command
     protected CodeGeneratorService $codeGeneratorService;
     protected Yenlo $yenlo;
 
-    protected $signature = 'userinfo:retrieve';
+    protected $signature = 'userinfo:retrieve {patient_id} {birthdate}';
     protected $description = 'Retrieve userinfo from Yenlo based on patient_id and birthdate';
 
     public function __construct(
