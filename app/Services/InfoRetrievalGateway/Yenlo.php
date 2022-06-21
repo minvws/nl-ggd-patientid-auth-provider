@@ -111,13 +111,13 @@ class Yenlo implements InfoRetrievalGateway
 
     protected function decodeAndVerifyResponse(string $body): array
     {
-        $json = json_decode($body, true, JSON_THROW_ON_ERROR);
+        $json = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
 
         $verified = $this->signatureService->verify($json['payload']);
         if (!$verified) {
             return [];
         }
 
-        return json_decode($json['payload'], false, JSON_THROW_ON_ERROR);
+        return json_decode(base64_decode($json['payload']), true, 512, JSON_THROW_ON_ERROR);
     }
 }
