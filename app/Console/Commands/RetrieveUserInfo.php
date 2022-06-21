@@ -9,26 +9,14 @@ use App\Services\InfoRetrievalGateway\Yenlo;
 use App\Services\JwtService;
 use Illuminate\Console\Command;
 
-class CreateJwt extends Command
+class RetrieveUserInfo extends Command
 {
     protected JwtService $jwtService;
     protected CodeGeneratorService $codeGeneratorService;
     protected Yenlo $yenlo;
 
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'app:create:jwt';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Create a new token in the cache';
-
+    protected $signature = 'userinfo:retrieve';
+    protected $description = 'Retrieve userinfo from Yenlo based on patient_id and birthdate';
 
     public function __construct(
         JwtService $jwtService,
@@ -42,15 +30,19 @@ class CreateJwt extends Command
         $this->yenlo = $yenlo;
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle(): int
     {
-        $hash = $this->codeGeneratorService->createHash('12345678', '1980-01-01');
-        $this->yenlo->retrieve($hash);
+        $patient_id = $this->argument("patient_id");
+        $birthdate = $this->argument("birthdate");
+
+        $hash = $this->codeGeneratorService->createHash(
+            is_string($patient_id) ? $patient_id : "",
+            is_string($birthdate) ? $birthdate : "",
+        );
+
+        $result = json_encode($this->yenlo->retrieve($hash));
+
+        $this->line(is_string($result) ? $result : "");
 
         return 0;
     }
