@@ -103,12 +103,16 @@ class Yenlo implements InfoRetrievalGateway
             $jwt = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
             Cache::put(self::CACHE_KEY, $jwt, $jwt['expires_in'] - 10);
         } catch (\Throwable $e) {
+            Log::error("Error while receiving auth data from yenlo: " . $e->getMessage());
             return "";
         }
 
         return $jwt['access_token'];
     }
 
+    /**
+     * @throws \JsonException
+     */
     protected function decodeAndVerifyResponse(string $body): array
     {
         $json = json_decode($body, true, 512, JSON_THROW_ON_ERROR);

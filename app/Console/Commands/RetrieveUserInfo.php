@@ -30,6 +30,9 @@ class RetrieveUserInfo extends Command
         $this->yenlo = $yenlo;
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function handle(): int
     {
         $patient_id = $this->argument("patient_id");
@@ -40,7 +43,7 @@ class RetrieveUserInfo extends Command
             is_string($birthdate) ? $birthdate : "",
         );
 
-        $result = json_encode($this->yenlo->retrieve($hash));
+        $result = json_encode($this->yenlo->retrieve($hash), JSON_THROW_ON_ERROR);
 
         $this->line(is_string($result) ? $result : "");
 
