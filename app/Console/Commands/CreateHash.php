@@ -12,7 +12,7 @@ class CreateHash extends Command
     protected CodeGeneratorService $codeGeneratorService;
 
     protected $signature = 'create:hash {patient_id} {birthdate}';
-    protected $description = 'Cleans up expired codes';
+    protected $description = 'Create hash based on patient id and birthdate';
 
     public function __construct(CodeGeneratorService $codeGeneratorService)
     {
