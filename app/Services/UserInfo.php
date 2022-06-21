@@ -6,8 +6,8 @@ namespace App\Services;
 
 class UserInfo
 {
-    public string $phoneNumber;
-    public string $email;
+    public string $phoneNumber = "";
+    public string $email = "";
 
     public function withPhoneNr(string $phoneNr): UserInfo
     {
