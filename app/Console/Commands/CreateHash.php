@@ -25,10 +25,10 @@ class CreateHash extends Command
         $patient_id = $this->argument("patient_id");
         $birthdate = $this->argument("birthdate");
 
-        print $this->codeGeneratorService->createHash(
+        $this->line($this->codeGeneratorService->createHash(
             is_string($patient_id) ? $patient_id : "",
             is_string($birthdate) ? $birthdate : "",
-        ) . "\n";
+        ));
 
         return 0;
     }
