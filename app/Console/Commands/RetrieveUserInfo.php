@@ -45,7 +45,7 @@ class RetrieveUserInfo extends Command
 
         $result = json_encode($this->yenlo->retrieve($hash), JSON_THROW_ON_ERROR);
 
-        $this->line(is_string($result) ? $result : "");
+        $this->line($result);
 
         return 0;
     }
