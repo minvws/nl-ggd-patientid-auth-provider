@@ -54,7 +54,7 @@ class Yenlo implements InfoRetrievalGateway
 
             $response = $client->post($this->userinfoUrl, [
                 RequestOptions::JSON => [
-                    'userhash' => $userHash,
+                    'userHash' => $userHash,
                 ]
             ]);
 
