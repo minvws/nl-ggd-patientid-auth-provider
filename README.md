@@ -41,7 +41,9 @@ APP_KEY=                                 # Can be generated with `php artisan ke
 CODEGEN_HMAC_KEY=                        # HMAC key for patient hash generation function
 CODEGEN_EXPIRY=900                       # Number of seconds before expiring authentication codes
 SMS_GATEWAY_MESSAGEBIRD_API_KEY=         # Api key for message bird text messaging
-OIDC_CLIENT_CONFIG_JSON=                 # Configuraiton file for oidc clients
+OIDC_CLIENT_CONFIG_JSON=                 # Configuration file for oidc clients
+CMS_X509_CERT=                           # Certificate for verifying Yenlo CMS signatures
+CMS_X509_CHAIN=                          # Accompanying CA chain
 ```
 
 ## Keys and certs

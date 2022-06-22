@@ -14,9 +14,5 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
-/ssl/*.crt
-/ssl/*.key
-/secrets/*.key
-/secrets/*.pem
 clients.json
 /tmp
