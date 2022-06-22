@@ -11,8 +11,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\Process\Process;
-use Exception;
 
 class Yenlo implements InfoRetrievalGateway
 {
