@@ -11,8 +11,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\Process\Process;
-use Exception;
 
 class Yenlo implements InfoRetrievalGateway
 {
@@ -124,58 +122,5 @@ class Yenlo implements InfoRetrievalGateway
         $this->cmsService->verify($payload, $signature);
 
         return json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
-    }
-
-    /**
-     * @throws CmsValidationException
-     */
-    private function checkCmsSignature(string $payload, string $signature): void
-    {
-
-        $tmpFilePayload = tmpfile();
-        $tmpFileSignature = tmpfile();
-
-        if (!$tmpFilePayload || !$tmpFileSignature) {
-            throw new CmsValidationException('Cannot create temp file on disk');
-        }
-
-        // Locate CMS public key
-        $cmsCertPath = config('cms.cert');
-        $cmsChainPath = config('cms.chain');
-
-        // Init files
-        $tmpFilePayloadPath = stream_get_meta_data($tmpFilePayload)['uri'];
-        $tmpFileSignaturePath = stream_get_meta_data($tmpFileSignature)['uri'];
-
-        // Place data in files
-        file_put_contents($tmpFilePayloadPath, $payload);
-        file_put_contents($tmpFileSignaturePath, $signature);
-
-        $args = [
-            'openssl', 'cms', '-verify', '-nointern', '-content', $tmpFilePayloadPath, '-inform', 'DER', '-binary',
-            '-in', $tmpFileSignaturePath,
-            '-CAfile', $cmsChainPath,
-            '-certfile', $cmsCertPath,
-            '-no-CAfile','-no-CApath',
-            '-purpose', 'any'
-        ];
-
-        $process = new Process($args);
-
-        try {
-            $process->run();
-        } catch (Exception $exception) {
-            Log::error((string)$exception);
-            throw new CmsValidationException('Signature invalid');
-        }
-
-        $errOutput = $process->getErrorOutput();
-        if ($errOutput !== "") {
-            Log::info($errOutput);
-        }
-
-        if ($process->getExitCode() !== 0) {
-            throw new CmsValidationException('Signature does not match payload');
-        }
     }
 }
