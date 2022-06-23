@@ -15,8 +15,8 @@ class SmsService
         $this->gateway = $gateway;
     }
 
-    public function send(string $phoneNr, string $template, array $vars): bool
+    public function send(string $phoneNumber, string $template, array $vars): bool
     {
-        return $this->gateway->send($phoneNr, $template, $vars);
+        return $this->gateway->send($phoneNumber, $template, $vars);
     }
 }

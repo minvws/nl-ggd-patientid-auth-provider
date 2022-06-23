@@ -171,7 +171,7 @@ class AuthController extends BaseController
             $this->smsService->send($contactInfo->phoneNumber, 'template', ['code' => $code]);
 
             $anonymizer = new Anonymizer();
-            $request->session()->put('confirmation_sent_to', $anonymizer->phoneNr($contactInfo->phoneNumber));
+            $request->session()->put('confirmation_sent_to', $anonymizer->phoneNumber($contactInfo->phoneNumber));
         } else {
             $confirmationType = 'email';
             $this->emailService->send($contactInfo->email, 'template', ['code' => $code]);

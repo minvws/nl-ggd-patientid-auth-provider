@@ -28,13 +28,13 @@ class Anonymizer
             '@' . $parts[1];
     }
 
-    public function phoneNr(string $phoneNr): string
+    public function phoneNumber(string $phoneNumber): string
     {
-        if (strlen($phoneNr) <= 2) {
+        if (strlen($phoneNumber) <= 2) {
             return '****';
         }
 
-        $s = str_repeat('*', strlen($phoneNr) - 2) . substr($phoneNr, -2);
+        $s = str_repeat('*', strlen($phoneNumber) - 2) . substr($phoneNumber, -2);
         while (strlen($s) < 4) {
             $s = '*' . $s;
         }

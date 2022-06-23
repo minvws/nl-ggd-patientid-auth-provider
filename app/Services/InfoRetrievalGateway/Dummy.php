@@ -16,7 +16,7 @@ class Dummy implements InfoRetrievalGateway
         $this->hmacKey = $hmacKey;
 
         $this->dummyData = [
-            $this->createHash('12345678', '1976-10-16') => (new UserInfo())->withPhoneNr('06-123456789'),
+            $this->createHash('12345678', '1976-10-16') => (new UserInfo())->withPhoneNumber('06-123456789'),
             $this->createHash('12345678', '1980-01-01') => (new UserInfo())->withEmail('user@example.org'),
         ];
     }
