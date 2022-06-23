@@ -12,7 +12,7 @@
 	--button-ghost-border-width: 2px;
 	--button-ghost-border-style: solid;
 	--button-ghost-border-color: var(--application-base-accent-color);
-	--button-ghost-border-radius: 0;
+	--button-ghost-border-radius: var(--button-base-border-radius);
 
 	/* Hover */
 	/* --button-ghost-hover-outline-style: ; */

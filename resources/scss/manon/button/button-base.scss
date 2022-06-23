@@ -1,32 +1,36 @@
 /*---------------------------------------------------------------*/
 /*-------------- components/buttons/base.scss -------------------*/
 /*---------------------------------------------------------------*/
-@import "button-base-variables";
+@use "button-base-variables";
 
 button,
 a.button,
 input[type="button"],
 input[type="submit"],
 input[type="reset"] {
-	display: var(--button-base-flex, inline-flex);
+	display: var(--button-base-flex);
 	box-sizing: border-box;
 	align-items: center;
-	justify-content: center;
-	gap: var(--button-base-gap, 0.5rem);
-	padding: var(--button-base-padding, 0.5rem);
-	min-width: var(--button-base-min-width, 2.75rem);
-	min-height: var(--button-base-min-height, 2.75rem);
+	justify-content: var(--button-base-justify-content);
+	gap: var(--button-base-gap);
+	padding-top: var(--button-base-padding-top);
+	padding-right: var(--button-base-padding-right);
+	padding-bottom: var(--button-base-padding-bottom);
+	padding-left: var(--button-base-padding-left);
+	min-width: var(--button-base-min-width);
+	min-height: var(--button-base-min-height);
 	background-color: var(--button-base-background-color);
 	border-width: var(--button-base-border-width);
 	border-style: var(--button-base-border-style);
 	border-color: var(--button-base-border-color);
-	color: var(--button-base-text-color);
+	color: var(--button-base-text-color, inherit);
 	font-size: var(--button-base-font-size, inherit);
-	line-height: var(--button-base-line-height, var(--application-line-height));
-	text-decoration: var(--button-base-text-decoration, none);
-	border-radius: var(--button-base-border-radius, 0);
-	webkit-border-radius: var(--button-base-border-radius, 0); /* Reset ios button styling */
-	-webkit-appearance: none; /* Reset ios button styling */
+	font-weight: var(--button-base-font-weight, inherit);
+	line-height: var(--button-base-line-height, inherit);
+	text-decoration: var(--button-base-text-decoration);
+	border-radius: var(--button-base-border-radius, inherit);
+	webkit-border-radius: var(--button-base-border-radius); /* Reset ios button styling */
+	-webkit-appearance: var(--button-base-webkit-appearance); /* Reset ios button styling */
 	cursor: pointer;
 
 	&:visited {

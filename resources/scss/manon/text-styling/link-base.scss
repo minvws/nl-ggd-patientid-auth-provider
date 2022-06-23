@@ -1,9 +1,11 @@
 /*---------------------------------------------------------------*/
-/*-------------------- text-styling/link.scss -------------------*/
+/*---------------- text-styling/link-base.scss ------------------*/
 /*---------------------------------------------------------------*/
+@use "link-base-variables";
+
 %visited-link-style {
-	background-color: var(--link-background-color);
-	color: var(--visited-link-color);
+	background-color: var(--link-base-background-color);
+	color: var(--link-base-visited-text-color, inherit);
 
 	&:before {
 		color: inherit;
@@ -12,13 +14,13 @@
 	/* States */
 	&:hover,
 	&.hover {
-		color: var(--visited-link-color-hover);
+		color: var(--link-base-visited-hover-text-color, inherit);
 	}
 }
 
 a {
-	background-color: var(--link-background-color);
-	color: var(--link-text-color);
+	background-color: var(--link-base-background-color);
+	color: var(--link-base-text-color, inherit);
 	cursor: pointer;
 	white-space: break;
 	overflow-wrap: break-word;
@@ -31,18 +33,18 @@ a {
 	> h4,
 	> h5,
 	> h6 {
-		color: var(--link-color);
+		color: var(--link-base-text-color, inherit);
 	}
 
 	/* states */
 	&:hover,
 	&.hover /* Testing purposes */ {
-		color: var(--link-color);
+		color: var(--link-base-hover-text-color, inherit);
 	}
 
 	&:active,
 	&.active /* Testing purposes */ {
-		outline: 1px dotted var(--grey-3);
+		outline: 1px dotted #ccc;
 		outline-offset: 0.25rem; /* Adding some spacing between the content and the outline */
 		z-index: 1; /* Laying the focussed area on top of any follow up messages */
 	}

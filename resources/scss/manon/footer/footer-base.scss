@@ -1,8 +1,7 @@
 /*---------------------------------------------------------------*/
 /*--------------- components/footer-base.scss -------------------*/
 /*---------------------------------------------------------------*/
-@import "../layout/layout-base-breakpoints";
-@import "footer-base-variables";
+@use "footer-base-variables";
 
 body > footer,
 %footer-base-style {
@@ -28,11 +27,11 @@ body > footer,
 		padding: var(--footer-base-padding);
 	}
 
-	@media (min-width: $footer-base-content-block-breakpoint-1) {
+	@media (min-width: footer-base-variables.$footer-base-content-block-breakpoint-1) {
 		padding: var(--footer-base-breakpoint-1-padding);
 	}
 
-	@media (min-width: $footer-base-content-block-breakpoint-2) {
+	@media (min-width: footer-base-variables.$footer-base-content-block-breakpoint-2) {
 		padding: var(--footer-base-breakpoint-2-padding);
 	}
 
