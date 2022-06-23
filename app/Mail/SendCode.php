@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
-use App\Models\Code;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -16,9 +15,9 @@ class SendCode extends Mailable
 
     public string $code;
 
-    public function __construct(Code $code)
+    public function __construct(string $code)
     {
-        $this->code = $code->code;
+        $this->code = $code;
     }
 
     public function build(): self
