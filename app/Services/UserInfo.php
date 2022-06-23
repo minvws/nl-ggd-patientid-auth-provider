@@ -9,9 +9,9 @@ class UserInfo
     public string $phoneNumber = "";
     public string $email = "";
 
-    public function withPhoneNr(string $phoneNr): UserInfo
+    public function withPhoneNumber(string $phoneNumber): UserInfo
     {
-        $this->phoneNumber = $phoneNr;
+        $this->phoneNumber = $phoneNumber;
         return $this;
     }
 

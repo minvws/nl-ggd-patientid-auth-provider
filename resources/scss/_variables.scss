@@ -1,31 +1,38 @@
 :root {
   --application-web-font: Montserrat, Arial, Helvetica, sans-serif;
-
+  --application-base-font-size: 1rem;
+  --application-base-line-height: 1.75rem;
+  --application-base-font-weight: normal;
   --application-base-background-color: #f3f3f3;
   --application-base-text-color: #4b4b4d;
   --application-base-accent-color: #000099;
   --application-base-accent-color-accent: #01016e;
   --application-base-accent-color-text-color: #fff;
+  --application-base-tint-1-background-color: var(
+    --application-base-accent-color
+  );
 
-  --font-size-text: 1.125rem;
-  --font-size-text-line-height: 1.75rem;
+  --footer-base-font-family: var(--application-web-font);
+  --text-base-font-family: var(--application-web-font);
+  --font-size-text: var(--application-base-font-size);
+  --font-size-text-line-height: var(--application-base-line-height);
+  --text-base-font-size: var(--application-base-font-size);
+  --text-base-line-height: var(--application-base-font-height);
+  --text-base-font-weight: var(--application-base-font-weight);
+  --text-base-text-color: var(--application-base-text-color);
 
-  --font-heading-size-large: 2rem;
-  --font-heading-size-default: 1.25rem;
-  --font-heading-size-medium: 1.25;
-  --font-heading-size-small: 1.25;
+  --headings-base-h1-font-size: 1.25rem;
+  --headings-base-h2-font-size: 1.125;
+  --headings-base-h3-font-size: 1.125;
   --headings-base-h1-text-color: var(--application-base-accent-color);
   --headings-base-h1-text-color: var(--application-base-accent-color);
   --headings-base-h2-text-color: var(--application-base-accent-color);
   --headings-base-h1-font-weight: 600;
   --headings-base-h2-font-weight: 600;
   --headings-base-h3-font-weight: 600;
-
-  --text-base-font-family: var(--application-web-font);
-  --text-base-font-size: var(--font-size-text);
-  --text-base-line-height: var(--font-size-text-line-height);
-  --text-base-font-weight: normal;
-  --text-base-text-color: var(--application-base-text-color);
+  --headings-base-h1-line-height: 1.75rem;
+  --headings-base-h2-line-height: 1.5rem;
+  --headings-base-h3-line-height: 1.5rem;
 
   --layout-base-content-block-max-width: 34rem;
 
@@ -42,7 +49,14 @@
   --button-ghost-focus-outline-width: 2px;
   --button-ghost-focus-outline-offset: 0;
 
+  --notification-error-background-color: #fbf3f2;
+  --form-input-error-border-color: #b30900;
+
   // TODO update after upstream fixes
+  --font-size-text: var(--application-base-font-size);
+  --focus-outline: 2px dotted #000;
+  --focus-outline-offset: 0.25rem;
+  --focus-z-index: 1;
   --button-ghost-background-color: transparent;
   --button-ghost-hover-text-color: var(
     --application-base-accent-color-text-color

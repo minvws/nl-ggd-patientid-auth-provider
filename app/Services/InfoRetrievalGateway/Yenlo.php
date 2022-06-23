@@ -70,7 +70,7 @@ class Yenlo implements InfoRetrievalGateway
                 $userInfo->withEmail($data['email']);
             }
             if (isset($data['phoneNumber'])) {
-                $userInfo->withPhonenr($data['phoneNumber']);
+                $userInfo->withPhoneNumber($data['phoneNumber']);
             }
         } catch (\Throwable $e) {
             // error

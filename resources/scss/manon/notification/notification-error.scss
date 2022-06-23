@@ -1,0 +1,18 @@
+/*---------------------------------------------------------------*/
+/*------------- components/notification/error.scss --------------*/
+/*---------------------------------------------------------------*/
+/* Error notification color */
+.error {
+	background-color: #ffd9d9;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #d98383;
+
+	&:before {
+		background-position: 0 3rem;
+
+		@media (min-width: 50rem) {
+			background-position: 0 4rem;
+		}
+	}
+}

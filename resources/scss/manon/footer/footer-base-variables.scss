@@ -1,6 +1,8 @@
 /*---------------------------------------------------------------*/
 /*----------- components/footer-base-variables.scss -------------*/
 /*---------------------------------------------------------------*/
+@use "../layout/layout-base-variables";
+
 :root {
 	/* --footer-base-min-height: ; */
 	--footer-base-justify-content: center;
@@ -8,8 +10,8 @@
 	/* --footer-base-min-height: ; */
 	--footer-base-max-width: 100%;
 	--footer-base-padding: 1rem 3%;
-	--footer-base-background-color: var(--application-base-accent-color);
-	--footer-base-text-color: var(--application-base-accent-color-text-color);
+	--footer-base-background-color: var(--application-base-tint-1-background-color);
+	--footer-base-text-color: var(--application-base-tint-1-text-color);
 	--footer-base-font-family: var(--text-base-font-family, sans-serif);
 	--footer-base-font-size: var(--text-base-font-size);
 	--footer-base-line-height: var(--text-base-font-size);
@@ -43,5 +45,5 @@
 /* Breakpoint */
 /* Overwrite the default reference with your value */
 /* E.g: $layout-base-footer-content-breakpoint-1: 42rem; */
-$footer-base-content-block-breakpoint-1: $layout-base-content-block-breakpoint-1;
-$footer-base-content-block-breakpoint-2: $layout-base-content-block-breakpoint-2;
+$footer-base-content-block-breakpoint-1: layout-base-variables.$layout-base-content-block-breakpoint-1;
+$footer-base-content-block-breakpoint-2: layout-base-variables.$layout-base-content-block-breakpoint-2;
