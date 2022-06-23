@@ -16,9 +16,9 @@ class SendCode extends Mailable
 
     public string $code;
 
-    public function __construct(Code $code)
+    public function __construct(string $code)
     {
-        $this->code = $code->code;
+        $this->code = $code;
     }
 
     public function build(): self

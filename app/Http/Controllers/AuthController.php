@@ -168,13 +168,13 @@ class AuthController extends BaseController
         // Sending to phone has priority, fallback to email if necessary
         if ($contactInfo->phoneNumber) {
             $confirmationType = 'sms';
-            $this->smsService->send($contactInfo->phoneNumber, 'template', ['code' => $code]);
+            $this->smsService->send($contactInfo->phoneNumber, 'template', ['code' => $code->code]);
 
             $anonymizer = new Anonymizer();
             $request->session()->put('confirmation_sent_to', $anonymizer->phoneNr($contactInfo->phoneNumber));
         } else {
             $confirmationType = 'email';
-            $this->emailService->send($contactInfo->email, 'template', ['code' => $code]);
+            $this->emailService->send($contactInfo->email, 'template', ['code' => $code->code]);
 
             $anonymizer = new Anonymizer();
             $request->session()->put('confirmation_sent_to', $anonymizer->email($contactInfo->email));
