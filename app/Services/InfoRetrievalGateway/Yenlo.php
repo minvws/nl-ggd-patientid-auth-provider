@@ -72,7 +72,6 @@ class Yenlo implements InfoRetrievalGateway
             if (isset($data['phoneNumber'])) {
                 $userInfo->withPhonenr($data['phoneNumber']);
             }
-
         } catch (\Throwable $e) {
             // error
             Log::error("Error while receiving data from yenlo: " . $e->getMessage());
