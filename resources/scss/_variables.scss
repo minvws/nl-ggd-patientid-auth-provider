@@ -49,6 +49,9 @@
   --button-ghost-focus-outline-width: 2px;
   --button-ghost-focus-outline-offset: 0;
 
+  --notification-error-background-color: #fbf3f2;
+  --form-input-error-border-color: #b30900;
+
   // TODO update after upstream fixes
   --font-size-text: var(--application-base-font-size);
   --focus-outline: 2px dotted #000;

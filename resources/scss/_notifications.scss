@@ -1,0 +1,65 @@
+/*---------------------------------------------------------------*/
+/*--------------- components/notification-base.scss -------------*/
+/*---------------------------------------------------------------*/
+.error,
+.explanation {
+  box-sizing: border-box;
+  max-width: 100%;
+  width: 100%;
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.error {
+  background-color: #fbf3f2;
+}
+
+div,
+p,
+span {
+  &.error {
+    &:before {
+      content: "";
+      background-image: url(../img/error_icon.svg);
+      background-size: 100%;
+      width: 1rem;
+      min-width: 1rem;
+      height: 1rem;
+      min-height: 1rem;
+      margin-right: 1rem;
+    }
+  }
+}
+
+p.error {
+  position: relative;
+  padding: 1rem 3% 1rem calc(3% + 2rem);
+
+  &:before {
+    top: calc(50% - 0.5rem);
+    position: absolute;
+    display: block;
+    float: left;
+    left: 1rem;
+  }
+
+  > span:first-of-type {
+    font-weight: bold;
+  }
+}
+
+input,
+select,
+textarea,
+input[type="checkbox"]:not(:checked),
+input[type="radio"]:not(:checked) {
+  &[aria-invalid="true"] {
+    border-color: var(--form-input-error-border-color);
+  }
+
+  + .error {
+      margin-top: 0;
+  }
+}
