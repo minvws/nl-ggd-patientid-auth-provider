@@ -2,9 +2,9 @@
 /*------------------------- text-styling/p-variables.scss --------------------------*/
 /*----------------------------------------------------------------------------------*/
 :root {
-	--p-base-line-height: var(--text-base-line-height);
-	--p-base-font-size: var(--text-base-font-size);
-	--p-base-font-weight: var(--text-base-font-weight);
-	--p-base-text-color: var(--text-base-text-color);
+	--p-base-line-height: var(--application-base-line-height);
+	--p-base-font-size: var(--application-base-font-size);
+	--p-base-font-weight: var(--application-base-font-weight);
+	--p-base-text-color: var(--application-base-text-color);
 	--p-base-background-color: unset;
 }

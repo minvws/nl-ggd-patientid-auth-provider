@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------*/
-/*-------------- text-styling/headings-base.scss ----------------*/
+/*--------------------- headings-base.scss ----------------------*/
 /*---------------------------------------------------------------*/
-@import "headings-base-variables";
+@use "headings-base-variables";
 
 h1,
 h2,
@@ -15,34 +15,34 @@ h6 {
 
 h1,
 h1 > a {
-	font-size: var(--headings-base-h1-font-size);
-	color: var(--headings-base-h1-text-color);
-	font-weight: var(--headings-base-h1-font-weight);
-	line-height: var(--headings-base-h1-line-height, initial);
+	font-size: var(--headings-base-h1-font-size, inherit);
+	color: var(--headings-base-h1-text-color, inherit);
+	font-weight: var(--headings-base-h1-font-weight, inherit);
+	line-height: var(--headings-base-h1-line-height, inherit);
 }
 
 h2,
 h2 > a {
-	font-size: var(--headings-base-h2-font-size);
-	color: var(--headings-base-h2-text-color);
-	font-weight: var(--headings-base-h2-font-weight);
-	line-height: var(--headings-base-h2-line-height, initial);
+	font-size: var(--headings-base-h2-font-size, inherit);
+	color: var(--headings-base-h2-text-color, inherit);
+	font-weight: var(--headings-base-h2-font-weight, inherit);
+	line-height: var(--headings-base-h2-line-height, inherit);
 }
 
 h3,
 h3 > a {
-	font-size: var(--headings-base-h3-font-size);
-	color: var(--headings-base-h3-text-color);
-	font-weight: var(--headings-base-h3-font-weight);
-	line-height: var(--headings-base-h3-line-height, initial);
+	font-size: var(--headings-base-h3-font-size, inherit);
+	color: var(--headings-base-h3-text-color, inherit);
+	font-weight: var(--headings-base-h3-font-weight, inherit);
+	line-height: var(--headings-base-h3-line-height, inherit);
 }
 
 h4,
 h4 > a {
-	font-size: var(--headings-base-h4-font-size);
-	color: var(--headings-base-h4-text-color);
-	font-weight: var(--headings-base-h4-font-weight);
-	line-height: var(--headings-base-h4-line-height, initial);
+	font-size: var(--headings-base-h4-font-size, inherit);
+	color: var(--headings-base-h4-text-color, inherit);
+	font-weight: var(--headings-base-h4-font-weight, inherit);
+	line-height: var(--headings-base-h4-line-height, inherit);
 }
 
 h5,

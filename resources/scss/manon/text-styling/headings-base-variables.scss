@@ -3,7 +3,7 @@
 /*---------------------------------------------------------------*/
 :root {
 	/* h1 */
-	--headings-base-h1-font-size: 1.75rem;
+	--headings-base-h1-font-size: 30px;
 	/* --headings-base-h1-text-color: ; */
 	/* --headings-base-h1-font-weight: ; */
 	/* --headings-base-h1-line-height: ; */
@@ -21,19 +21,19 @@
 	/* --headings-base-h3-line-height: ; */
 
 	/* h4 */
-	--headings-base-h4-font-size: var(--text-base-font-size);
+	--headings-base-h4-font-size: var(--application-base-font-size);
 	/* --headings-base-h4-text-color: ; */
 	/* --headings-base-h4-font-weight: ; */
 	/* --headings-base-h4-line-height: ; */
 
 	/* h5 */
-	--headings-base-h5-font-size: var(--text-base-font-size);
+	--headings-base-h5-font-size: var(--application-base-font-size);
 	/* --headings-base-h5-text-color: ; */
 	/* --headings-base-h5-font-weight: ; */
 	/* --headings-base-h5-line-height: ; */
 
 	/* h6 */
-	--headings-base-h6-font-size: var(--text-base-font-size);
+	--headings-base-h6-font-size: var(--application-base-font-size);
 	/* --headings-base-h6-text-color: ; */
 	/* --headings-base-h6-font-weight: ; */
 	/* --headings-base-h6-line-height: ; */

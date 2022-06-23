@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------*/
 /*--------- components/text-styling/max-line-length.scss --------*/
 /*---------------------------------------------------------------*/
-@import "max-line-length-variables";
+@use "max-line-length-variables";
 
 p,
 a,
