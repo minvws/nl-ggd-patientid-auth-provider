@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\InfoRetrievalGateway;
 
+use Exception;
 use App\Services\CmsService;
 use App\Services\UserInfo;
 use App\Exceptions\CmsValidationException;
@@ -11,6 +12,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class Yenlo implements InfoRetrievalGateway
 {
@@ -104,10 +106,18 @@ class Yenlo implements InfoRetrievalGateway
             ]
         ]);
 
-        $jwt = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
-        Cache::put(self::CACHE_KEY, $jwt, $jwt['expires_in'] - 10);
+        $body = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $validator = Validator::make($body, [
+            'expires_in' => 'required|string',
+            'access_token' => 'required|string',
+        ]);
+        if ($validator->fails()) {
+            throw new Exception("Error parsing response from Yenlo token request");
+        }
 
-        return $jwt['access_token'];
+        Cache::put(self::CACHE_KEY, $body, $body['expires_in'] - 10);
+
+        return $body['access_token'];
     }
 
     /**
