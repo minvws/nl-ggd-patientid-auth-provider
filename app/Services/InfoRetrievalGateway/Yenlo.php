@@ -63,8 +63,8 @@ class Yenlo implements InfoRetrievalGateway
             if (isset($data['email'])) {
                 $info->withEmail($data['email']);
             }
-            if (isset($data['phoneNr'])) {
-                $info->withPhonenr($data['phoneNr']);
+            if (isset($data['phoneNumber'])) {
+                $info->withPhoneNumber($data['phoneNumber']);
             }
 
             return $info;

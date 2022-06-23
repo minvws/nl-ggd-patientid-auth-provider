@@ -16,13 +16,13 @@ class MessageBird implements SmsGatewayInterface
         $this->apiKey = $apiKey;
     }
 
-    public function send(string $phoneNr, string $template, array $vars): bool
+    public function send(string $phoneNumber, string $template, array $vars): bool
     {
         $client = new Client($this->apiKey);
 
         $msg = new Message();
         $msg->originator = 'Alarmallama';
-        $msg->recipients = array($phoneNr);
+        $msg->recipients = array($phoneNumber);
         $msg->body = 'Jouw persoonlijke PAP code is ' . $vars['code'];
 
         try {

@@ -20,13 +20,13 @@ class AnonymizerTest extends TestCase
     }
 
     /**
-     * @dataProvider phonenrs
+     * @dataProvider phoneNumbers
      */
-    public function testPhoneNr(string $has, string $want)
+    public function testPhoneNumber(string $has, string $want)
     {
         $anonymizer = new Anonymizer();
 
-        $this->assertEquals($want, $anonymizer->phoneNr($has));
+        $this->assertEquals($want, $anonymizer->phoneNumber($has));
     }
 
     public function emails()
@@ -39,7 +39,7 @@ class AnonymizerTest extends TestCase
         ];
     }
 
-    public function phonenrs(): array
+    public function phoneNumbers(): array
     {
         return [
             [ '0', '****' ],
