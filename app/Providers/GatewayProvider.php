@@ -20,7 +20,10 @@ class GatewayProvider extends ServiceProvider
     {
         $this->app->singleton(SmsService::class, function () {
             return new SmsService(
-                new MessageBird(config('messagebird.api_key'))
+                new MessageBird(
+                    config('messagebird.api_key'),
+                    config('messagebird.sender'),
+                )
             );
         });
 

@@ -10,10 +10,12 @@ use MessageBird\Objects\Message;
 class MessageBird implements SmsGatewayInterface
 {
     protected string $apiKey;
+    protected string $sender;
 
-    public function __construct(string $apiKey)
+    public function __construct(string $apiKey, string $sender)
     {
         $this->apiKey = $apiKey;
+        $this->sender = $sender;
     }
 
     public function send(string $phoneNumber, string $template, array $vars): bool
@@ -21,7 +23,7 @@ class MessageBird implements SmsGatewayInterface
         $client = new Client($this->apiKey);
 
         $msg = new Message();
-        $msg->originator = 'Alarmallama';
+        $msg->originator = $this->sender;
         $msg->recipients = array($phoneNumber);
         $msg->body = 'Jouw persoonlijke PAP code is ' . $vars['code'];
 
