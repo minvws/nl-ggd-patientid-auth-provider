@@ -21,7 +21,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\View\View;
+use Illuminate\Contracts\View\Factory as ViewFactory;
+use Illuminate\Contracts\View\View as ViewContract;
 
 class AuthController extends BaseController
 {
@@ -49,7 +50,7 @@ class AuthController extends BaseController
         $this->oidcService = $oidcService;
     }
 
-    public function login(Request $request): View
+    public function login(Request $request): ViewFactory | ViewContract
     {
         return view('login');
     }
@@ -73,7 +74,7 @@ class AuthController extends BaseController
         return Redirect::route('confirm');
     }
 
-    public function confirm(Request $request): RedirectResponse | View
+    public function confirm(Request $request): RedirectResponse | ViewFactory | ViewContract
     {
         $confirmationType = $request->session()->get('confirmation_type');
         $sentTo = $request->session()->get('confirmation_sent_to');
@@ -88,7 +89,7 @@ class AuthController extends BaseController
         ]);
     }
 
-    public function confirmationSubmit(ConfirmationRequest $request): RedirectResponse | View
+    public function confirmationSubmit(ConfirmationRequest $request): RedirectResponse | ViewFactory | ViewContract
     {
         $hash = $request->session()->get('hash');
         if (!$hash) {
@@ -117,7 +118,7 @@ class AuthController extends BaseController
         ]);
     }
 
-    public function resend(Request $request): View|RedirectResponse
+    public function resend(Request $request): RedirectResponse | ViewFactory | ViewContract
     {
         $confirmationType = $request->session()->get('confirmation_type');
 
