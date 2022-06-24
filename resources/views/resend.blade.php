@@ -15,7 +15,7 @@
                     <button type="submit">@lang('resend.button') <span aria-hidden="true">&gt;</span></button>
                 </div>
                 <div>
-                    <a class="button ghost" href="#">
+                    <a class="button ghost" href="{{ route('confirm') }}">
                         <span aria-hidden="true">&lt;</span>
                         @lang('back')
                     </a>

@@ -34,7 +34,7 @@
                     <button type="submit">@lang("confirmation.retrieve_data") <span aria-hidden="true">&gt;</span></button>
                 </div>
                 <div>
-                    <a class="button ghost" href="#">
+                    <a class="button ghost" href="{{ route('resend') }}">
                         @lang('confirmation.no_sms')
                         <span aria-hidden="true">&gt;</span>
                     </a>
