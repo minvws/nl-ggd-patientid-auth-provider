@@ -26,7 +26,7 @@ class Locale
         $locale = $request->query->get('lang');
         if ($locale && in_array($locale, Config::get('app.locales'), true)) {
             $request->session()->put('lang', $locale);
-        } else if ($request->session()->has('lang')) {
+        } elseif ($request->session()->has('lang')) {
             $locale = $request->session()->get('lang');
         } else {
             $locale = Config::get('app.locale');
