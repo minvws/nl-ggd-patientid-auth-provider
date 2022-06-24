@@ -46,11 +46,11 @@ class GatewayProvider extends ServiceProvider
 
         $this->app->singleton(InfoRetrievalService::class, function () {
             switch (env('INFORETRIEVAL_SERVICE', 'yenlo')) {
-                case 'dummy' :
+                case 'dummy':
                     $provider = new InfoRetrievalGatewayDummy(config('codegenerator.hmac_key', ''));
                     break;
                 case 'yenlo':
-                    $provider = new InfoRetrievalService($this->app->get(Yenlo::class));
+                    $provider = $this->app->get(Yenlo::class);
                     break;
                 default:
                     throw new \Exception("please provide your info provider through INFORETRIEVAL_SERVICE");
