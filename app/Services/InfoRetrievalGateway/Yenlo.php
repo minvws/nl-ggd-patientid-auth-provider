@@ -107,7 +107,7 @@ class Yenlo implements InfoRetrievalGateway
 
         $body = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
         $validator = Validator::make($body, [
-            'expires_in' => 'required|string',
+            'expires_in' => 'required|int',
             'access_token' => 'required|string',
         ]);
         if ($validator->fails()) {
