@@ -23,14 +23,15 @@ class Locale
      */
     public function handle(Request $request, Closure $next)
     {
-        $rawLocale = $request->query->get('lang');
-        if ($rawLocale && in_array($rawLocale, Config::get('app.locales'), true)) {
-            $locale = $rawLocale;
-
-            $request->session()->put('locale', $locale);
+        $locale = $request->query->get('lang');
+        if ($locale && in_array($locale, Config::get('app.locales'), true)) {
+            $request->session()->put('lang', $locale);
+        } else if ($request->session()->has('lang')) {
+            $locale = $request->session()->get('lang');
+        } else {
+            $locale = Config::get('app.locale');
         }
 
-        $locale = $request->session()->get('locale', Config::get('app.locale'));
         App::setLocale($locale);
 
         return $next($request);

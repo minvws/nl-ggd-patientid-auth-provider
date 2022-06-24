@@ -10,6 +10,7 @@ use App\Services\JwtService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -35,6 +36,9 @@ class OidcService
         $params = $this->getAuthParams($request->all());
 
         // Start or replace session
+        if (!array_key_exists('lang', $params)) {
+            $params['lang'] = App::getLocale();
+        }
         $request->session()->flush();
         foreach ($params as $key => $value) {
             $request->session()->put($key, $value);
@@ -72,7 +76,9 @@ class OidcService
             $this->getAuthParams($request->session()->all());
             return true;
         } catch (\Throwable $e) {
+            $locale = App::getLocale();
             $request->session()->flush();
+            $request->session()->put('lang', $locale);
             return false;
         }
     }
