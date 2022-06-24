@@ -45,11 +45,18 @@ class GatewayProvider extends ServiceProvider
         });
 
         $this->app->singleton(InfoRetrievalService::class, function () {
-            return new InfoRetrievalService(
-                new InfoRetrievalGatewayDummy(config('codegenerator.hmac_key', ''))
-            );
+            switch (env('INFORETRIEVAL_SERVICE', '')) {
+                case 'dummy' :
+                    $provider = new InfoRetrievalGatewayDummy(config('codegenerator.hmac_key', ''));
+                    break;
+                case 'yenlo':
+                    $provider = new InfoRetrievalService($this->app->get(Yenlo::class));
+                    break;
+                default:
+                    throw new \Exception("please provide your info provider through INFORETRIEVAL_SERVICE");
+            }
 
-//            return new InfoRetrievalService($this->app->get(Yenlo::class));
+            return new InfoRetrievalService($provider);
         });
     }
 }
