@@ -286,6 +286,7 @@ class OidcServiceTest extends TestCase
             config('jwt.private_key_path'),
             config('jwt.iss'),
             config('jwt.aud'),
+            config('jwt.exp'),
         );
 
         return new OidcService(
