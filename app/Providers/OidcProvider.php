@@ -22,6 +22,7 @@ class OidcProvider extends ServiceProvider
                     config('jwt.private_key_path'),
                     config('jwt.iss'),
                     config('jwt.aud'),
+                    (int)config('jwt.exp'),
                 )
             );
         });
