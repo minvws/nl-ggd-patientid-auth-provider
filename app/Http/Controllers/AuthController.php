@@ -57,14 +57,20 @@ class AuthController extends BaseController
 
     public function loginSubmit(LoginRequest $request): RedirectResponse
     {
-        $hash = $this->codeGeneratorService->createHash($request->get('patient_id'), $request->get('birthdate'));
+        // Generate hash
+        $hash = $this->codeGeneratorService->createHash(
+            $request->get('patient_id'),
+            $request->parsedBirthdate(),
+        );
 
-        // Send confirmation code
+        // Try to retrieve user info and send confirmation code
         try {
             $this->sendConfirmationCode($request, $hash);
         } catch (ContactInfoNotFound $e) {
             $v = Validator::make([], []);
-            $v->getMessageBag()->add('patient_id', 'Patient ID / birthdate combo not found');
+            $v->errors()->add('patient_id', $this->__('validation.unknown_patient_id'));
+            $v->errors()->add('birthdate', $this->__('validation.unknown_date_of_birth'));
+            $request->session()->put('_old_input', $request->all());
             return Redirect::route('start_auth')->withErrors($v);
         }
 
@@ -79,7 +85,7 @@ class AuthController extends BaseController
         $confirmationType = $request->session()->get('confirmation_type');
         $sentTo = $request->session()->get('confirmation_sent_to');
 
-        if (!$confirmationType) {
+        if (!$confirmationType || !$sentTo) {
             return Redirect::route('start_auth');
         }
 
@@ -96,26 +102,8 @@ class AuthController extends BaseController
             return Redirect::route('start_auth');
         }
 
-        if ($this->codeGeneratorService->validate($hash, $request->get('code', ''))) {
-            // Authorization successful, redirect back to client application with auth code
-            return $this->oidcService->finishAuthorize($request, $hash);
-        }
-
-        $confirmationType = $request->session()->get('confirmation_type');
-        $sentTo = $request->session()->get('confirmation_sent_to');
-
-        if (!$confirmationType) {
-            return Redirect::route('start_auth');
-        }
-
-        $v = Validator::make([], []);
-        $v->getMessageBag()->add('code', 'This code is not correct');
-
-        return view('confirm', [
-            'confirmationType' => $confirmationType,
-            'sentTo' => $sentTo,
-            'errors' => $v->getMessageBag()
-        ]);
+        // Authorization successful, redirect back to client application with auth code
+        return $this->oidcService->finishAuthorize($request, $hash);
     }
 
     public function resend(Request $request): RedirectResponse | ViewFactory | ViewContract
@@ -142,7 +130,8 @@ class AuthController extends BaseController
             $this->sendConfirmationCode($request, $hash);
         } catch (ContactInfoNotFound $e) {
             $v = Validator::make([], []);
-            $v->getMessageBag()->add('patient_id', 'Patient ID / birthdate combo not found');
+            $v->errors()->add('patient_id', $this->__('validation.unknown_patient_id'));
+            $v->errors()->add('birthdate', $this->__('validation.unknown_date_of_birth'));
             return Redirect::route('start_auth')->withErrors($v);
         }
 
@@ -183,5 +172,11 @@ class AuthController extends BaseController
 
         // Store confirmation type so the view can tell the user where to look for the code
         $request->session()->put('confirmation_type', $confirmationType);
+    }
+
+    protected function __(string $key): string
+    {
+        $message = __($key);
+        return is_string($message) ? $message : '';
     }
 }
