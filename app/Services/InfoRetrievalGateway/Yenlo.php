@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\InfoRetrievalGateway;
 
+use Exception;
 use App\Services\CmsService;
 use App\Services\UserInfo;
 use App\Exceptions\CmsValidationException;
@@ -11,6 +12,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class Yenlo implements InfoRetrievalGateway
 {
@@ -36,9 +38,14 @@ class Yenlo implements InfoRetrievalGateway
         $this->userinfoUrl = $userinfoUrl;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function retrieve(string $userHash): UserInfo
     {
         $accessToken = $this->fetchAccessToken();
+
+        $userInfo = new UserInfo();
 
         try {
             $client = new Client([
@@ -59,24 +66,24 @@ class Yenlo implements InfoRetrievalGateway
 
             $data = $this->decodeAndVerifyResponse((string)$response->getBody());
 
-            $info = new UserInfo();
             if (isset($data['email'])) {
-                $info->withEmail($data['email']);
+                $userInfo->withEmail($data['email']);
             }
             if (isset($data['phoneNumber'])) {
-                $info->withPhoneNumber($data['phoneNumber']);
+                $userInfo->withPhoneNumber($data['phoneNumber']);
             }
-
-            return $info;
         } catch (\Throwable $e) {
             // error
             Log::error("Error while receiving data from yenlo: " . $e->getMessage());
         }
 
-        return new UserInfo();
+        return $userInfo;
     }
 
-    // Retrieves a new access token, or uses a cached one if available and not expired
+    /*
+     * Retrieves a new access token, or uses a cached one if available and not expired
+     * @throws \Exception
+     */
     protected function fetchAccessToken(): string
     {
         $token = Cache::get(self::CACHE_KEY);
@@ -84,29 +91,32 @@ class Yenlo implements InfoRetrievalGateway
             return $token['access_token'];
         }
 
-        try {
-            $client = new Client([
-                'http_errors' => false,
-                'auth' => [
-                    $this->clientId,
-                    $this->clientSecret,
-                ]
-            ]);
+        $client = new Client([
+            'http_errors' => false,
+            'auth' => [
+                $this->clientId,
+                $this->clientSecret,
+            ]
+        ]);
 
-            $response = $client->post($this->tokenUrl, [
-                RequestOptions::FORM_PARAMS => [
-                    'grant_type' => 'client_credentials',
-                ]
-            ]);
+        $response = $client->post($this->tokenUrl, [
+            RequestOptions::FORM_PARAMS => [
+                'grant_type' => 'client_credentials',
+            ]
+        ]);
 
-            $jwt = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
-            Cache::put(self::CACHE_KEY, $jwt, $jwt['expires_in'] - 10);
-        } catch (\Throwable $e) {
-            Log::error("Error while receiving auth data from yenlo: " . $e->getMessage());
-            return "";
+        $body = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        $validator = Validator::make($body, [
+            'expires_in' => 'required|string',
+            'access_token' => 'required|string',
+        ]);
+        if ($validator->fails()) {
+            throw new Exception("Error parsing response from Yenlo token request");
         }
 
-        return $jwt['access_token'];
+        Cache::put(self::CACHE_KEY, $body, $body['expires_in'] - 10);
+
+        return $body['access_token'];
     }
 
     /**
