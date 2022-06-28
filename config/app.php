@@ -202,6 +202,7 @@ return [
         App\Providers\CodeGeneratorProvider::class,
         App\Providers\OidcProvider::class,
         App\Providers\JwtProvider::class,
+        App\Providers\JsonClientResolverProvider::class,
     ],
 
     /*

@@ -11,8 +11,10 @@ Route::get('/oidc/authorize', function (Request $request, OidcService $oidcServi
     return $oidcService->authorize($request);
 });
 
-Route::post('/oidc/accesstoken', function (Request $request, OidcService $oidcService) {
-    return $oidcService->accessToken($request);
+Route::middleware('cors')->group(function () {
+    Route::post('/oidc/accesstoken', function (Request $request, OidcService $oidcService) {
+        return $oidcService->accessToken($request);
+    });
 });
 
 Route::get('/', function () {
