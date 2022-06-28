@@ -19,6 +19,7 @@
                     autocomplete="off"
                     required
                     placeholder="1234567"
+                    value="{{ old('patient_id') }}"
                     aria-describedby="patient_id_explanation"
                     {{ $errors->has('patient_id')
                         ? 'aria-invalid=true aria-errormessage=patient_id_error'
@@ -38,6 +39,7 @@
                     required
                     placeholder="@lang('login.birthDate_placeholder')"
                     aria-describedby="birthdate_error"
+                    value="{{ old('birthdate') }}"
                 >
                 @if ($errors->has('birthdate'))
                     <p class="error" id="birthdate_error">{{ $errors->first('birthdate') }}</p>
