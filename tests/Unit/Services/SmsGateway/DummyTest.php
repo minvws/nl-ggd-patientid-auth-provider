@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Services\SmsGateway;
 
 use App\Services\SmsGateway\Dummy;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class DummyTest extends TestCase
 {
