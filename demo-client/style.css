@@ -1,0 +1,88 @@
+html {
+  background: #fbffe5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+    "Roboto Sans", "Noto Sans", sans-serif;
+}
+html,
+body {
+  margin: 0;
+}
+
+code,
+td {
+  font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console,
+    monospace;
+}
+
+main {
+  max-width: 42rem;
+  padding: 2rem;
+  margin: 0 auto;
+}
+
+label {
+  font-weight: 600;
+}
+
+label code {
+  font-weight: 400;
+}
+
+input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 2px solid #a8b75aaa;
+  border-radius: 0.25rem;
+  box-sizing: border-box;
+}
+input:invalid {
+  border: 2px solid #d52dff;
+}
+.warning {
+  padding: 1rem;
+  background: #ffe6d3;
+  border: 2px solid #703000;
+  border-radius: 0.25rem;
+}
+input + .warning {
+  margin-top: 0;
+}
+a {
+  color: #005695;
+}
+input:focus,
+a:focus,
+button:focus {
+  outline: 2px dotted #000;
+}
+#start_auth a {
+  font-size: 1.5rem;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th {
+  text-align: left;
+}
+td {
+  padding: 0.5rem 0;
+  border-bottom: 2px solid #90976a;
+}
+td:nth-child(1) {
+  padding-right: 2rem;
+}
+td:nth-child(2) {
+  overflow-wrap: anywhere;
+}
+pre {
+  overflow: auto;
+  max-height: 40rem;
+  padding: 1rem;
+  border: 2px solid #90976a;
+  border-radius: 0.25rem;
+}
+button {
+  padding: 0.5rem 1rem;
+}

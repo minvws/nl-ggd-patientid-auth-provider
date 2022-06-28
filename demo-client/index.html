@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>PAP demo client</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>PAP demo client</h1>
+      <p>
+        You can use this demo client app to construct an authorization URI,
+        start the authorization flow, analyze the callback params and finally
+        obtain an <code>access_token</code>.
+      </p>
+      <noscript>
+        <p class="warning">
+          <strong>Warning: this demo client requires JavaScript.</strong>
+        </p>
+      </noscript>
+      <h2>Configuration</h2>
+      <form>
+        <label for="pap_base_uri">PAP base URI</label>
+        <input
+          id="pap_base_uri"
+          name="pap_base_uri"
+          placeholder="https://pap.localdev:444/"
+          required
+        />
+        <label for="redirect_uri">Redirect URI</label>
+        <input
+          id="redirect_uri"
+          name="redirect_uri"
+          placeholder="https://pap-demo-client.localdev:445/callback.html"
+          required
+        />
+        <label for="client_id">Client ID</label>
+        <input
+          id="client_id"
+          name="client_id"
+          placeholder="client-123"
+          required
+        />
+        <label for="state">State - <code>[\x20-\x7E]+</code></label>
+        <input
+          id="state"
+          name="state"
+          minlength="1"
+          pattern="[\x20-\x7E]+"
+          required
+        />
+        <label for="code_verifier">
+          Code verifier - <code>[a-zA-Z0-9._~-]{43,128}</code>
+        </label>
+        <input
+          id="code_verifier"
+          name="code_verifier"
+          minlength="43"
+          maxlength="128"
+          pattern="[a-zA-Z0-9._~-]+"
+          required
+        />
+        <label for="code_challenge">
+          Code challenge -
+          <code>url_safe_base64(sha256(ascii(code_verifier)))</code>
+        </label>
+        <input
+          id="code_challenge"
+          name="code_challenge"
+          aria-describedby="sha256-warning"
+          readonly
+          required
+        />
+        <p id="sha256-warning" class="warning" hidden>
+          Warning: failed to calculate code challenge. Note: SHA-256 in
+          JavaScript requires TLS. Please calculate the code challenge manually.
+        </p>
+        <label for="lang">Language <span>(optional)</span></label>
+        <input id="lang" name="lang" placeholder='"en" or "nl"' />
+        <div id="start_auth" hidden>
+          <h2>Start authentication</h2>
+          <a rel="noopener,external"></a>
+        </div>
+      </form>
+    </main>
+  </body>
+  <script>
+    updateVerifierAndChallenge(document.getElementById("code_verifier"));
+    updateLink(document.querySelector("form"));
+
+    document.addEventListener("input", async (event) => {
+      const target = event.target;
+      if (!target) return;
+      const form = target.closest("form");
+      if (!form) return;
+      form.checkValidity();
+      if (target.name === "code_verifier") {
+        await updateVerifierAndChallenge(target);
+      }
+      updateLink(form);
+    });
+
+    function updateLink(form) {
+      if (!form) return;
+      const startAuth = document.getElementById("start_auth");
+      let a = startAuth?.querySelector("a");
+      if (!a) return;
+      try {
+        const data = new FormData(form);
+        window.sessionStorage.setItem(
+          "pap_demo_client_data",
+          JSON.stringify(Object.fromEntries(data.entries()))
+        );
+        const url = new URL(data.get("pap_base_uri"));
+        url.pathname = "/oidc/authorize";
+        url.searchParams.set("response_type", "code");
+        url.searchParams.set("client_id", data.get("client_id"));
+        url.searchParams.set("state", data.get("state"));
+        url.searchParams.set("scope", "openid");
+        url.searchParams.set("redirect_uri", data.get("redirect_uri"));
+        url.searchParams.set("code_challenge", data.get("code_challenge"));
+        url.searchParams.set("code_challenge_method", "S256");
+        if (data.get("lang")) url.searchParams.set("lang", data.get("lang"));
+        a.innerHTML = `<code>${url}</code>`;
+        a.href = url;
+        startAuth.removeAttribute("hidden");
+      } catch (error) {
+        startAuth.setAttribute("hidden", "");
+      }
+    }
+
+    async function updateVerifierAndChallenge(element) {
+      const verifier = element?.value;
+      const challengeElement = element?.closest("form")?.code_challenge;
+      if (!element?.validity.valid) {
+        if (challengeElement) challengeElement.value = "";
+        return;
+      }
+      try {
+        const challenge = await computeChallenge(verifier);
+        element.setAttribute("aria-invalid", challenge ? "false" : "true");
+        if (challengeElement) challengeElement.value = challenge;
+      } catch (error) {
+        console.error(error);
+        challengeElement?.removeAttribute("readonly");
+        document.getElementById("sha256-warning")?.removeAttribute("hidden");
+      }
+    }
+
+    async function computeChallenge(verifier) {
+      return urlSafeBase64(uint8ToStr(await hash(strToUint8(verifier))));
+    }
+
+    async function hash(uint8) {
+      return new Uint8Array(await crypto.subtle.digest("SHA-256", uint8));
+    }
+
+    function strToUint8(str) {
+      return new TextEncoder().encode(str);
+    }
+
+    function uint8ToStr(uint8) {
+      return String.fromCharCode(...uint8);
+    }
+
+    // See https://datatracker.ietf.org/doc/html/rfc4648#section-5
+    function urlSafeBase64(str) {
+      return btoa(str).replace(/[=+\/]/g, (c) =>
+        c == "=" ? "" : c == "+" ? "-" : "_"
+      );
+    }
+  </script>
+</html>
