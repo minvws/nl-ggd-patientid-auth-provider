@@ -35,7 +35,7 @@
                 </div>
                 <div>
                     <a class="button ghost" href="{{ route('resend') }}">
-                        @lang('confirmation.no_sms')
+                        @lang('confirmation.no_code.' . $confirmationType)
                         <span aria-hidden="true">&gt;</span>
                     </a>
                 </div>
