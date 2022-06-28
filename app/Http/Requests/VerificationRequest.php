@@ -8,7 +8,7 @@ use App\Services\CodeGeneratorService;
 use Illuminate\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ConfirmationRequest extends FormRequest
+class VerificationRequest extends FormRequest
 {
     protected CodeGeneratorService $codeGeneratorService;
 

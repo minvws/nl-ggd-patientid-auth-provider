@@ -3,9 +3,9 @@
 @section('content')
     <section>
         <div>
-            <h1>@lang('resend.header.' . $confirmationType)</h1>
+            <h1>@lang('resend.header.' . $verificationType)</h1>
 
-            <p>@lang('resend.explanation.' . $confirmationType)</p>
+            <p>@lang('resend.explanation.' . $verificationType)</p>
 
             <p>@lang('resend.contact_ggd')</p>
 
@@ -15,7 +15,7 @@
                     <button type="submit">@lang('resend.button') <span aria-hidden="true">&gt;</span></button>
                 </div>
                 <div>
-                    <a class="button ghost" href="{{ route('confirm') }}">
+                    <a class="button ghost" href="{{ route('verify') }}">
                         <span aria-hidden="true">&lt;</span>
                         @lang('back')
                     </a>
