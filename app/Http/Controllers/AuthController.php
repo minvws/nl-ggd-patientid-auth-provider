@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Anonymizer;
-use App\Http\Requests\ConfirmationRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\VerificationRequest;
 use App\Services\CodeGeneratorService;
 use App\Services\EmailService;
 use App\Services\InfoRetrievalService;
@@ -63,9 +63,9 @@ class AuthController extends BaseController
             $request->parsedBirthdate(),
         );
 
-        // Try to retrieve user info and send confirmation code
+        // Try to retrieve user info and send verification code
         try {
-            $this->sendConfirmationCode($request, $hash);
+            $this->sendVerificationCode($request, $hash);
         } catch (ContactInfoNotFound $e) {
             $v = Validator::make([], []);
             $v->errors()->add('patient_id', $this->__('validation.unknown_patient_id'));
@@ -77,25 +77,25 @@ class AuthController extends BaseController
         // Store hash in session
         $request->session()->put('hash', $hash);
 
-        return Redirect::route('confirm');
+        return Redirect::route('verify');
     }
 
-    public function confirm(Request $request): RedirectResponse | ViewFactory | ViewContract
+    public function verify(Request $request): RedirectResponse | ViewFactory | ViewContract
     {
-        $confirmationType = $request->session()->get('confirmation_type');
-        $sentTo = $request->session()->get('confirmation_sent_to');
+        $verificationType = $request->session()->get('verification_type');
+        $sentTo = $request->session()->get('verification_sent_to');
 
-        if (!$confirmationType || !$sentTo) {
+        if (!$verificationType || !$sentTo) {
             return Redirect::route('start_auth');
         }
 
-        return view('confirm', [
-            'confirmationType' => $confirmationType,
+        return view('verify', [
+            'verificationType' => $verificationType,
             'sentTo' => $sentTo,
         ]);
     }
 
-    public function confirmationSubmit(ConfirmationRequest $request): RedirectResponse | ViewFactory | ViewContract
+    public function verifySubmit(VerificationRequest $request): RedirectResponse | ViewFactory | ViewContract
     {
         $hash = $request->session()->get('hash');
         if (!$hash) {
@@ -108,13 +108,13 @@ class AuthController extends BaseController
 
     public function resend(Request $request): RedirectResponse | ViewFactory | ViewContract
     {
-        $confirmationType = $request->session()->get('confirmation_type');
+        $verificationType = $request->session()->get('verification_type');
 
-        if (!$confirmationType) {
+        if (!$verificationType) {
             return Redirect::route('start_auth');
         }
 
-        return view('resend', ['confirmationType' => $confirmationType]);
+        return view('resend', ['verificationType' => $verificationType]);
     }
 
     public function resendSubmit(Request $request): RedirectResponse
@@ -125,9 +125,9 @@ class AuthController extends BaseController
             return Redirect::route('start_auth');
         }
 
-        // Send confirmation code
+        // Send verification code
         try {
-            $this->sendConfirmationCode($request, $hash);
+            $this->sendVerificationCode($request, $hash);
         } catch (ContactInfoNotFound $e) {
             $v = Validator::make([], []);
             $v->errors()->add('patient_id', $this->__('validation.unknown_patient_id'));
@@ -135,10 +135,10 @@ class AuthController extends BaseController
             return Redirect::route('start_auth')->withErrors($v);
         }
 
-        return Redirect::route('confirm');
+        return Redirect::route('verify');
     }
 
-    protected function sendConfirmationCode(Request $request, string $hash): void
+    protected function sendVerificationCode(Request $request, string $hash): void
     {
         // Fetch phone number and/or email address
         $contactInfo = $this->infoRetrievalService->retrieve($hash);
@@ -148,7 +148,7 @@ class AuthController extends BaseController
             throw new ContactInfoNotFound();
         }
 
-        // Generate confirmation code
+        // Generate verification code
         $code = $this->codeGeneratorService->generate($hash, false);
         if ($code->isExpired()) {
             // When expired (when we asked to resend the code again for instance), generate a new code
@@ -157,21 +157,21 @@ class AuthController extends BaseController
 
         // Sending to phone has priority, fallback to email if necessary
         if ($contactInfo->phoneNumber) {
-            $confirmationType = 'sms';
+            $verificationType = 'sms';
             $this->smsService->send($contactInfo->phoneNumber, 'template', ['code' => $code->code]);
 
             $anonymizer = new Anonymizer();
-            $request->session()->put('confirmation_sent_to', $anonymizer->phoneNumber($contactInfo->phoneNumber));
+            $request->session()->put('verification_sent_to', $anonymizer->phoneNumber($contactInfo->phoneNumber));
         } else {
-            $confirmationType = 'email';
+            $verificationType = 'email';
             $this->emailService->send($contactInfo->email, 'template', ['code' => $code->code]);
 
             $anonymizer = new Anonymizer();
-            $request->session()->put('confirmation_sent_to', $anonymizer->email($contactInfo->email));
+            $request->session()->put('verification_sent_to', $anonymizer->email($contactInfo->email));
         }
 
-        // Store confirmation type so the view can tell the user where to look for the code
-        $request->session()->put('confirmation_type', $confirmationType);
+        // Store verification type so the view can tell the user where to look for the code
+        $request->session()->put('verification_type', $verificationType);
     }
 
     protected function __(string $key): string
