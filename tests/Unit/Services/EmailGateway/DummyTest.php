@@ -13,6 +13,6 @@ class DummyTest extends TestCase
     {
         $gateway = new Dummy();
 
-        $this->assertTrue($gateway->send("test@example.org", "", []));
+        $this->assertTrue($gateway->send("test@example.org", "", ["code" => "123456"]));
     }
 }
