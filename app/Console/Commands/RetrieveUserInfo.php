@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Services\CodeGeneratorService;
-use App\Services\InfoRetrievalGateway\Yenlo;
+use App\Services\InfoRetrievalService;
 use App\Services\JwtService;
 use Illuminate\Console\Command;
 
@@ -13,7 +13,7 @@ class RetrieveUserInfo extends Command
 {
     protected JwtService $jwtService;
     protected CodeGeneratorService $codeGeneratorService;
-    protected Yenlo $yenlo;
+    protected InfoRetrievalService $infoRetrievalService;
 
     protected $signature = 'userinfo:retrieve {patient_id} {birthdate}';
     protected $description = 'Retrieve userinfo from Yenlo based on patient_id and birthdate';
@@ -21,13 +21,13 @@ class RetrieveUserInfo extends Command
     public function __construct(
         JwtService $jwtService,
         CodeGeneratorService $codeGeneratorService,
-        Yenlo $yenlo
+        InfoRetrievalService $infoRetrievalService
     ) {
         parent::__construct();
 
         $this->jwtService = $jwtService;
         $this->codeGeneratorService = $codeGeneratorService;
-        $this->yenlo = $yenlo;
+        $this->infoRetrievalService = $infoRetrievalService;
     }
 
     /**
@@ -43,7 +43,7 @@ class RetrieveUserInfo extends Command
             is_string($birthdate) ? $birthdate : "",
         );
 
-        $result = json_encode($this->yenlo->retrieve($hash), JSON_THROW_ON_ERROR);
+        $result = json_encode($this->infoRetrievalService->retrieve($hash), JSON_THROW_ON_ERROR);
 
         $this->line($result);
 

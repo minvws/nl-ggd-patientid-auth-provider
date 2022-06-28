@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Services\SmsGateway;
 
 use App\Services\SmsGateway\Dummy;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class DummyTest extends TestCase
 {
@@ -13,6 +13,6 @@ class DummyTest extends TestCase
     {
         $gateway = new Dummy();
 
-        $this->assertTrue($gateway->send("0600000000", "", []));
+        $this->assertTrue($gateway->send("0600000000", "", ["code" => "123456"]));
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Services\EmailGateway;
 
 use App\Services\EmailGateway\Dummy;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class DummyTest extends TestCase
 {
@@ -13,6 +13,6 @@ class DummyTest extends TestCase
     {
         $gateway = new Dummy();
 
-        $this->assertTrue($gateway->send("test@example.org", "", []));
+        $this->assertTrue($gateway->send("test@example.org", "", ["code" => "123456"]));
     }
 }
