@@ -16,7 +16,7 @@ class OidcProvider extends ServiceProvider
     {
         $this->app->singleton(OidcService::class, function () {
             return new OidcService(
-                new JsonClientResolver(base_path(config('oidc.client_config_path'))),
+                $this->app->get(JsonClientResolver::class),
                 new CacheStorage(),
                 new JwtService(
                     config('jwt.private_key_path'),
