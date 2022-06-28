@@ -11,6 +11,7 @@ use App\Services\InfoRetrievalGateway\Dummy as InfoRetrievalGatewayDummy;
 use App\Services\InfoRetrievalGateway\Yenlo;
 use App\Services\InfoRetrievalService;
 use App\Services\SmsGateway\MessageBird;
+use App\Services\SmsGateway\RateLimiter;
 use App\Services\SmsService;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,10 +21,13 @@ class GatewayProvider extends ServiceProvider
     {
         $this->app->singleton(SmsService::class, function () {
             return new SmsService(
-                new MessageBird(
-                    config('messagebird.api_key'),
-                    config('messagebird.sender'),
-                )
+                new RateLimiter(
+                    new MessageBird(
+                        config('messagebird.api_key'),
+                        config('messagebird.sender'),
+                    ),
+                    config('messagebird.ratelimit')
+                ),
             );
         });
 
