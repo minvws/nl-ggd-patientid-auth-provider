@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Authentication result - PAP demo client</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Authentication result</h1>
+      <noscript>
+        <p class="warning">
+          <strong>Warning: this demo client requires JavaScript.</strong>
+        </p>
+      </noscript>
+      <h2>Configuration</h2>
+      <table id="configuration">
+        <tr>
+          <th scope="col">Key</th>
+          <th scope="col">Value</th>
+        </tr>
+      </table>
+      <h2>Params</h2>
+      <table id="params">
+        <tr>
+          <th scope="col">Key</th>
+          <th scope="col">Value</th>
+        </tr>
+      </table>
+      <p id="state_result"></p>
+      <h2>Get <code>access_token</code></h2>
+      <p>Performs a <code>POST</code> request for <code id="url"></code></p>
+      <button id="fetch_token">Fetch token</button>
+      <div id="access_token_result" hidden>
+        <h3>Result</h3>
+        <p>Status: <code id="access_token_status"></code></p>
+        <pre id="access_token_body"></pre>
+      </div>
+    </main>
+  </body>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const data = readSessionData();
+
+    if (!data || !data.code_verifier) {
+      warnMissingSessionData();
+    } else {
+      // Update the tables with session data and params
+      updateTable(
+        document.getElementById("configuration"),
+        Object.entries(data)
+      );
+      updateTable(document.getElementById("params"), params.entries());
+      updateStateCheck(document.getElementById("state_result"), data, params);
+
+      // Construct and display the /oidc/accesstoken URL
+      const url = makeURL(data, params);
+      updateElementById("url", url);
+
+      // Perform the request when the button is pressed
+      document.getElementById("fetch_token")?.addEventListener("click", () => {
+        fetch(url, { method: "POST" })
+          .then(async (response) => {
+            const status = response.status;
+            let body = await response.text();
+            if (status === 200) {
+              body = JSON.stringify(JSON.parse(body), null, 2);
+            }
+            updateElementById("access_token_status", status);
+            updateElementById("access_token_body", body);
+            document
+              .getElementById("access_token_result")
+              ?.removeAttribute("hidden");
+          })
+          .catch(console.error);
+      });
+    }
+
+    function makeURL(data, params) {
+      const url = new URL(data.pap_base_uri);
+      url.pathname = "/oidc/accesstoken";
+      url.searchParams.set("grant_type", "authorization_code");
+      url.searchParams.set("client_id", data.client_id);
+      url.searchParams.set("redirect_uri", data.redirect_uri);
+      url.searchParams.set("code_verifier", data.code_verifier);
+      url.searchParams.set("code", params.get("code"));
+      return url;
+    }
+
+    function readSessionData() {
+      try {
+        return JSON.parse(
+          window.sessionStorage.getItem("pap_demo_client_data")
+        );
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function warnMissingSessionData() {
+      const warning = document.createElement("p");
+      warning.classList.add("warning");
+      warning.innerHTML =
+        'Warning: failed to read authorization request data from session storage. Please <a href="index.html">start again</a>.';
+      document.getElementById("configuration")?.replaceWith(warning);
+      document.querySelector("form")?.setAttribute("hidden", "");
+      document
+        .getElementById("access_token_result")
+        ?.setAttribute("hidden", "");
+    }
+
+    function updateTable(element, entries) {
+      if (!element) return;
+      const row = (key, value) => {
+        const element = document.createElement("tr");
+        element.innerHTML = `<td>${key}</td><td>${value}</td>`;
+        return element;
+      };
+      for (const [key, value] of entries) {
+        element.appendChild(row(key, value));
+      }
+    }
+
+    function updateStateCheck(element, data, params) {
+      if (!element) return;
+      if (data?.state === params.get("state")) {
+        element.innerHTML =
+          "The callback <code>state</code> matches request <code>state</code>.";
+      } else {
+        element.innerHTML =
+          "The callback <code>state</code> <strong>does not</strong> match request <code>state</code>.";
+        element.classList.add("warning");
+      }
+    }
+
+    function updateElementById(id, text) {
+      const element = document.getElementById(id);
+      if (element) element.innerText = text;
+    }
+  </script>
+</html>

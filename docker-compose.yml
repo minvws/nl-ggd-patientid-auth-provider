@@ -22,6 +22,18 @@ services:
       - './ssl/:/etc/apache2/ssl/'
       - '.:/var/www/html'
 
+  pap_demo_client:
+    build:
+      context: '.'
+      dockerfile: Dockerfile.pap-demo-client
+    hostname: pap-demo-client.localdev
+    ports:
+      - '${DEMO_CLIENT_PORT:-445}:443'
+    volumes:
+      - './demo-client:/usr/local/apache2/htdocs/'
+      - './ssl/pap-demo-client.localdev.crt:/usr/local/apache2/conf/server.crt'
+      - './ssl/pap-demo-client.localdev.key:/usr/local/apache2/conf/server.key'
+
   pap_db:
     container_name: pap_db
     environment:
