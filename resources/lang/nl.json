@@ -35,5 +35,6 @@
   "validation.required_patient_id": "Graag uw patiëntnummer invullen. U vindt dit nummer in uw afspraakbevestiging van de GGD.",
   "validation.required_date_of_birth": "Graag uw geboortedatum invullen.",
   "validation.invalid_code": "Geen geldige code. Vul uw 6-cijferige verificatiecode in.",
-  "validation.required_code": "Graag eerst uw 6-cijferige verificatiecode invullen."
+  "validation.required_code": "Graag eerst uw 6-cijferige verificatiecode invullen.",
+  "send failed": "Er is een fout opgetreden tijdens het verzenden van de vertificatiecode. Probeer opnieuw."
 }

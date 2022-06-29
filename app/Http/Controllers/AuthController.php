@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Anonymizer;
+use App\Exceptions\SendFailure;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\VerificationRequest;
 use App\Services\CodeGeneratorService;
@@ -66,6 +67,11 @@ class AuthController extends BaseController
         // Try to retrieve user info and send verification code
         try {
             $this->sendVerificationCode($request, $hash);
+        } catch (SendFailure $e) {
+            $v = Validator::make([], []);
+            $v->errors()->add('global', $this->__('send failed'));
+            $request->session()->put('_old_input', $request->all());
+            return Redirect::route('start_auth')->withErrors($v);
         } catch (ContactInfoNotFound $e) {
             $v = Validator::make([], []);
             $v->errors()->add('patient_id', $this->__('validation.unknown_patient_id'));
@@ -128,6 +134,11 @@ class AuthController extends BaseController
         // Send verification code
         try {
             $this->sendVerificationCode($request, $hash);
+        } catch (SendFailure $e) {
+            $v = Validator::make([], []);
+            $v->errors()->add('global', $this->__('send failed'));
+            $request->session()->put('_old_input', $request->all());
+            return Redirect::route('start_auth')->withErrors($v);
         } catch (ContactInfoNotFound $e) {
             $v = Validator::make([], []);
             $v->errors()->add('patient_id', $this->__('validation.unknown_patient_id'));
@@ -158,13 +169,19 @@ class AuthController extends BaseController
         // Sending to phone has priority, fallback to email if necessary
         if ($contactInfo->phoneNumber) {
             $verificationType = 'sms';
-            $this->smsService->send($contactInfo->phoneNumber, 'template', ['code' => $code->code]);
+            $result = $this->smsService->send($contactInfo->phoneNumber, 'template', ['code' => $code->code]);
+            if (! $result) {
+                throw new SendFailure();
+            }
 
             $anonymizer = new Anonymizer();
             $request->session()->put('verification_sent_to', $anonymizer->phoneNumber($contactInfo->phoneNumber));
         } else {
             $verificationType = 'email';
-            $this->emailService->send($contactInfo->email, 'template', ['code' => $code->code]);
+            $result = $this->emailService->send($contactInfo->email, 'template', ['code' => $code->code]);
+            if (! $result) {
+                throw new SendFailure();
+            }
 
             $anonymizer = new Anonymizer();
             $request->session()->put('verification_sent_to', $anonymizer->email($contactInfo->email));
