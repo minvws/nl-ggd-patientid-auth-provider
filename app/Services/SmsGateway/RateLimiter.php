@@ -19,12 +19,14 @@ class RateLimiter implements SmsGatewayInterface
 
     public function send(string $phoneNumber, string $template, array $vars): bool
     {
+        $result = true;
+
         return LaraLimiter::attempt(
             'send-message:' . $phoneNumber,
             $this->maxPerMinute,
-            function () use ($phoneNumber, $template, $vars) {
-                $this->provider->send($phoneNumber, $template, $vars);
+            function () use (&$result, $phoneNumber, $template, $vars) {
+                $result = $this->provider->send($phoneNumber, $template, $vars);
             }
-        );
+        ) && $result;
     }
 }

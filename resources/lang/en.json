@@ -35,5 +35,6 @@
   "validation.required_patient_id": "Please enter your patient number. You’ll find this in your appointment confirmation from the GGD.",
   "validation.required_date_of_birth": "Please enter your date of birth.",
   "validation.invalid_code": "Invalid code. Please enter your 6-digit verification code.",
-  "validation.required_code": "Please enter your 6-digit verification code first."
+  "validation.required_code": "Please enter your 6-digit verification code first.",
+  "send failed": "Sending of the confirmation code has failed. Please try again."
 }

@@ -8,6 +8,9 @@
 
             <form method="POST" action="{{ route('login.submit') }}">
                 @csrf
+                @if ($errors->has('global'))
+                    <p class="error" id="global_error">{{ $errors->first('global') }}</p>
+                @endif
 
                 <label for="patient_id">@lang('login.patientId')</label>
                 <input
