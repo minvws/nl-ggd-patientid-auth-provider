@@ -3,7 +3,7 @@
   "unauthenticated.explanation": "Uw verzoek om test- of vaccinatiegegevens op te halen bij de GGD GHOR, kan niet verwerkt worden.",
   "unauthenticated.try_again": "Ga a.u.b. terug naar de applicatie of website die u heeft doorgestuurd en probeer het opnieuw.",
   "login.header": "Vul uw patiëntnummer en geboortedatum in",
-  "login.instructions": "Uw test- of vaccinatiegegevens worden opgehaald bij de GGD GHOR.",
+  "login.instructions": "Log in met uw patiëntnummer om :client_name toegang te geven tot uw test- of vaccinatiegegevens.",
   "login.patientId": "Patientnummer",
   "login.patientId_explanation": "U vindt uw patiëntnummer in uw afspraakbevestiging van de GGD",
   "login.birthDate": "Geboortedatum",

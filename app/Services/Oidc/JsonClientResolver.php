@@ -17,7 +17,7 @@ class JsonClientResolver implements ClientResolverInterface
 
         $this->clients = [];
         foreach (json_decode((string)$content, true) as $clientId => $clientData) {
-            $this->clients[$clientId] = new Client($clientId, $clientData['redirect_uris'] ?? []);
+            $this->clients[$clientId] = new Client($clientId, $clientData['name'], $clientData['redirect_uris'] ?? []);
         }
     }
 

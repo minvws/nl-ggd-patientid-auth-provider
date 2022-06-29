@@ -53,7 +53,7 @@ class AuthController extends BaseController
 
     public function login(Request $request): ViewFactory | ViewContract
     {
-        return view('login');
+        return view('login')->with('client', $request->session()->get('client'));
     }
 
     public function loginSubmit(LoginRequest $request): RedirectResponse

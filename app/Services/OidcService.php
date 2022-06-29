@@ -39,10 +39,16 @@ class OidcService
         if (!array_key_exists('lang', $params)) {
             $params['lang'] = App::getLocale();
         }
+
+        // Store client object
+        $client = $this->clientResolver->resolve($params['client_id']);
+        $params['client'] = $client;
+
         $request->session()->flush();
         foreach ($params as $key => $value) {
             $request->session()->put($key, $value);
         }
+
 
         return Redirect::route('start_auth');
     }

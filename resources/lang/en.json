@@ -3,7 +3,7 @@
   "unauthenticated.explanation": "Your request to retrieve test or vaccination data from the GGD GHOR, can not be processed.",
   "unauthenticated.try_again": "Please go back to the application or website that redirected you and try again.",
   "login.header": "Enter your patient number and birth date",
-  "login.instructions": "Your test or vaccination data will be retrieved from the GGD GHOR.",
+  "login.instructions": "Log in with your patient number to grant :client_name access to your test or vaccination data.",
   "login.patientId": "Patient number",
   "login.patientId_explanation": "You can find your patient number in your GGD appointment confirmation",
   "login.birthDate": "Birth date",

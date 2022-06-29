@@ -1,11 +1,13 @@
 {
     "client-123": {
+        "name": "client A",
         "redirect_uris": [
             "https://loopback.dev/",
             "https://127.0.0.1/"
         ]
     },
     "client-456": {
+        "name": "client B",
         "redirect_uris": [
             "https://loopback.dev/"
         ]
