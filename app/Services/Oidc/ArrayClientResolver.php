@@ -15,7 +15,7 @@ class ArrayClientResolver implements ClientResolverInterface
     {
         $this->clients = [];
         foreach ($clientConfig as $clientId => $clientData) {
-            $this->clients[$clientId] = new Client($clientId, $clientData['redirect_uris'] ?? []);
+            $this->clients[$clientId] = new Client($clientId, $clientData['name'], $clientData['redirect_uris'] ?? []);
         }
     }
 

@@ -4,7 +4,7 @@
     <section>
         <div>
             <h1>@lang('login.header')</h1>
-            <p>@lang('login.instructions')</p>
+            <p>@lang('login.instructions', ['client_name' => $client->getName()])</p>
 
             <form method="POST" action="{{ route('login.submit') }}">
                 @csrf

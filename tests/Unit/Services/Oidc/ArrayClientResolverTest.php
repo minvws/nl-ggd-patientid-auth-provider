@@ -14,6 +14,7 @@ class ArrayClientResolverTest extends TestCase
     {
         $resolver = new ArrayClientResolver([
             'client_123' => [
+                'name' => 'client123',
                 'redirect_uris' => [
                     'https://foo',
                     'https://bar',
@@ -21,6 +22,7 @@ class ArrayClientResolverTest extends TestCase
                 ]
             ],
             'client_test' => [
+                'name' => 'clientest',
                 'redirect_uris' => [
                     'https://test.com',
                 ]
@@ -37,5 +39,6 @@ class ArrayClientResolverTest extends TestCase
         $client = $resolver->resolve('client_123');
         $this->assertCount(3, $client->getRedirectUris());
         $this->assertEquals('client_123', $client->getClientId());
+        $this->assertEquals('client123', $client->getName());
     }
 }

@@ -270,6 +270,7 @@ class OidcServiceTest extends TestCase
         $this->storageMock = Mockery::mock(StorageInterface::class);
         $this->clientResolver = new ArrayClientResolver([
             'client_123' => [
+                'name' => 'client123',
                 'redirect_uris' => [
                     'https://foo',
                     'https://bar',
@@ -277,6 +278,7 @@ class OidcServiceTest extends TestCase
                 ]
             ],
             'client_test' => [
+                'name' => 'clienttest',
                 'redirect_uris' => [
                     'https://test.com',
                 ]
