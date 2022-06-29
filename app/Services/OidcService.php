@@ -189,7 +189,7 @@ class OidcService
 
     protected function verifyCodeChallenge(string $challenge, string $verifier): bool
     {
-        return $challenge == rtrim(strtr(base64_encode($verifier), '+/', '-_'), '=');
+        return hash_equals($challenge, rtrim(strtr(base64_encode($verifier), '+/', '-_'), '='));
     }
 
     protected function generateAuthCode(): string
