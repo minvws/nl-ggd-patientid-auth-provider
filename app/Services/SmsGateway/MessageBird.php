@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\SmsGateway;
 
+use Illuminate\Support\Facades\Log;
 use MessageBird\Client;
 use MessageBird\Objects\Message;
 
@@ -30,6 +31,7 @@ class MessageBird implements SmsGatewayInterface
         try {
             $client->messages->create($msg);
         } catch (\Throwable $e) {
+            Log::error("messagebird::send: error: " . $e->getMessage());
             return false;
         }
 

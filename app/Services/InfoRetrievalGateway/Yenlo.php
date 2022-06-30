@@ -73,8 +73,7 @@ class Yenlo implements InfoRetrievalGateway
                 $userInfo->withPhoneNumber($data['phoneNumber']);
             }
         } catch (\Throwable $e) {
-            // error
-            Log::error("Error while receiving data from yenlo: " . $e->getMessage());
+            Log::error("yenlo::retrieve: error while receiving data: " . $e->getMessage());
         }
 
         return $userInfo;
@@ -111,6 +110,7 @@ class Yenlo implements InfoRetrievalGateway
             'access_token' => 'required|string',
         ]);
         if ($validator->fails()) {
+            Log::error("yenlo::fetchAccessToken: error while validating body: " . json_encode($body));
             throw new Exception("Error parsing response from Yenlo token request");
         }
 
