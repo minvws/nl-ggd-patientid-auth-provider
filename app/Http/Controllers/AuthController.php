@@ -20,6 +20,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\View\Factory as ViewFactory;
@@ -68,11 +69,15 @@ class AuthController extends BaseController
         try {
             $this->sendVerificationCode($request, $hash);
         } catch (SendFailure $e) {
+            Log::error("authcontroller: send failure: " . $e->getMessage());
+
             $v = Validator::make([], []);
             $v->errors()->add('global', $this->__('send failed'));
             $request->session()->put('_old_input', $request->all());
             return Redirect::route('start_auth')->withErrors($v);
         } catch (ContactInfoNotFound $e) {
+            Log::warning("authcontroller: contact not found: " . $e->getMessage());
+
             $v = Validator::make([], []);
             $v->errors()->add('patient_id', $this->__('validation.unknown_patient_id'));
             $v->errors()->add('birthdate', $this->__('validation.unknown_date_of_birth'));
@@ -135,11 +140,15 @@ class AuthController extends BaseController
         try {
             $this->sendVerificationCode($request, $hash);
         } catch (SendFailure $e) {
+            Log::error("authcontroller: send failure: " . $e->getMessage());
+
             $v = Validator::make([], []);
             $v->errors()->add('global', $this->__('send failed'));
             $request->session()->put('_old_input', $request->all());
             return Redirect::route('start_auth')->withErrors($v);
         } catch (ContactInfoNotFound $e) {
+            Log::warning("authcontroller: contact not found: " . $e->getMessage());
+
             $v = Validator::make([], []);
             $v->errors()->add('patient_id', $this->__('validation.unknown_patient_id'));
             $v->errors()->add('birthdate', $this->__('validation.unknown_date_of_birth'));
@@ -156,6 +165,8 @@ class AuthController extends BaseController
 
         // If not contact info is found, redirect back to login form
         if ($contactInfo->isEmpty()) {
+            Log::error("sendVerificationCode: empty contact info for " . $hash);
+
             throw new ContactInfoNotFound();
         }
 
@@ -171,6 +182,7 @@ class AuthController extends BaseController
             $verificationType = 'sms';
             $result = $this->smsService->send($contactInfo->phoneNumber, 'template', ['code' => $code->code]);
             if (! $result) {
+                Log::error("sendVerificationCode: send failure");
                 throw new SendFailure();
             }
 
@@ -180,6 +192,7 @@ class AuthController extends BaseController
             $verificationType = 'email';
             $result = $this->emailService->send($contactInfo->email, 'template', ['code' => $code->code]);
             if (! $result) {
+                Log::error("sendVerificationCode: send failure");
                 throw new SendFailure();
             }
 
