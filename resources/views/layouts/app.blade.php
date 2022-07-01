@@ -16,6 +16,7 @@
         <link rel="mask-icon" href="/mask-icon.svg" color="#000099">
         <link rel="shortcut icon" href="/favicon.ico">
         <meta name="theme-color" content="#ffffff">
+        <script defer src="/js/accordion.min.js"></script>
     </head>
     <body>
         <x-header/>
