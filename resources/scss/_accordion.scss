@@ -1,0 +1,64 @@
+.accordion {
+  display: flex;
+  flex-direction: column;
+  margin: 0 -2rem;
+  width: calc(100% + 4rem);
+  gap: 2px;
+
+  > div {
+    width: calc(100% - 4rem);
+    padding: 0 2rem;
+    background-color: #f2f2fa;
+
+    > button {
+      margin: 0 -2rem;
+      width: calc(100% + 4rem);
+      padding: 2rem;
+      color: var(--application-base-text-color);
+      background-color: transparent;
+      font-weight: 600;
+
+      &:focus {
+        outline-offset: 0;
+      }
+    }
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem 0 2rem 0;
+    }
+  }
+}
+
+.js-accordion-loaded {
+  .accordion {
+    button {
+      &:after {
+        content: "";
+        background-size: 12px 7px;
+        width: 12px;
+        height: 7px;
+        margin-left: auto;
+        color: #000099;
+      }
+
+      &[aria-expanded="false"] {
+        &:after {
+          background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCAxLjQ4YzAgLjI1OC4wOTIuNDg0LjI3Ni42NjlsNC45NjIgNS4wMkExIDEgMCAwIDAgNiA3LjUwNGMuMjkzIDAgLjUzNi0uMTA5Ljc2Mi0uMzM1bDQuOTYyLTUuMDJhLjkwMy45MDMgMCAwIDAgLjI3Ni0uNjcuOTY2Ljk2NiAwIDAgMC0uOTYyLS45NzkuOTkxLjk5MSAwIDAgMC0uNzAzLjMxTDYgNS4yMDMgMS42NjUuODFBLjk5MS45OTEgMCAwIDAgLjk2Mi41Ljk2Ni45NjYgMCAwIDAgMCAxLjQ4WiIgZmlsbD0iY3VycmVudENvbG9yIi8+PC9zdmc+Cg==");
+        }
+
+        & + div {
+          display: none;
+        }
+      }
+
+      &[aria-expanded="true"] {
+        &:after {
+          background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCA2LjUyNWMwLS4yNi4wOTItLjQ4NS4yNzYtLjY3TDUuMjM4LjgzNkExIDEgMCAwIDEgNiAuNWMuMjkzIDAgLjUzNi4xMDkuNzYyLjMzNWw0Ljk2MiA1LjAyYS45MDMuOTAzIDAgMCAxIC4yNzYuNjdjMCAuNTQ0LS40MjcuOTgtLjk2Mi45OGEuOTkxLjk5MSAwIDAgMS0uNzAzLS4zMUw2IDIuOCAxLjY2NSA3LjE5NWEuOTkxLjk5MSAwIDAgMS0uNzAzLjMxLjk2Ni45NjYgMCAwIDEtLjk2Mi0uOThaIiBmaWxsPSJjdXJyZW50Q29sb3IiLz48L3N2Zz4K");
+        }
+      }
+    }
+  }
+}

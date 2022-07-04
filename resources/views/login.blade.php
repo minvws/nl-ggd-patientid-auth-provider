@@ -52,6 +52,24 @@
                     <button type="submit">@lang("continue") <span aria-hidden="true">&gt;</span></button>
                 </div>
             </form>
+            <div class="accordion">
+                <div>
+                    <button id="faq-no-patient-number" aria-expanded="false">
+                        @lang('faq.no-patient-number.question')
+                    </button>
+                    <div aria-labelledby="faq-no-patient-number">
+                        {!! __('faq.no-patient-number.answer') !!}
+                    </div>
+                </div>
+                <div>
+                    <button id="faq-birthdate-unknown" aria-expanded="false">
+                        @lang('faq.birthdate-unknown.question')
+                    </button>
+                    <div aria-labelledby="faq-birthdate-unknown">
+                        {!! __('faq.birthdate-unknown.answer') !!}
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 @endsection
