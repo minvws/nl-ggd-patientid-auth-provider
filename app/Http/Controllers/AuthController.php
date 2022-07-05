@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Contracts\View\View as ViewContract;
+use OpenSSLAsymmetricKey;
 
 class AuthController extends BaseController
 {
@@ -213,9 +214,12 @@ class AuthController extends BaseController
         if (Cache::has('jwks')) {
             return response()->json(Cache::get('jwks'));
         }
-
+        /** @var string $certificate */
         $certificate = file_get_contents(base_path(config('jwt.certificate_path')));
-        $keyInfo = openssl_pkey_get_details(openssl_pkey_get_public($certificate));
+        /** @var OpenSSLAsymmetricKey $publicKey */
+        $publicKey = openssl_pkey_get_public($certificate);
+        /** @var array $keyInfo */
+        $keyInfo = openssl_pkey_get_details($publicKey);
 
         $jsonData = [
             'keys' => [
