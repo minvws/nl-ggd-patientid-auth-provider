@@ -177,9 +177,9 @@ class AuthController extends BaseController
             'frontchannel_logout_session_supported' => false,
             'backchannel_logout_supported' => false,
             'backchannel_logout_session_supported' => false,
-            'issuer' => route('/'),
-            'authorization_endpoint' => route('/authorize'),
-            'token_endpoint' => route('/accesstoken'),
+            'issuer' => url('/'),
+            'authorization_endpoint' => url('/authorize'),
+            'token_endpoint' => url('/accesstoken'),
             'scopes_supported' => [
                 'openid',
             ],
