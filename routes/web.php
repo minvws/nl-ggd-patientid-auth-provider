@@ -21,6 +21,8 @@ Route::get('/', function () {
     return 'GGD PatientId Auth Provider';
 });
 
+Route::get('.well-known/openid-configuration', [AuthController::class, 'configuration']);
+
 Route::middleware('oidc.session')->group(function () {
     Route::get('/login', [AuthController::class, 'login'])->name('start_auth');
     Route::get('/verify', [AuthController::class, 'verify'])->name('verify');

@@ -17,6 +17,7 @@ use App\Exceptions\ContactInfoNotFound;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
@@ -156,6 +157,45 @@ class AuthController extends BaseController
         }
 
         return Redirect::route('verify');
+    }
+
+    public function configuration(): JsonResponse
+    {
+        return response()->json([
+            'version' => '3.0',
+            'token_endpoint_auth_methods_supported' => [
+                'none',
+            ],
+            'claims_parameter_supported' => true,
+            'request_parameter_supported' => false,
+            'request_uri_parameter_supported' => true,
+            'require_request_uri_registration' => false,
+            'grant_types_supported' => [
+                'authorization_code',
+            ],
+            'frontchannel_logout_supported' => false,
+            'frontchannel_logout_session_supported' => false,
+            'backchannel_logout_supported' => false,
+            'backchannel_logout_session_supported' => false,
+            'issuer' => route('/'),
+            'authorization_endpoint' => route('/authorize'),
+            'token_endpoint' => route('/accesstoken'),
+            'scopes_supported' => [
+                'openid',
+            ],
+            'response_types_supported' => [
+                'code',
+            ],
+            'response_modes_supported' => [
+                'query',
+            ],
+            'subject_types_supported' => [
+                'pairwise',
+            ],
+            'id_token_signing_alg_values_supported' => [
+                'RS256',
+            ],
+        ]);
     }
 
     protected function sendVerificationCode(Request $request, string $hash): void
