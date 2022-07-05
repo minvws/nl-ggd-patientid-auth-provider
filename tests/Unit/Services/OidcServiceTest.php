@@ -286,6 +286,7 @@ class OidcServiceTest extends TestCase
         ]);
         $this->jwtService = new JwtService(
             config('jwt.private_key_path'),
+            config('jwt.certificate_path'),
             config('jwt.iss'),
             config('jwt.aud'),
             config('jwt.exp'),

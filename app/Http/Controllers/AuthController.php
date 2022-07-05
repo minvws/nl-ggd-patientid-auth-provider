@@ -214,13 +214,13 @@ class AuthController extends BaseController
             return response()->json(Cache::get('jwks'));
         }
 
-        $keyInfo = openssl_pkey_get_details(openssl_pkey_get_public(
-            file_get_contents(base_path(config('jwt.certificate_path')))
-        ));
+        $certificate = file_get_contents(base_path(config('jwt.certificate_path')));
+        $keyInfo = openssl_pkey_get_details(openssl_pkey_get_public($certificate));
 
         $jsonData = [
             'keys' => [
                 [
+                    "kid" => hash('sha256', $certificate),
                     'kty' => 'RSA',
                     'n' => rtrim(str_replace(['+', '/'], ['-', '_'], base64_encode($keyInfo['rsa']['n'])), '='),
                     'e' => rtrim(str_replace(['+', '/'], ['-', '_'], base64_encode($keyInfo['rsa']['e'])), '='),

@@ -10,13 +10,20 @@ use Firebase\JWT\JWT;
 class JwtService
 {
     protected string $privateKey;
+    protected string $certificate;
     protected string $iss;
     protected string $aud;
     protected int $expiryTime;
 
-    public function __construct(string $privateKeyPath, string $iss, string $aud, int $expiryTime)
-    {
+    public function __construct(
+        string $privateKeyPath,
+        string $certificatePath,
+        string $iss,
+        string $aud,
+        int $expiryTime
+    ) {
         $this->privateKey = (string)file_get_contents(base_path($privateKeyPath));
+        $this->certificate = (string)file_get_contents(base_path($certificatePath));
         $this->iss = $iss;
         $this->aud = $aud;
         $this->expiryTime = $expiryTime;
@@ -27,6 +34,7 @@ class JwtService
         $now = Carbon::now();
 
         $payload = array(
+            "kid" => hash('sha256', $this->certificate),
             "iss" => $this->iss,
             "aud" => $this->aud,
             "iat" => $now->getTimestamp(),
