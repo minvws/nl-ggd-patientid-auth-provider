@@ -215,7 +215,7 @@ class AuthController extends BaseController
         }
 
         $keyInfo = openssl_pkey_get_details(openssl_pkey_get_public(
-            file_get_contents(base_path(config('jwks.certificate_path')))
+            file_get_contents(base_path(config('jwt.certificate_path')))
         ));
 
         $jsonData = [
