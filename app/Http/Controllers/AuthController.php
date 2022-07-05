@@ -21,6 +21,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
@@ -161,7 +162,11 @@ class AuthController extends BaseController
 
     public function configuration(): JsonResponse
     {
-        return response()->json([
+        if (Cache::has('configuration')) {
+            return response()->json(Cache::get('configuration'));
+        }
+
+        $jsonData = [
             'version' => '3.0',
             'token_endpoint_auth_methods_supported' => [
                 'none',
@@ -180,6 +185,7 @@ class AuthController extends BaseController
             'issuer' => url('/'),
             'authorization_endpoint' => url('/authorize'),
             'token_endpoint' => url('/accesstoken'),
+            'jwks_uri' => url('/.well-known/jwks.json'),
             'scopes_supported' => [
                 'openid',
             ],
@@ -195,7 +201,36 @@ class AuthController extends BaseController
             'id_token_signing_alg_values_supported' => [
                 'RS256',
             ],
-        ]);
+        ];
+
+        Cache::put('configuration', $jsonData, now()->addMinutes(5));
+
+        return response()->json($jsonData);
+    }
+
+    public function jwks(): JsonResponse
+    {
+        if (Cache::has('jwks')) {
+            return response()->json(Cache::get('jwks'));
+        }
+
+        $keyInfo = openssl_pkey_get_details(openssl_pkey_get_public(
+            file_get_contents(base_path(config('jwks.certificate_path')))
+        ));
+
+        $jsonData = [
+            'keys' => [
+                [
+                    'kty' => 'RSA',
+                    'n' => rtrim(str_replace(['+', '/'], ['-', '_'], base64_encode($keyInfo['rsa']['n'])), '='),
+                    'e' => rtrim(str_replace(['+', '/'], ['-', '_'], base64_encode($keyInfo['rsa']['e'])), '='),
+                ],
+            ],
+        ];
+
+        Cache::put('jwks', $jsonData, now()->addMinutes(5));
+
+        return response()->json($jsonData);
     }
 
     protected function sendVerificationCode(Request $request, string $hash): void
