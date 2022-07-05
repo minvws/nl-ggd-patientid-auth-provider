@@ -24,11 +24,7 @@ class Dummy implements InfoRetrievalGateway
 
     public function retrieve(string $userHash): UserInfo
     {
-        if (! isset($this->dummyData[$userHash])) {
-            return new UserInfo();
-        }
-
-        return $this->dummyData[$userHash];
+        return $this->dummyData[$userHash] ?? new UserInfo();
     }
 
     protected function createHash(string $patientId, string $birthDate): string
