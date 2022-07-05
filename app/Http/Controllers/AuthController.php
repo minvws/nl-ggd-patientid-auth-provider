@@ -183,8 +183,8 @@ class AuthController extends BaseController
             'backchannel_logout_supported' => false,
             'backchannel_logout_session_supported' => false,
             'issuer' => url('/'),
-            'authorization_endpoint' => url('/authorize'),
-            'token_endpoint' => url('/accesstoken'),
+            'authorization_endpoint' => url('/oidc/authorize'),
+            'token_endpoint' => url('/oidc/accesstoken'),
             'jwks_uri' => url('/.well-known/jwks.json'),
             'scopes_supported' => [
                 'openid',
