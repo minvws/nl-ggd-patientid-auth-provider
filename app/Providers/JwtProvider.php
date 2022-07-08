@@ -14,6 +14,7 @@ class JwtProvider extends ServiceProvider
         $this->app->singleton(JwtService::class, function () {
             return new JwtService(
                 config('jwt.private_key_path'),
+                config('jwt.certificate_path'),
                 config('jwt.iss'),
                 config('jwt.aud'),
                 (int)config('jwt.exp'),

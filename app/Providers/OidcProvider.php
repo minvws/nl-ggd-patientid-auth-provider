@@ -20,6 +20,7 @@ class OidcProvider extends ServiceProvider
                 new CacheStorage(),
                 new JwtService(
                     config('jwt.private_key_path'),
+                    config('jwt.certificate_path'),
                     config('jwt.iss'),
                     config('jwt.aud'),
                     (int)config('jwt.exp'),
