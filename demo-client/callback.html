@@ -111,14 +111,19 @@
 
     function updateTable(element, entries) {
       if (!element) return;
-      const row = (key, value) => {
-        const element = document.createElement("tr");
-        element.innerHTML = `<td>${key}</td><td>${value}</td>`;
-        return element;
-      };
       for (const [key, value] of entries) {
         element.appendChild(row(key, value));
       }
+    }
+
+    function row(...cells) {
+      const row = document.createElement("tr");
+      for (const text of cells) {
+        const cell = document.createElement("td");
+        cell.innerText = text;
+        row.appendChild(cell);
+      }
+      return row;
     }
 
     function updateStateCheck(element, data, params) {
