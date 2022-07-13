@@ -1,4 +1,5 @@
-/node_modules
+clients.json
+node_modules/
 /public/js
 /public/css
 /public/hot
@@ -11,8 +12,7 @@
 Homestead.json
 Homestead.yaml
 npm-debug.log
-yarn-error.log
+/*.log
 /.idea
 /.vscode
-clients.json
 /tmp
