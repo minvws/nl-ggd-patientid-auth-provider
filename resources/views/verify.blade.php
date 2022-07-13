@@ -15,7 +15,7 @@
                     name="code"
                     type="number"
                     inputmode="numeric"
-                    pattern="[0-9]{1-8}"
+                    pattern="[0-9]{6}"
                     autocomplete="off"
                     required
                     placeholder="123456"
