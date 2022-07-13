@@ -3,16 +3,23 @@
   "name": "ggd-patientid-auth-provider",
   "license": "EUPL-1.2",
   "scripts": {
-    "build": "sass --no-source-map resources/scss/app.scss | postcss -o public/css/app.css",
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "sass --load-path=node_modules/ --no-source-map resources/scss/main.scss | postcss -o public/css/main.css",
+    "build:js": "esbuild resources/js/main.js --bundle --target=es6 --outfile=public/js/main.js",
+    "dev:css": "sass --load-path=node_modules/ --no-source-map resources/scss/main.scss:public/css/main.css",
     "lint": "prettier --check .",
     "format": "prettier --write ."
   },
   "engines": {
     "node": ">=16"
   },
+  "dependencies": {
+    "@minvws/manon": "^1.0.0"
+  },
   "devDependencies": {
     "autoprefixer": "^10.4.7",
     "cssnano": "^5.1.8",
+    "esbuild": "^0.14.49",
     "postcss": "^8.4.13",
     "postcss-cli": "^9.1.0",
     "postcss-custom-properties": "^12.1.7",

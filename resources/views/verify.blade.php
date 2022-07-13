@@ -9,26 +9,28 @@
 
             <form method="POST" action="{{ route('verify.submit') }}">
                 @csrf
-                <label for="code">@lang('verify.code')</label>
-                <input
-                    id="code"
-                    name="code"
-                    type="number"
-                    inputmode="numeric"
-                    pattern="[0-9]{1-8}"
-                    autocomplete="off"
-                    required
-                    placeholder="123456"
-                    aria-describedby="code_explanation"
-                    {{ $errors->has('code')
-                        ? 'aria-invalid=true aria-errormessage=code_error'
+
+                <div>
+                    <label for="code">@lang('verify.code')</label>
+                    <input
+                        id="code"
+                        name="code"
+                        inputmode="numeric"
+                        pattern="[0-9]{1-8}"
+                        autocomplete="off"
+                        required
+                        placeholder="123456"
+                        aria-describedby="code_explanation"
+                        {{ $errors->has('code')
+                            ? 'aria-invalid=true aria-errormessage=code_error'
                         : '' }}
-                >
-                @if ($errors->has('code'))
-                    <p class="error" id="code_error">{{ $errors->first('code') }}</p>
-                @else
-                    <p class="explanation" id="code_explanation">@lang('verify.code_explanation')</p>
-                @endif
+                        >
+                        @if ($errors->has('code'))
+                            <p class="error" id="code_error">{{ $errors->first('code') }}</p>
+                        @else
+                            <p class="explanation" id="code_explanation">@lang('verify.code_explanation')</p>
+                        @endif
+                </div>
 
                 <div>
                     <button type="submit">@lang("verify.retrieve_data") <span aria-hidden="true">&gt;</span></button>

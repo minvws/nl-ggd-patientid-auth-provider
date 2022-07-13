@@ -1,0 +1,12 @@
+$breakpoint: 34rem !default;
+
+body > footer > div {
+  p {
+    color: #fff;
+  }
+
+  @media (min-width: $breakpoint) {
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+}
