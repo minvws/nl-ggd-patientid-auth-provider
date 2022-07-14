@@ -1,0 +1,23 @@
+.language {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  a {
+    font-size: var(--headings-h2-font-size);
+    font-weight: var(--headings-h2-font-weight);
+    text-decoration: none;
+    word-break: normal;
+    padding: 0.5rem;
+    margin: -0.5rem;
+
+    &[aria-current="page"],
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &:focus {
+      outline-offset: 0;
+    }
+  }
+}
