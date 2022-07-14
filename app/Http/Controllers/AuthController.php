@@ -120,7 +120,10 @@ class AuthController extends BaseController
             return Redirect::route('start_auth');
         }
 
-        return view('resend', ['verificationType' => $verificationType]);
+        $hash = $request->session()->get('hash');
+        $contactInfo = $this->infoRetrievalService->retrieve($hash);
+
+        return view('resend', ['verificationType' => $verificationType, 'contact' => $contactInfo]);
     }
 
     public function resendSubmit(Request $request): RedirectResponse
@@ -133,7 +136,9 @@ class AuthController extends BaseController
 
         // Send verification code
         try {
-            $this->sendVerificationCode($request, $hash);
+            $method = strval($request->request->get('method'));
+
+            $this->sendVerificationCode($request, $hash, $method);
         } catch (SendFailure $e) {
             $v = Validator::make([], []);
             $v->errors()->add('global', $this->__('send failed'));
@@ -149,7 +154,7 @@ class AuthController extends BaseController
         return Redirect::route('verify');
     }
 
-    protected function sendVerificationCode(Request $request, string $hash): void
+    protected function sendVerificationCode(Request $request, string $hash, string $method = ""): void
     {
         // Fetch phone number and/or email address
         $contactInfo = $this->infoRetrievalService->retrieve($hash);
@@ -167,7 +172,7 @@ class AuthController extends BaseController
         }
 
         // Sending to phone has priority, fallback to email if necessary
-        if ($contactInfo->phoneNumber) {
+        if ($contactInfo->phoneNumber && ($method == "phone" || $method == "")) {
             $verificationType = 'sms';
             $result = $this->smsService->send($contactInfo->phoneNumber, 'template', ['code' => $code->code]);
             if (! $result) {
@@ -176,7 +181,7 @@ class AuthController extends BaseController
 
             $anonymizer = new Anonymizer();
             $request->session()->put('verification_sent_to', $anonymizer->phoneNumber($contactInfo->phoneNumber));
-        } else {
+        } elseif ($contactInfo->email && ($method == "email" || $method == "")) {
             $verificationType = 'email';
             $result = $this->emailService->send($contactInfo->email, 'template', ['code' => $code->code]);
             if (! $result) {

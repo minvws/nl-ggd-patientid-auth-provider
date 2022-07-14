@@ -9,10 +9,21 @@
 
             <p>@lang('resend.contact_ggd')</p>
 
-            <form method="POST" action="{{ route('resend.submit') }}">
-                @csrf
                 <div>
-                    <button type="submit">@lang('resend.button') <span aria-hidden="true">&gt;</span></button>
+                    @if ($contact->phoneNumber)
+                    <form method="POST" action="{{ route('resend.submit') }}">
+                        @csrf
+                        <input type="hidden" name="method" value="phone">
+                        <button type="submit">@lang('resend.sms.button') <span aria-hidden="true">&gt;</span></button>
+                    </form>
+                    @endif
+                    @if ($contact->email)
+                    <form method="POST" action="{{ route('resend.submit') }}">
+                        @csrf
+                        <input type="hidden" name="method" value="email">
+                        <button type="submit">@lang('resend.email.button') <span aria-hidden="true">&gt;</span></button>
+                    </form>
+                    @endif
                 </div>
                 <div>
                     <a class="button ghost" href="{{ route('verify') }}">
