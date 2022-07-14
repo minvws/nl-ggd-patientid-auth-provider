@@ -27,6 +27,7 @@
   "footer.see": "See",
   "continue": "Continue",
   "back": "Back",
+  "cancel": "Cancel",
   ":code is your verification code": ":code is your verification code",
   "validation.invalid_patient_id": "Invalid patient number. You’ll find this number in your appointment confirmation from the GGD.",
   "validation.invalid_date_of_birth": "Invalid date of birth. Please enter your date of birth as it is shown on your passport or identity card.",

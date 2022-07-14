@@ -54,11 +54,15 @@ Param|Value
 
 All params except `lang` are required.
 
-If the authentication flow is completed successfully, the user is redirected to `{redirect_uri}?state={state}&code={code}` with a `code` that can be exchanged for an accesstoken via `/oidc/accesstoken`.
+If the authentication flow is completed **successfully**, the user is redirected to `{redirect_uri}?state={state}&code={code}` with a `code` that can be exchanged for an accesstoken via `/oidc/accesstoken`.
+
+If the authentication flow is **cancelled** by the user, the user is redirected to `{redirect_uri}?state={state}&error=cancelled`.
+
+If the authentication request is invalid, the user is shown an error message instructing them to go back to the application or website that redirected them and to try again.
 
 ## `/oidc/accesstoken`
 
-After the user is redirected back, the client app can exchange the provided `code` for an access token by performing a `POST` request to `/oidc/accesstoken` with the following x-www-form-urlencoded params:
+After the user is successfully authenticated and redirected back, the client app can exchange the provided `code` for an access token by performing a `POST` request to `/oidc/accesstoken` with the following x-www-form-urlencoded params:
 
 Param|Value
 --|--
