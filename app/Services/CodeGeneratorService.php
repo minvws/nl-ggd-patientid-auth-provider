@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Models\Code;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class CodeGeneratorService
 {
@@ -46,10 +47,12 @@ class CodeGeneratorService
     {
         $record = Code::whereHash($hash)->first();
         if (! $record) {
+            Log::warning("validate: cannot find record for given hash");
             return false;
         }
 
         if ($record->code != $code) {
+            Log::warning("validate: code is not valid for given hash");
             return false;
         }
 

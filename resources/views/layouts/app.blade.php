@@ -10,12 +10,13 @@
         @else
         <title>{{ config('app.name', '') }}</title>
         @endif
-        <link rel="stylesheet" href="/css/app.css">
+        <link rel="stylesheet" href="/css/main.css">
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
         <link rel="mask-icon" href="/mask-icon.svg" color="#000099">
         <link rel="shortcut icon" href="/favicon.ico">
         <meta name="theme-color" content="#ffffff">
+        <script defer src="/js/main.js"></script>
     </head>
     <body>
         <x-header/>

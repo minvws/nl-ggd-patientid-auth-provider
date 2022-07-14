@@ -29,6 +29,7 @@ class CmsService
         $tmpFileSignature = tmpfile();
 
         if (!$tmpFilePayload || !$tmpFileSignature) {
+            Log::warning("verify: cannot create temp file on disk");
             throw new CmsValidationException('Cannot create temp file on disk');
         }
 
@@ -49,21 +50,21 @@ class CmsService
             '-purpose', 'any'
         ];
 
-        $process = new Process($args);
-
         try {
+            $process = new Process($args);
             $process->run();
-        } catch (Exception $exception) {
-            Log::error((string)$exception);
+        } catch (Exception $e) {
+            Log::error("verify: openssl process: " . $e->getMessage());
             throw new CmsValidationException('Signature invalid');
         }
 
         $errOutput = $process->getErrorOutput();
         if ($errOutput !== "") {
-            Log::info($errOutput);
+            Log::info("verify: openssl error output: " . $errOutput);
         }
 
         if ($process->getExitCode() !== 0) {
+            Log::error("verify: openssl exit status: " . $process->getExitCode());
             throw new CmsValidationException('Signature does not match payload');
         }
     }

@@ -1,0 +1,15 @@
+$breakpoint: 34rem !default;
+
+body > main > section {
+  flex-grow: 1;
+
+  > div {
+    flex-grow: 1;
+    background: #fff;
+
+    @media (min-width: $breakpoint) {
+      padding-right: 2rem;
+      padding-left: 2rem;
+    }
+  }
+}

@@ -21,8 +21,11 @@ class LoginRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'patient_id' => $this->__('validation.invalid_patient_id'),
-            'birthdate' => $this->__('validation.invalid_date_of_birth'),
+            'patient_id.required' => $this->__('validation.invalid_patient_id'),
+            'patient_id.integer' => $this->__('validation.invalid_patient_id'),
+            'patient_id.digits_between' => $this->__('validation.invalid_patient_id'),
+            'birthdate.required' => $this->__('validation.invalid_date_of_birth'),
+            'birthdate.string' => $this->__('validation.invalid_date_of_birth'),
         ];
     }
 

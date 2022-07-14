@@ -17,13 +17,17 @@ use App\Exceptions\ContactInfoNotFound;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Contracts\View\View as ViewContract;
+use OpenSSLAsymmetricKey;
 
 class AuthController extends BaseController
 {
@@ -53,7 +57,16 @@ class AuthController extends BaseController
 
     public function login(Request $request): ViewFactory | ViewContract
     {
-        return view('login')->with('client', $request->session()->get('client'));
+        $qs = http_build_query([
+            'state' => $request->session()->get('state'),
+            'error' => 'cancelled'
+        ]);
+        $cancel_uri = $request->session()->get('redirect_uri') . '?' . $qs;
+
+        return view('login', [
+            'client_name' => $request->session()->get('client')->getName(),
+            'cancel_uri' => $cancel_uri
+        ]);
     }
 
     public function loginSubmit(LoginRequest $request): RedirectResponse
@@ -68,11 +81,15 @@ class AuthController extends BaseController
         try {
             $this->sendVerificationCode($request, $hash);
         } catch (SendFailure $e) {
+            Log::error("authcontroller: send failure: " . $e->getMessage());
+
             $v = Validator::make([], []);
             $v->errors()->add('global', $this->__('send failed'));
             $request->session()->put('_old_input', $request->all());
             return Redirect::route('start_auth')->withErrors($v);
         } catch (ContactInfoNotFound $e) {
+            Log::warning("authcontroller: contact not found: " . $e->getMessage());
+
             $v = Validator::make([], []);
             $v->errors()->add('patient_id', $this->__('validation.unknown_patient_id'));
             $v->errors()->add('birthdate', $this->__('validation.unknown_date_of_birth'));
@@ -140,11 +157,15 @@ class AuthController extends BaseController
 
             $this->sendVerificationCode($request, $hash, $method);
         } catch (SendFailure $e) {
+            Log::error("authcontroller: send failure: " . $e->getMessage());
+
             $v = Validator::make([], []);
             $v->errors()->add('global', $this->__('send failed'));
             $request->session()->put('_old_input', $request->all());
             return Redirect::route('start_auth')->withErrors($v);
         } catch (ContactInfoNotFound $e) {
+            Log::warning("authcontroller: contact not found: " . $e->getMessage());
+
             $v = Validator::make([], []);
             $v->errors()->add('patient_id', $this->__('validation.unknown_patient_id'));
             $v->errors()->add('birthdate', $this->__('validation.unknown_date_of_birth'));
@@ -154,6 +175,82 @@ class AuthController extends BaseController
         return Redirect::route('verify');
     }
 
+    public function configuration(): JsonResponse
+    {
+        if (Cache::has('configuration')) {
+            return response()->json(Cache::get('configuration'));
+        }
+
+        $jsonData = [
+            'version' => '3.0',
+            'token_endpoint_auth_methods_supported' => [
+                'none',
+            ],
+            'claims_parameter_supported' => true,
+            'request_parameter_supported' => false,
+            'request_uri_parameter_supported' => true,
+            'require_request_uri_registration' => false,
+            'grant_types_supported' => [
+                'authorization_code',
+            ],
+            'frontchannel_logout_supported' => false,
+            'frontchannel_logout_session_supported' => false,
+            'backchannel_logout_supported' => false,
+            'backchannel_logout_session_supported' => false,
+            'issuer' => url('/'),
+            'authorization_endpoint' => url('/oidc/authorize'),
+            'token_endpoint' => url('/oidc/accesstoken'),
+            'jwks_uri' => url('/.well-known/jwks.json'),
+            'scopes_supported' => [
+                'openid',
+            ],
+            'response_types_supported' => [
+                'code',
+            ],
+            'response_modes_supported' => [
+                'query',
+            ],
+            'subject_types_supported' => [
+                'pairwise',
+            ],
+            'id_token_signing_alg_values_supported' => [
+                'RS256',
+            ],
+        ];
+
+        Cache::put('configuration', $jsonData, now()->addMinutes(5));
+
+        return response()->json($jsonData);
+    }
+
+    public function jwks(): JsonResponse
+    {
+        if (Cache::has('jwks')) {
+            return response()->json(Cache::get('jwks'));
+        }
+        /** @var string $certificate */
+        $certificate = file_get_contents(base_path(config('jwt.certificate_path')));
+        /** @var OpenSSLAsymmetricKey $publicKey */
+        $publicKey = openssl_pkey_get_public($certificate);
+        /** @var array $keyInfo */
+        $keyInfo = openssl_pkey_get_details($publicKey);
+
+        $jsonData = [
+            'keys' => [
+                [
+                    "kid" => hash('sha256', $certificate),
+                    'kty' => 'RSA',
+                    'n' => rtrim(str_replace(['+', '/'], ['-', '_'], base64_encode($keyInfo['rsa']['n'])), '='),
+                    'e' => rtrim(str_replace(['+', '/'], ['-', '_'], base64_encode($keyInfo['rsa']['e'])), '='),
+                ],
+            ],
+        ];
+
+        Cache::put('jwks', $jsonData, now()->addMinutes(5));
+
+        return response()->json($jsonData);
+    }
+
     protected function sendVerificationCode(Request $request, string $hash, string $method = ""): void
     {
         // Fetch phone number and/or email address
@@ -161,6 +258,8 @@ class AuthController extends BaseController
 
         // If not contact info is found, redirect back to login form
         if ($contactInfo->isEmpty()) {
+            Log::error("sendVerificationCode: empty contact info for " . $hash);
+
             throw new ContactInfoNotFound();
         }
 
@@ -176,6 +275,7 @@ class AuthController extends BaseController
             $verificationType = 'sms';
             $result = $this->smsService->send($contactInfo->phoneNumber, 'template', ['code' => $code->code]);
             if (! $result) {
+                Log::error("sendVerificationCode: send failure");
                 throw new SendFailure();
             }
 
@@ -185,6 +285,7 @@ class AuthController extends BaseController
             $verificationType = 'email';
             $result = $this->emailService->send($contactInfo->email, 'template', ['code' => $code->code]);
             if (! $result) {
+                Log::error("sendVerificationCode: send failure");
                 throw new SendFailure();
             }
 
