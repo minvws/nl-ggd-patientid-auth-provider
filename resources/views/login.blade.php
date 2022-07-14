@@ -4,7 +4,7 @@
     <section>
         <div>
             <h1>@lang('login.header')</h1>
-            <p>@lang('login.instructions', ['client_name' => $client->getName()])</p>
+            <p>@lang('login.instructions', ['client_name' => $client_name])</p>
 
             <form method="POST" action="{{ route('login.submit') }}">
                 @csrf
@@ -51,8 +51,19 @@
                         @endif
                 </div>
 
-                <button type="submit">@lang("continue") <span class="icon icon-chevron-right" aria-hidden="true"/></button>
+                <button type="submit">
+                    @lang("continue")
+                    <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                </button>
             </form>
+
+            <div class="extra-buttons">
+                <a href="{{ $cancel_uri }}" class="text-button">
+                    <span class="icon icon-chevron-left" aria-hidden="true"></span>
+                    @lang("cancel")
+                </a>
+            </div>
+
             <div class="accordion">
                 <div>
                     <button id="faq-no-patient-number" aria-expanded="false">

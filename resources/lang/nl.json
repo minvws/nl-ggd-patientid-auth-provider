@@ -27,6 +27,7 @@
   "footer.see": "Kijk op",
   "continue": "Verder",
   "back": "Terug",
+  "cancel": "Annuleren",
   ":code is your verification code": ":code is uw persoonlijke verificatiecode",
   "validation.invalid_patient_id": "Geen geldig patiëntnummer. U vindt dit nummer in uw afspraakbevestiging van de GGD.",
   "validation.invalid_date_of_birth": "Geen geldige geboortedatum. Vul a.u.b. uw geboortedatum in zoals die op uw paspoort of identiteitskaart staat.",

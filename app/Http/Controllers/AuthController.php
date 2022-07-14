@@ -57,7 +57,16 @@ class AuthController extends BaseController
 
     public function login(Request $request): ViewFactory | ViewContract
     {
-        return view('login')->with('client', $request->session()->get('client'));
+        $qs = http_build_query([
+            'state' => $request->session()->get('state'),
+            'error' => 'cancelled'
+        ]);
+        $cancel_uri = $request->session()->get('redirect_uri') . '?' . $qs;
+
+        return view('login', [
+            'client_name' => $request->session()->get('client')->getName(),
+            'cancel_uri' => $cancel_uri
+        ]);
     }
 
     public function loginSubmit(LoginRequest $request): RedirectResponse
