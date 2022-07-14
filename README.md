@@ -1,36 +1,42 @@
-# GGD PatientId Auth Provider
+# GGD PatientID Auth Provider
 
-One of the main routes of user authentication for the CoronaCheck apps is [login via DigiD](providing-events-by-digid.md). For a significant amount of users DigiD is not available however, for example because a person does not have a BSN number. For negative tests, which lead to short-lived proofs, we typically use [retrieval codes](providing-events-by-token.md), but for longer-lived proofs such as vaccination certificates this isn't the most ideal authentication method. Therefor, this document describes a third alternative: authenticating users using a 'passwordless' approach directly via the event provider.
+GGD PatientID Auth Provider (or GGD-PAP for short) is an OAuth 2.0 [OIDC](https://openid.net/connect/) + [PKCE](https://tools.ietf.org/html/rfc7636) authentication provider for the alternative authentication route for users who can not use DigiD, as described in the provider docs ([Providing Vaccination / Test / Recovery / Assessment Events by Patient ID](https://github.com/minvws/nl-covid19-coronacheck-provider-docs/blob/main/docs/providing-events-by-patient-id.md)) and in the app coordination docs ([GGD PatientID Authentication Provider](https://github.com/minvws/nl-covid19-coronacheck-app-coordination/blob/main/architecture/GGD%20PatientID%20Authentication%20Provider.md)).
 
-For providers who have already implemented the DigiD based route, adding this route is fairly easy, as long as the provider has the following data on hand:
+## Integrating in an app
 
-* The unique Patient ID for a patient at the provider (in short the 'user identifier')
-* The patient's full birth date
-* A cellphone number of the patient
-* If a cellphone number is not available, the e-mail address of the patient
+If you are familiar with OIDC and PKCE this should be fairly straightforward. The authorization endpoint is `/oidc/authorize` and the token endpoint is `/oidc/accesstoken`. Only `response_type=code` with `scope=openid` is supported. PKCE is mandatory and only `code_challenge_method=S256` is supported.
 
+For full integration instructions, see [INTEGRATING.md](./INTEGRATING.md).
 
-## Development
+## Installation & development
 
-`git clone `
+For local installation instructions, see [DEVELOPMENT.md](./DEVELOPMENT.md).
 
-`cp .env.example`
+## Demo client app
 
-Change config variables.
+If you followed the instruction in [DEVELOPMENT.md](./DEVELOPMENT.md) for running the app with docker-compose, you can access the demo client app at [https://pap-demo-client.localdev:445](https://pap-demo-client.localdev:445).
 
-`composer install`
+Otherwise, host the `./demo-client` directory somewhere with a simple static http server.
 
-`php artisan key:generate`
+To use the demo client app, the PAP app needs to have it configured in its `clients.json`.
 
-`npm install`
+## Production / acceptance
 
-`npm run build`
+Generate a JWT key & cert (replace `fqdn.example.com` with the FQDN of the authentication provider):
 
-Can be ran with internal webserver via `php artisan serve`
+```
+openssl req -x509 -nodes -newkey rsa:4096 -keyout jwt.key -out cert.pem -sha256 -days 365 -subj '/CN=fqdn.example.com'
+```
+
+This generates a `jwt.key` and a `cert.pem` file, note these have a 1 year validity. 
+
+Environment variables can be configured however you like, e.g. via the webserver or `.env` file.
+
+Unpack release artifact, webroot should be the `public` folder within.
 
 ## Configuration variables
 
-See [.env.example](.env.example)
+See [.env.example](./.env.example).
 
 Short list of some important variables.
 
@@ -46,24 +52,3 @@ CMS_X509_CERT=                           # Certificate for verifying Yenlo CMS s
 CMS_X509_CHAIN=                          # Accompanying CA chain
 ```
 
-## Keys and certs
-
-Use `scripts/generate-certs.sh` and `scripts/generate-jwt-key.sh` to generate the localdev ssl cert and the JWT key, respectively.
-
-### JWT key + certificate for production environment
-
-`openssl req -x509 -nodes -newkey rsa:4096 -keyout jwt.key -out cert.pem -sha256 -days 365 -subj '/CN=full.sub.domain.tld'`
-
-Where `full.sub.domain.tld` is the desired authentication app FQDN.
-
-This generates a `jwt.key` and a `cert.pem` file, note these have a 1 year validity. 
-
-## Installation production / acceptance
-
-Environment variables via webserver or `.env` file.
-Unpack release artifact, webroot should be the `public` folder within.
-
-## References
-
-* https://github.com/minvws/nl-covid19-coronacheck-provider-docs/blob/main/docs/providing-events-by-patient-id.md
-* https://github.com/minvws/nl-covid19-coronacheck-app-coordination/blob/main/architecture/GGD%20PatientID%20Authentication%20Provider.md

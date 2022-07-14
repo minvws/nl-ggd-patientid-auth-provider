@@ -1,8 +1,8 @@
-resources/scss/manon/
-package-lock.json
-.github/
 clients.json
+package-lock.json
 composer.json
+node_modules/
+.github/
 public/
 vendor/
 dist/
@@ -10,3 +10,4 @@ docs/
 *.yml
 *.md
 *.lock
+/tmp

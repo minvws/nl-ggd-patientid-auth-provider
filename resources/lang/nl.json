@@ -3,7 +3,7 @@
   "unauthenticated.explanation": "Uw verzoek om test- of vaccinatiegegevens op te halen bij de GGD GHOR, kan niet verwerkt worden.",
   "unauthenticated.try_again": "Ga a.u.b. terug naar de applicatie of website die u heeft doorgestuurd en probeer het opnieuw.",
   "login.header": "Vul uw patiëntnummer en geboortedatum in",
-  "login.instructions": "Log in met uw patiëntnummer om :client_name toegang te geven tot uw test- of vaccinatiegegevens.",
+  "login.instructions": "U geeft :client_name toestemming om uw test- of vaccinatiegegevens op te halen.",
   "login.patientId": "Patientnummer",
   "login.patientId_explanation": "U vindt uw patiëntnummer in uw afspraakbevestiging van de GGD",
   "login.birthDate": "Geboortedatum",
@@ -24,11 +24,12 @@
   "resend.button": "Opnieuw versturen",
   "resend.email.button": "Opnieuw e-mail versturen",
   "resend.sms.button": "Opnieuw SMS versturen",
-  "footer.about_ggd": "GGD GHOR Nederland is de belangenbehartiger voor de publieke gezondheid en veiligheid in Nederland. De GGD GHOR staat voor de overkoepelende brancheorganisatie van de 25 Gemeentelijke Gezondheidsdiensten (GGD’en) en Geneeskundige Hulpverleningsorganisaties in de Regio (GHOR)",
+  "footer.about_ggd": "GGD GHOR Nederland is dé belangenbehartiger voor de publieke gezondheid en veiligheid in Nederland. Het is de overkoepelende brancheorganisatie van de 25 Gemeentelijke Gezondheidsdiensten (GGD’en) en Geneeskundige Hulpverleningsorganisaties in de Regio (GHOR).",
   "footer.more_information": "Meer informatie",
   "footer.see": "Kijk op",
   "continue": "Verder",
   "back": "Terug",
+  "cancel": "Annuleren",
   ":code is your verification code": ":code is uw persoonlijke verificatiecode",
   "validation.invalid_patient_id": "Geen geldig patiëntnummer. U vindt dit nummer in uw afspraakbevestiging van de GGD.",
   "validation.invalid_date_of_birth": "Geen geldige geboortedatum. Vul a.u.b. uw geboortedatum in zoals die op uw paspoort of identiteitskaart staat.",
@@ -38,5 +39,9 @@
   "validation.required_date_of_birth": "Graag uw geboortedatum invullen.",
   "validation.invalid_code": "Geen geldige code. Vul uw 6-cijferige verificatiecode in.",
   "validation.required_code": "Graag eerst uw 6-cijferige verificatiecode invullen.",
-  "send failed": "Er is een fout opgetreden tijdens het verzenden van de vertificatiecode. Probeer opnieuw."
+  "send failed": "Er is een fout opgetreden tijdens het verzenden van de vertificatiecode. Probeer opnieuw.",
+  "faq.no-patient-number.question": "Ik heb geen patiëntnummer",
+  "faq.no-patient-number.answer": "<p>Uw patiëntnummer bestaat uit minimaal 1 en maximaal 8 cijfers. Dit nummer staat altijd bovenaan uw afspraakbevestiging van de GGD. Controleer brieven of e-mails die u hebt gehad over uw test- of vaccinatie-afspraak.</p><p>Heeft u geen afspraakbevestiging gehad of kunt u uw patiëntnummer niet vinden? Dan kunt u deze ook opvragen door te bellen met de GGD op <a href=\"tel:08005090\">0800 - 5090</a>.</p>",
+  "faq.birthdate-unknown.question": "Mijn geboortedatum is onbekend",
+  "faq.birthdate-unknown.answer": "<p>Is uw geboortedatum niet bekend? Vul in ieder geval uw geboortejaar in en “XX” voor de dagen en maanden. Bijvoorbeeld: XX-XX-1980.</p><p>Lukt dit niet? Dan kunt u uw gegevens ook opvragen door te bellen met de GGD op <a href=\"tel:08005090\">0800 - 5090</a>.</p>"
 }

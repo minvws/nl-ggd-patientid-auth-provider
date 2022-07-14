@@ -1,0 +1,87 @@
+:root {
+  --icon-base-font-family: "ggd-pap-icons" !important;
+
+  --application-base-font-family: Montserrat, Arial, Helvetica, sans-serif;
+  --application-base-font-size: 1rem;
+  --application-base-line-height: 1.75rem;
+  --application-base-font-weight: 400;
+  --application-base-background-color: #f3f3f3;
+  --application-base-text-color: #4b4b4d;
+  --application-base-accent-color: #000099;
+  --application-base-accent-color-accent: #01016e;
+
+  --footer-background-color: var(--application-base-accent-color);
+  --footer-text-color: #fff;
+
+  --headings-h1-font-size: 1.25rem;
+  --headings-h2-font-size: 1.125;
+  --headings-h3-font-size: 1.125;
+  --headings-h1-font-weight: 600;
+  --headings-h2-font-weight: 600;
+  --headings-h3-font-weight: 600;
+  --headings-h1-line-height: 1.75rem;
+  --headings-h2-line-height: 1.5rem;
+  --headings-h3-line-height: 1.5rem;
+  --headings-h1-text-color: var(--application-base-accent-color);
+  --headings-h2-text-color: var(--application-base-accent-color);
+  --headings-h3-text-color: var(--application-base-accent-color);
+
+  --layout-main-content-block-max-width: 34rem;
+  --layout-header-content-block-max-width: 34rem;
+  --layout-footer-content-block-max-width: 34rem;
+
+  --layout-main-content-block-first-padding-top: 0;
+  --layout-main-content-block-padding-right: 1rem;
+  --layout-main-content-block-last-padding-bottom: 0;
+  --layout-main-content-block-padding-left: 1rem;
+
+  --layout-header-content-block-padding-top: 1rem;
+  --layout-header-content-block-padding-right: 1rem;
+  --layout-header-content-block-padding-bottom: 1rem;
+  --layout-header-content-block-padding-left: 1rem;
+
+  --layout-footer-content-block-padding-right: 1rem;
+  --layout-footer-content-block-padding-left: 1rem;
+
+  --form-base-padding-top: 1rem;
+  --form-base-padding-right: 0;
+  --form-base-padding-bottom: 1rem;
+  --form-base-padding-left: 0;
+  --form-base-background-color: none;
+  --form-base-text-color: var(--application-base-text-color);
+  --form-base-align-items: flex-start;
+
+  --button-base-align-self: flex-start;
+  --form-button-font-weight: 600;
+
+  --form-input-border-width: 1px;
+  --form-input-border-style: solid;
+  --form-input-border-color: var(--application-base-text-color);
+  --form-input-border-radius: 0.25rem;
+  --form-input-font-weight: 400;
+
+  --button-base-font-weight: 600;
+  --button-base-padding-top: 0.75rem;
+  --button-base-padding-right: 1.5rem;
+  --button-base-padding-bottom: 0.75rem;
+  --button-base-padding-left: 1.5rem;
+
+  --focus-outline: 2px dotted #000;
+  --focus-outline-offset: 0.25rem;
+  --focus-z-index: 1;
+
+  --button-base-focus-outline-style: dotted;
+  --button-base-focus-outline-color: #000;
+  --button-base-focus-outline-width: 2px;
+  --button-base-focus-outline-offset: 0.25rem;
+
+  --button-ghost-focus-outline-style: dotted;
+  --button-ghost-focus-outline-color: #000;
+  --button-ghost-focus-outline-width: 2px;
+  --button-ghost-focus-outline-offset: 0.25rem;
+
+  --link-text-color: var(--application-base-text-color);
+  --link-hover-text-color: var(--application-base-accent-color);
+  --link-visited-text-color: var(--link-text-color);
+  --link-visited-hover-text-color: var(--link-hover-text-color);
+}

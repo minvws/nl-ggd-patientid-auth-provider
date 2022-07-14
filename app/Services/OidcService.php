@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -49,7 +50,6 @@ class OidcService
             $request->session()->put($key, $value);
         }
 
-
         return Redirect::route('start_auth');
     }
 
@@ -82,6 +82,8 @@ class OidcService
             $this->getAuthParams($request->session()->all());
             return true;
         } catch (\Throwable $e) {
+            Log::warning("hasAuthorizeSession: cannot find all authorization parameters: " . $e->getMessage());
+
             $locale = App::getLocale();
             $request->session()->flush();
             $request->session()->put('lang', $locale);
@@ -142,35 +144,42 @@ class OidcService
             'client_id' => ['required', 'string'],
         ]);
         if ($validator->fails()) {
+            Log::error("accessToken: incomplete set of request data found");
             throw new BadRequestHttpException("incomplete set of request data found");
         }
 
         // Check params
         if ($request->get('grant_type') != "authorization_code") {
+            Log::error("accessToken: authorization_code expected as response type");
             throw new BadRequestHttpException("authorization_code expected as response type");
         }
 
         if (empty($request->get('code'))) {
+            Log::error("accessToken: code not found");
             throw new BadRequestHttpException("code not found");
         }
 
         // Validate request against stored authData
         $authData = $this->storage->fetchAuthData($request->get('code'));
         if (!$authData) {
+            Log::error("accessToken: code not found or expired");
             throw new BadRequestHttpException("code not found or expired");
         }
 
         if ($request->get('client_id') != $authData['client_id']) {
+            Log::error("accessToken: incorrect client id");
             throw new BadRequestHttpException("incorrect client id");
         }
 
         if ($request->get('redirect_uri') != $authData['redirect_uri']) {
+            Log::error("accessToken: incorrect redirect uri");
             throw new BadRequestHttpException("incorrect redirect uri");
         }
 
         // Verify challenge code (only support S256)
         $codeChallenge = $this->base64url(hash('sha256', $request->get('code_verifier'), true));
         if (! hash_equals($codeChallenge, $authData['code_challenge'])) {
+            Log::error("accessToken: bad challenge");
             throw new BadRequestHttpException("bad challenge");
         }
 

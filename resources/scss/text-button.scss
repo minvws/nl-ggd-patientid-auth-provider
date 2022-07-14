@@ -1,0 +1,13 @@
+a.text-button {
+  display: var(--button-base-flex);
+  box-sizing: border-box;
+  align-items: center;
+  align-self: flex-start;
+  justify-content: var(--button-base-justify-content);
+  gap: var(--button-base-gap);
+  font-size: var(--button-base-font-size);
+  font-weight: var(--button-base-font-weight);
+  font-family: var(--application-base-font-family);
+  white-space: normal;
+  text-decoration: none;
+}

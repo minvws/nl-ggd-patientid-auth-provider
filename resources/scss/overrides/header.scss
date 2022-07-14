@@ -1,0 +1,12 @@
+$breakpoint: 34rem !default;
+
+body > header > div {
+  background: #fff;
+  flex-direction: row;
+  justify-content: space-between;
+
+  @media (min-width: $breakpoint) {
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+}
