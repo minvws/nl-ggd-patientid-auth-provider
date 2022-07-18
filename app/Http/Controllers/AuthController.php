@@ -270,6 +270,9 @@ class AuthController extends BaseController
             $code = $this->codeGeneratorService->generate($hash, true);
         }
 
+        // Default verification
+        $verificationType = 'sms';
+
         // Sending to phone has priority, fallback to email if necessary
         if ($contactInfo->phoneNumber && ($method == "phone" || $method == "")) {
             $verificationType = 'sms';
