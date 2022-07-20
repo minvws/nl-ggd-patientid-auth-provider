@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Session;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -47,6 +53,13 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        $this->renderable(function (TooManyRequestsHttpException $e, $request) {
+            $locale = Session::has('lang') ? Session::get('lang') : Config::get('app.locale');
+            App::setLocale($locale);
+
+            return response()->view('errors.' . $e->getStatusCode(), [], $e->getStatusCode());
         });
     }
 }

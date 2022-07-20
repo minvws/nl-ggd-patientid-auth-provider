@@ -41,7 +41,7 @@
   "faq.no-patient-number.question": "I don’t have a patient number",
   "faq.no-patient-number.answer": "<p>Your patient number consists of a minimum of 1 and a maximum of 8 digits. This number is always listed at the top of your GGD appointment confirmation. Please check any letters or emails you have received regarding your test or vaccination appointment.</p><p>Didn’t receive an appointment confirmation or can’t find your patient number? Then you can also request this by calling the GGD on <a href=\"08005090\">0800 - 5090</a>.</p>",
   "faq.birthdate-unknown.question": "My date of birth is unknown",
-  "faq.birthdate-unknown.answer": "<p>Is your date of birth not known? In any case, enter your year of birth and “XX” for the days and months. For example: XX-XX-1980.</p><p>Not working? Then you can also request your details by calling the GGD on <a href=\"tel:08005090\">0800 - 5090</a>.</p>"
+  "faq.birthdate-unknown.answer": "<p>Is your date of birth not known? In any case, enter your year of birth and “XX” for the days and months. For example: XX-XX-1980.</p><p>Not working? Then you can also request your details by calling the GGD on <a href=\"tel:08005090\">0800 - 5090</a>.</p>",
   "ratelimit.header": "Ratelimit exceeded",
   "ratelimit.content": "The ratelimit has been exceeded. U beed to wait at least 10 minutes before you can try again."
 }
