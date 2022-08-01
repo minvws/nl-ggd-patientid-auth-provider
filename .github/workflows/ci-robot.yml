@@ -88,11 +88,8 @@ jobs:
           php artisan key:generate
           npm install
           npm run build
-      - name: copy cert
-        run: sudo cp ssl/pap.localdev.crt /etc/ssl/certs
       - name: Start application
         run: docker-compose up -d
-        # run: php artisan serve &
       - name: Install python dependencies
         run: |
           python -m pip install --upgrade pip
