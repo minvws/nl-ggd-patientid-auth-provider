@@ -1,0 +1,70 @@
+name: Robot Framework CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  composer-install:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: vendor/
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: zip
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    strategy:
+      max-parallel: 3
+      matrix:
+        php-versions: [ '8.0' ]
+
+  robot-ci-tests:
+    needs:
+      - composer-install
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: vendor/
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php-versions }}
+      - name: use .env.testing
+        run: cp .env.testing .env
+      - name: Copy clients.json
+        run: cp clients.json.example clients.json
+      - name: Generate JWT key
+        run: sh ./scripts/generate-jwt-key.sh
+      - name: Generate SSl cert
+        run: sh ./scripts/generate-certs.sh
+      # - name: Check for known CVE vulnerabilities
+        # run: php artisan security-check:now
+      - name: Start application
+        run: docker-compose up -d
+      - name: Install python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tests/robot_framework/requirements.txt
+          pip install --no-deps robotframework-postgresqldb
+          rfbrowser init
+      - name: Robot Framework tests
+        run: python -m robot -d tests/robot_framework/results -x outputxunit.xml -i CI -v headless:true tests/robot_framework
+    strategy:
+      matrix:
+        php-versions: [ '8.0']
