@@ -89,7 +89,7 @@ jobs:
           npm install
           npm run build
       - name: copy cert
-        run: cp ssl/pap.localdev.crt /etc/ssl/certs
+        run: sudo cp ssl/pap.localdev.crt /etc/ssl/certs
       - name: Start application
         run: docker-compose up -d
         # run: php artisan serve &
