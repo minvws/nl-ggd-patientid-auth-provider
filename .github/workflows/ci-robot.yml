@@ -59,7 +59,7 @@ jobs:
       - name: use .env.testing
         run: cp .env.testing .env
       - name: echo id
-        run: id
+        run: id -u
       - name: Add variables to .env file
         run: |
           echo "INFORETRIEVAL_SERVICE=dummy" >> .env
