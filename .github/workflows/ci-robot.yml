@@ -89,7 +89,8 @@ jobs:
           npm install
           npm run build
       - name: Start application
-        run: php artisan serve &
+        run: docker-compose up -d
+        # run: php artisan serve &
       - name: Install python dependencies
         run: |
           python -m pip install --upgrade pip
