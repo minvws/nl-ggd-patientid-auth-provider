@@ -65,6 +65,18 @@ jobs:
           rfbrowser init
       - name: Robot Framework tests
         run: python -m robot -d tests/robot_framework/results -x outputxunit.xml -i CI -v headless:true tests/robot_framework
+      - name: Upload RF test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: reports
+          path: tests/robot_framework/results
+      - name: Publish Robot Framework test results
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        if: ${{ always() && github.actor != 'dependabot[bot]' }}
+        with:
+          junit_files: tests/robot_framework/results/outputxunit.xml
+          check_name: Robot Framework FE tests
     strategy:
       matrix:
         php-versions: [ '8.0']
