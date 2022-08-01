@@ -1,3 +1,4 @@
 * Settings *
+Library     Browser
 
 * Keywords *
