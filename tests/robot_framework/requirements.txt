@@ -1,3 +1,3 @@
-jwt
+PyJWT
 robotframework-browser
 robotframework-debuglibrary
