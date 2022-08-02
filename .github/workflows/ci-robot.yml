@@ -85,15 +85,16 @@ jobs:
         run: sh ./scripts/generate-jwt-key.sh
       - name: Generate SSl cert
         run: sh ./scripts/generate-certs.sh
-      - name: Gernerate keys
+      - name: Generate keys and build
         run: |
           composer install
           php artisan key:generate
           npm install
           npm run build
-          php artisan migrate:fresh --seed
       - name: Start application
         run: docker-compose up -d
+      - name: Seed DB
+        run: php artisan migrate:fresh --seed
       - name: Install python dependencies
         run: |
           python -m pip install --upgrade pip
