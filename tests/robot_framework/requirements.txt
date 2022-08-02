@@ -1,2 +1,3 @@
+jwt
 robotframework-browser
 robotframework-debuglibrary

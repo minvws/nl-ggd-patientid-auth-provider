@@ -3,13 +3,13 @@
         "name": "Client 123",
         "redirect_uris": [
             "https://pap-demo-client.localdev:445/callback.html",
-            "https://127.0.0.1/"
+            "https://localhost:445/callback.html"
         ]
     },
     "client-456": {
         "name": "Client 456",
         "redirect_uris": [
-            "https://pap-demo-client.localdev:445/callback.html",
+            "https://pap-demo-client.localdev:445/callback.html"
         ]
     }
 }

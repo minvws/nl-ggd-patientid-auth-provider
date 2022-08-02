@@ -67,6 +67,8 @@ jobs:
           echo "SMS_SERVICE=dummy" >> .env
           echo "WWWUSER=${{ env.USER_ID }}" >> .env
           echo "WWWGROUP=20" >> .env
+          echo "THROTTLE_NUM_REQUESTS=60" >> .env
+          echo "THROTTLE_PERIOD_MINUTES=1" >> .env
       - name: echo .env
         run: cat .env
       - name: Fill postgres credentials
@@ -88,6 +90,7 @@ jobs:
           php artisan key:generate
           npm install
           npm run build
+          php artisan migrate:fresh --seed
       - name: Start application
         run: docker-compose up -d
       - name: Install python dependencies
