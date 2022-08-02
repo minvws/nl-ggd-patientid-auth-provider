@@ -95,6 +95,8 @@ jobs:
         run: docker-compose up -d
       - name: Seed DB
         run: docker-compose run pap php artisan migrate:fresh --seed
+      - name: logfile permissions
+        run: chmod 600 storage/logs/laravel.log
       - name: Install python dependencies
         run: |
           python -m pip install --upgrade pip
