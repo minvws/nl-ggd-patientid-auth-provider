@@ -96,7 +96,9 @@ jobs:
       - name: Seed DB
         run: docker-compose run pap php artisan migrate:fresh --seed
       - name: logfile permissions
-        run: chmod 755 storage/logs
+        run: |
+          chmod 755 storage
+          chmod 777 storage/logs
       - name: Install python dependencies
         run: |
           python -m pip install --upgrade pip
