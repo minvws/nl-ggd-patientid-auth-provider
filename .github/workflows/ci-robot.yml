@@ -94,7 +94,7 @@ jobs:
       - name: Start application
         run: docker-compose up -d
       - name: Seed DB
-        run: php artisan migrate:fresh --seed
+        run: docker-compose run pap php artisan migrate:fresh --seed
       - name: Install python dependencies
         run: |
           python -m pip install --upgrade pip
