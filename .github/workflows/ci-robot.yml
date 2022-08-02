@@ -99,6 +99,7 @@ jobs:
         run: |
           chmod 755 storage
           chmod 777 storage/logs
+          chmod 777 storage/framework
       - name: Install python dependencies
         run: |
           python -m pip install --upgrade pip
