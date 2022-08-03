@@ -99,15 +99,6 @@ jobs:
         run: |
           chmod -R o+rw storage
           chmod -R o+rw secrets
-# chmod -R g+rw storage
-# chmod -R g+rw secrets
-# chmod 755 storage
-# chmod 777 storage/logs
-# chmod 777 storage/framework
-# chmod 777 storage/framework/sessions
-# chmod 777 storage/framework/views
-# chmod 777 secrets
-# chmod 644 secrets/*
       - name: log secrets folder
         run: ls -lah secrets
       - name: Install python dependencies
