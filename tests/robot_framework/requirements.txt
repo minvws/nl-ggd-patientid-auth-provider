@@ -2,3 +2,4 @@ cryptography
 PyJWT
 robotframework-browser
 robotframework-debuglibrary
+cryptography
