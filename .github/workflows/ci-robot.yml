@@ -101,6 +101,7 @@ jobs:
           chmod 777 storage/logs
           chmod 777 storage/framework
           chmod 777 storage/framework/sessions
+          chmod 777 secrets
       - name: Install python dependencies
         run: |
           python -m pip install --upgrade pip
