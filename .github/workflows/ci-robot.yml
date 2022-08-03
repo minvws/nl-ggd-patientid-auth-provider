@@ -102,6 +102,7 @@ jobs:
           chmod 777 storage/framework
           chmod 777 storage/framework/sessions
           chmod 777 secrets
+          chmod 644 secrets/*
       - name: log secrets folder
         run: ls -lah secrets
       - name: Install python dependencies
