@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Http\Middleware\TrustProxies as Middleware;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -31,6 +30,6 @@ class TrustProxies extends Middleware
 
     public function __construct()
     {
-        $proxies = Config::get('proxies.trusted');
+        $this->proxies = config('proxies.trusted');
     }
 }
