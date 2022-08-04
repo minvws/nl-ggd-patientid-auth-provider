@@ -80,8 +80,10 @@ class CodeGeneratorService
      */
     protected function generateCode(int $digits): string
     {
-        $hash = hash('sha256', random_bytes(32));
+        $max = (int) pow(10, $digits) - 1;
+        $number = random_int(0, $max);
+        $code = str_pad((string) $number, $digits, '0');
 
-        return (string)((hexdec(substr($hash, (int)hexdec($hash[39]) * 2, 8)) & 0x7fffffff) % pow(10, $digits));
+        return $code;
     }
 }
