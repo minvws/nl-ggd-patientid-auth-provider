@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Exceptions;
 
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Throwable;
 
@@ -53,11 +53,23 @@ class Handler extends ExceptionHandler
             //
         });
 
-        $this->renderable(function (TooManyRequestsHttpException $e, $request) {
-            $locale = Session::has('lang') ? Session::get('lang') : Config::get('app.locale');
+        $this->renderable(function (TooManyRequestsHttpException $e, Request $request): mixed {
+            $session = $request->session();
+
+            $locale = $session->has('lang') ? $session->get('lang') : Config::get('app.locale');
             App::setLocale($locale);
 
-            return response()->view('errors.' . $e->getStatusCode(), [], $e->getStatusCode());
+            if ($session->has('redirect_uri') && $session->has('state')) {
+                $qs = http_build_query([
+                    'state' => $session->get('state'),
+                    'error' => 'cancelled'
+                ]);
+                $cancel_uri = $session->get('redirect_uri') . '?' . $qs;
+            }
+
+            return response()->view('errors.' . $e->getStatusCode(), [
+                'cancel_uri' => $cancel_uri ?? null
+            ], $e->getStatusCode());
         });
     }
 }
