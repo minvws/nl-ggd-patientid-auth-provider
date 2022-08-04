@@ -41,5 +41,7 @@
   "faq.no-patient-number.question": "Ik heb geen patiëntnummer",
   "faq.no-patient-number.answer": "<p>Uw patiëntnummer bestaat uit minimaal 1 en maximaal 8 cijfers. Dit nummer staat altijd bovenaan uw afspraakbevestiging van de GGD. Controleer brieven of e-mails die u hebt gehad over uw test- of vaccinatie-afspraak.</p><p>Heeft u geen afspraakbevestiging gehad of kunt u uw patiëntnummer niet vinden? Dan kunt u deze ook opvragen door te bellen met de GGD op <a href=\"tel:08005090\">0800 - 5090</a>.</p>",
   "faq.birthdate-unknown.question": "Mijn geboortedatum is onbekend",
-  "faq.birthdate-unknown.answer": "<p>Is uw geboortedatum niet bekend? Vul in ieder geval uw geboortejaar in en “XX” voor de dagen en maanden. Bijvoorbeeld: XX-XX-1980.</p><p>Lukt dit niet? Dan kunt u uw gegevens ook opvragen door te bellen met de GGD op <a href=\"tel:08005090\">0800 - 5090</a>.</p>"
+  "faq.birthdate-unknown.answer": "<p>Is uw geboortedatum niet bekend? Vul in ieder geval uw geboortejaar in en “XX” voor de dagen en maanden. Bijvoorbeeld: XX-XX-1980.</p><p>Lukt dit niet? Dan kunt u uw gegevens ook opvragen door te bellen met de GGD op <a href=\"tel:08005090\">0800 - 5090</a>.</p>",
+  "ratelimit.header": "Te veel pogingen",
+  "ratelimit.content": "Er zijn in korte tijd veel inlog-pogingen gedaan. Probeer het later opnieuw."
 }

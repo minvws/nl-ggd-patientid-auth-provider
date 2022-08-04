@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Exceptions;
 
+use Illuminate\Http\Request;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -47,6 +51,25 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+        });
+
+        $this->renderable(function (TooManyRequestsHttpException $e, Request $request): mixed {
+            $session = $request->session();
+
+            $locale = $session->has('lang') ? $session->get('lang') : Config::get('app.locale');
+            App::setLocale($locale);
+
+            if ($session->has('redirect_uri') && $session->has('state')) {
+                $qs = http_build_query([
+                    'state' => $session->get('state'),
+                    'error' => 'cancelled'
+                ]);
+                $cancel_uri = $session->get('redirect_uri') . '?' . $qs;
+            }
+
+            return response()->view('errors.' . $e->getStatusCode(), [
+                'cancel_uri' => $cancel_uri ?? null
+            ], $e->getStatusCode());
         });
     }
 }
