@@ -149,7 +149,7 @@ class OidcService
         }
 
         // Check params
-        if ($request->get('grant_type') != "authorization_code") {
+        if ($request->get('grant_type') !== "authorization_code") {
             Log::error("accessToken: authorization_code expected as response type");
             throw new BadRequestHttpException("authorization_code expected as response type");
         }
@@ -166,12 +166,12 @@ class OidcService
             throw new BadRequestHttpException("code not found or expired");
         }
 
-        if ($request->get('client_id') != $authData['client_id']) {
+        if ($request->get('client_id') !== $authData['client_id']) {
             Log::error("accessToken: incorrect client id");
             throw new BadRequestHttpException("incorrect client id");
         }
 
-        if ($request->get('redirect_uri') != $authData['redirect_uri']) {
+        if ($request->get('redirect_uri') !== $authData['redirect_uri']) {
             Log::error("accessToken: incorrect redirect uri");
             throw new BadRequestHttpException("incorrect redirect uri");
         }

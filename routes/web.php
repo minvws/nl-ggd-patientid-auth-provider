@@ -3,26 +3,16 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
-use App\Services\OidcService;
+use App\Http\Controllers\OidcController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-
-Route::get('/oidc/authorize', function (Request $request, OidcService $oidcService) {
-    return $oidcService->authorize($request);
-});
-
-Route::middleware('cors')->group(function () {
-    Route::post('/oidc/accesstoken', function (Request $request, OidcService $oidcService) {
-        return $oidcService->accessToken($request);
-    });
-});
 
 Route::get('/', function () {
     return 'GGD PatientId Auth Provider';
 });
 
-Route::get('.well-known/openid-configuration', [AuthController::class, 'configuration']);
-Route::get('.well-known/jwks.json', [AuthController::class, 'jwks']);
+Route::get('/oidc/authorize', [OidcController::class, 'authorize']);
+Route::post('/oidc/accesstoken', [OidcController::class, 'accessToken'])
+    ->middleware('cors');
 
 Route::middleware('oidc.session')->group(function () {
     Route::get('/login', [AuthController::class, 'login'])->name('start_auth');
