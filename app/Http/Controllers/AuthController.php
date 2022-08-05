@@ -73,32 +73,11 @@ class AuthController extends BaseController
             $request->parsedBirthdate(),
         );
 
-        // Try to retrieve user info and send verification code
-        try {
-            $this->sendVerificationCode($request, $hash);
-        } catch (SendFailure $e) {
-            Log::error("authcontroller: send failure: " . $e->getMessage());
-
-            return Redirect::route('start_auth')
-                ->withInput()
-                ->withErrors([
-                    'global' => $this->__('send failed')
-                ]);
-        } catch (ContactInfoNotFound $e) {
-            Log::warning("authcontroller: contact not found: " . $e->getMessage());
-
-            return Redirect::route('start_auth')
-                ->withInput()
-                ->withErrors([
-                    'patient_id' => $this->__('validation.unknown_patient_id'),
-                    'birthdate' => $this->__('validation.unknown_date_of_birth'),
-                ]);
-        }
-
         // Store hash in session
         $request->session()->put('hash', $hash);
 
-        return Redirect::route('verify');
+        // Try to retrieve user info and send verification code
+        return $this->sendVerificationCodeAndRedirectToVerify($request, $hash);
     }
 
     public function verify(Request $request): RedirectResponse | ViewFactory | ViewContract
@@ -146,29 +125,7 @@ class AuthController extends BaseController
             return Redirect::route('start_auth');
         }
 
-        // Send verification code
-        try {
-            $this->sendVerificationCode($request, $hash);
-        } catch (SendFailure $e) {
-            Log::error("authcontroller: send failure: " . $e->getMessage());
-
-            return Redirect::route('start_auth')
-                ->withInput()
-                ->withErrors([
-                    'global' => $this->__('send failed')
-                ]);
-        } catch (ContactInfoNotFound $e) {
-            Log::warning("authcontroller: contact not found: " . $e->getMessage());
-
-            return Redirect::route('start_auth')
-                ->withInput()
-                ->withErrors([
-                    'patient_id' => $this->__('validation.unknown_patient_id'),
-                    'birthdate' => $this->__('validation.unknown_date_of_birth'),
-                ]);
-        }
-
-        return Redirect::route('verify');
+        return $this->sendVerificationCodeAndRedirectToVerify($request, $hash);
     }
 
     protected function sendVerificationCode(Request $request, string $hash): void
@@ -221,5 +178,32 @@ class AuthController extends BaseController
     {
         $message = __($key);
         return is_string($message) ? $message : '';
+    }
+
+    protected function sendVerificationCodeAndRedirectToVerify(Request $request, string $hash): RedirectResponse
+    {
+        // Send verification code
+        try {
+            $this->sendVerificationCode($request, $hash);
+        } catch (SendFailure $e) {
+            Log::error("authcontroller: send failure: " . $e->getMessage());
+
+            return Redirect::route('start_auth')
+                ->withInput()
+                ->withErrors([
+                    'global' => $this->__('send failed')
+                ]);
+        } catch (ContactInfoNotFound $e) {
+            Log::warning("authcontroller: contact not found: " . $e->getMessage());
+
+            return Redirect::route('start_auth')
+                ->withInput()
+                ->withErrors([
+                    'patient_id' => $this->__('validation.unknown_patient_id'),
+                    'birthdate' => $this->__('validation.unknown_date_of_birth'),
+                ]);
+        }
+
+        return Redirect::route('verify');
     }
 }
