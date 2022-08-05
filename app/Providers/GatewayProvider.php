@@ -18,8 +18,7 @@ class GatewayProvider extends ServiceProvider
     public function boot(): void
     {
         $this->app->singleton(SmsService::class, function () {
-            $provider = env('SMS_SERVICE', 'messagebird');
-            switch ($provider) {
+            switch (config('gateway.sms_service')) {
                 case 'dummy':
                     return new SmsService(new SmsGateway\Dummy());
                 case 'messagebird':
@@ -38,8 +37,7 @@ class GatewayProvider extends ServiceProvider
         });
 
         $this->app->singleton(EmailService::class, function () {
-            $provider = env('EMAIL_SERVICE', 'native');
-            switch ($provider) {
+            switch (config('gateway.email_service')) {
                 case 'dummy':
                     return new EmailService(new EmailGateway\Dummy());
                 case 'native':
@@ -57,8 +55,7 @@ class GatewayProvider extends ServiceProvider
         });
 
         $this->app->singleton(InfoRetrievalService::class, function () {
-            $provider = env('INFORETRIEVAL_SERVICE', 'yenlo');
-            switch ($provider) {
+            switch (config('gateway.info_retrieval_service')) {
                 case 'dummy':
                     return new InfoRetrievalService(
                         new InfoRetrievalGateway\Dummy(
