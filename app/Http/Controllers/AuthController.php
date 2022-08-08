@@ -59,8 +59,9 @@ class AuthController extends BaseController
         ]);
         $cancel_uri = $request->session()->get('redirect_uri') . '?' . $qs;
 
+        $oidcParams = $request->session()->get('oidcparams');
         return view('login', [
-            'client_name' => $request->session()->get('client')->getName(),
+            'client_name' => $oidcParams->get('client')->getName(),
             'cancel_uri' => $cancel_uri
         ]);
     }
