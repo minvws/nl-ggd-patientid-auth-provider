@@ -6,7 +6,6 @@ namespace App\Services;
 
 use App\Services\Oidc\ClientResolverInterface;
 use App\Services\Oidc\StorageInterface;
-use App\Services\JwtService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -107,7 +106,7 @@ class OidcService
             throw new BadRequestHttpException("incomplete set of request data found");
         }
 
-        if ($params['response_type'] != "code") {
+        if ($params['response_type'] !== "code") {
             throw new BadRequestHttpException("code expected as response type");
         }
 
@@ -115,7 +114,7 @@ class OidcService
             throw new BadRequestHttpException("code challenge expected");
         }
 
-        if ($params['code_challenge_method'] != "S256") {
+        if ($params['code_challenge_method'] !== "S256") {
             throw new BadRequestHttpException("incorrect hashing method");
         }
 
@@ -126,7 +125,7 @@ class OidcService
         // Check if the client-id matches something we can accept, and check if
         // the redirect_uri is valid for the client_id
         $client = $this->clientResolver->resolve($params['client_id']);
-        if (!$client || !in_array($params['redirect_uri'], $client->getRedirectUris())) {
+        if (!$client || !in_array($params['redirect_uri'], $client->getRedirectUris(), true)) {
             throw new BadRequestHttpException("invalid redirect uri specified");
         }
 
@@ -149,7 +148,7 @@ class OidcService
         }
 
         // Check params
-        if ($request->get('grant_type') != "authorization_code") {
+        if ($request->get('grant_type') !== "authorization_code") {
             Log::error("accessToken: authorization_code expected as response type");
             throw new BadRequestHttpException("authorization_code expected as response type");
         }
@@ -166,12 +165,12 @@ class OidcService
             throw new BadRequestHttpException("code not found or expired");
         }
 
-        if ($request->get('client_id') != $authData['client_id']) {
+        if ($request->get('client_id') !== $authData['client_id']) {
             Log::error("accessToken: incorrect client id");
             throw new BadRequestHttpException("incorrect client id");
         }
 
-        if ($request->get('redirect_uri') != $authData['redirect_uri']) {
+        if ($request->get('redirect_uri') !== $authData['redirect_uri']) {
             Log::error("accessToken: incorrect redirect uri");
             throw new BadRequestHttpException("incorrect redirect uri");
         }

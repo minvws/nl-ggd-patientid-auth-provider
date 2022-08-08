@@ -51,7 +51,7 @@ class CodeGeneratorService
             return false;
         }
 
-        if ($record->code != $code) {
+        if ($record->code !== $code) {
             Log::warning("validate: code is not valid for given hash");
             return false;
         }

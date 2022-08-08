@@ -41,6 +41,9 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             Locale::class,
         ],
+        'well_known' => [
+            // No middleware needed
+        ],
     ];
 
     /**
