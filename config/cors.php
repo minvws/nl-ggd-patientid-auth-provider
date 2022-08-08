@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'paths' => ['/.well-known/*', '/oidc/authorize', '/oidc/accesstoken'],
+    'paths' => ['/.well-known/*', '/oidc/authorize'],
 
     'allowed_methods' => ['GET'],
 
