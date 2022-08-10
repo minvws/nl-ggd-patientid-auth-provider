@@ -70,7 +70,7 @@ class AuthController extends BaseController
         // Generate hash
         $hash = $this->codeGeneratorService->createHash(
             $request->get('patient_id'),
-            $request->parsedBirthdate(),
+            $request->getBirthdate(),
         );
 
         // Store hash in session

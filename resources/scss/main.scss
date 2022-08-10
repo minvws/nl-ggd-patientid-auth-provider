@@ -16,6 +16,7 @@
 @use "@minvws/manon/form-base";
 @use "@minvws/manon/form-button";
 @use "@minvws/manon/form-fieldset";
+@use "@minvws/manon/form-fieldset-visually-hidden";
 @use "@minvws/manon/form-input";
 @use "@minvws/manon/focus";
 
@@ -26,6 +27,7 @@
 @use "overrides/form-base" as form-base-overrides;
 @use "overrides/form-button" as form-button-overrides;
 @use "overrides/form-input" as form-input-overrides;
+@use "overrides/form-fieldset" as form-fieldset-overrides;
 @use "overrides/label" as label-overrides;
 @use "overrides/focus" as focus-overrides;
 
@@ -37,3 +39,4 @@
 @use "text-button";
 @use "extra-buttons";
 @use "language";
+@use "birthdate";

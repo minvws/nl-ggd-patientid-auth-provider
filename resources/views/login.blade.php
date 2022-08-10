@@ -18,10 +18,9 @@
                         id="patient_id"
                         name="patient_id"
                         inputmode="numeric"
-                        pattern="[0-9]{1-8}"
+                        pattern="[0-9]{1,8}"
                         autocomplete="off"
                         required
-                        placeholder="1234567"
                         value="{{ old('patient_id') }}"
                         aria-describedby="patient_id_explanation"
                         {{ $errors->has('patient_id')
@@ -35,21 +34,61 @@
                     @endif
                 </div>
 
-                <div>
-                    <label for="birthdate">@lang('login.birthDate')</label>
-                    <input
-                        id="birthdate"
-                        name="birthdate"
-                        autocomplete="off"
-                        required
-                        placeholder="@lang('login.birthDate_placeholder')"
-                        aria-describedby="birthdate_error"
-                        value="{{ old('birthdate') }}"
-                        >
-                        @if ($errors->has('birthdate'))
-                            <p class="error" id="birthdate_error">{{ $errors->first('birthdate') }}</p>
-                        @endif
-                </div>
+                <fieldset class="birthdate">
+                    <legend>@lang('login.birthDate')</legend>
+                    <div>
+                        <div>
+                            <label for="birth_day">@lang('login.day')</label>
+                            <input
+                                id="birth_day"
+                                name="birth_day"
+                                autocomplete="off"
+                                inputmode="numeric"
+                                pattern="[xX]{1,2}|[012]?[0-9]|3[01]"
+                                maxlength="2"
+                                value="{{ old('birth_day') }}"
+                                {{ $errors->has('birthdate')
+                                    ? 'aria-invalid=true aria-errormessage=birthdate_error'
+                                    : '' }}
+                            >
+                        </div>
+                        <div>
+                            <label for="birth_month">@lang('login.month')</label>
+                            <input
+                                id="birth_month"
+                                name="birth_month"
+                                autocomplete="off"
+                                inputmode="numeric"
+                                pattern="[xX]{1,2}|0?[0-9]|1[012]"
+                                maxlength="2"
+                                value="{{ old('birth_month') }}"
+                                {{ $errors->has('birthdate')
+                                    ? 'aria-invalid=true aria-errormessage=birthdate_error'
+                                    : '' }}
+                            >
+                        </div>
+                        <div>
+                            <label for="birth_year">@lang('login.year')</label>
+                            <input
+                                id="birth_year"
+                                name="birth_year"
+                                autocomplete="off"
+                                inputmode="numeric"
+                                pattern="(18|19|20)[0-9]{2}"
+                                minlength="4"
+                                maxlength="4"
+                                required
+                                value="{{ old('birth_year') }}"
+                                {{ $errors->has('birthdate')
+                                    ? 'aria-invalid=true aria-errormessage=birthdate_error'
+                                    : '' }}
+                            >
+                        </div>
+                    </div>
+                    @if ($errors->has('birthdate'))
+                        <p class="error" id="birthdate_error">{{ $errors->first('birthdate') }}</p>
+                    @endif
+                </fieldset>
 
                 <button type="submit">
                     @lang("continue")

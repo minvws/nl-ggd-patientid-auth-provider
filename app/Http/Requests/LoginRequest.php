@@ -13,8 +13,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'patient_id' => ['required', 'integer', 'digits_between:1,8'],
-            'birthdate' => ['required', 'string'],
+            'patient_id' => ['required', 'integer', 'digits_between:1,8']
         ];
     }
 
@@ -24,66 +23,40 @@ class LoginRequest extends FormRequest
             'patient_id.required' => $this->__('validation.invalid_patient_id'),
             'patient_id.integer' => $this->__('validation.invalid_patient_id'),
             'patient_id.digits_between' => $this->__('validation.invalid_patient_id'),
-            'birthdate.required' => $this->__('validation.invalid_date_of_birth'),
-            'birthdate.string' => $this->__('validation.invalid_date_of_birth'),
         ];
     }
 
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
-            if (empty($this->parsedBirthdate())) {
+            if (empty($this->getBirthdate())) {
                 $validator->errors()->add('birthdate', $this->__('validation.invalid_date_of_birth'));
             }
         });
     }
 
     /**
-     * Parse passport date of birth. Possible formats include:
-     * - DD-MM-YYYY
-     * - XX-MM-YYYY
-     * - XX-XX-YYYY
-     * - MM-YYYY
-     * - XX-YYYY
-     * - YYYY
-     * (Where "X" is a literal letter X in the input.)
-     *
-     * The returned date string, if any, is formatted as ISO8601 (YYYY-MM-DD)
-     * with "XX" (if present) replaced by "01" for GGD-GHOR-specific reasons.
+     * Get ISO8601 date string (YYYY-MM-DD) based on birth_day, birth_month and
+     * birth_year fields. Day and month "XX" or "00" are replaced by "01".
+     * Returns '' if day, month and year don't combine to form a valid date.
      */
-    public function parsedBirthdate(): string
+    public function getBirthdate(): string
     {
-        $birthdate = $this->get('birthdate');
-        if (!is_string($birthdate)) {
-            return '';
-        }
-
-        // Split on a few common date separators
-        $parts = preg_split('/[\\/\\\\,\\.-]/', strtoupper($birthdate));
-        if (!$parts || count($parts) > 3) {
-            return '';
-        }
-
-        // Reverse the array if YYYY was last
-        if (strlen(end($parts)) === 4) {
-            $parts = array_reverse($parts);
-        }
-
-        $year = $parts[0];
-        $month = $parts[1] ?? '01';
-        $day = $parts[2] ?? '01';
+        $year = $this->get('birth_year') ?? '';
+        $month = $this->get('birth_month') ?? '01';
+        $day = $this->get('birth_day') ?? '01';
 
         if (strlen($year) !== 4 || strlen($month) > 2 || strlen($day) > 2) {
             return '';
         }
 
-        if ($month === "X" || $month === "XX") {
+        if ($month === "X" || $month === "XX" || $month === "0" || $month === "00") {
             $month = "01";
         }
         if (strlen($month) === 1) {
             $month = "0" . $month;
         }
-        if ($day === "X" || $day === "XX") {
+        if ($day === "X" || $day === "XX" || $day === "0" || $day === "00") {
             $day = "01";
         }
         if (strlen($day) === 1) {
