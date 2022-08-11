@@ -14,13 +14,15 @@ Test One
 
     Go To       ${start_auth}
     Fill Text   id=patient_id   12345678
-    Fill Text   id=birthdate    1976-10-16
+    Fill Text   id=birth_day    16
+    Fill Text   id=birth_month  10
+    Fill Text   id=birth_year   1976
     Click       " Verder "
 
     ${LARAVEL_LOGS}     Get File        ${EXECDIR}/storage/logs/laravel.log
     ${SMS_CODE}         Set Variable    ${LARAVEL_LOGS.split("\n")[-2].split()[-1]}
     Fill Text           id=code         ${SMS_CODE}
-    ${RESPONSE_HEADERS}  Click And Get Response Headers     //button    verify  
+    ${RESPONSE_HEADERS}  Click And Get Response Headers     //button    verify
     ${LOCATION_CODE}    Set Variable    ${RESPONSE_HEADERS["location"].split("code=")[-1]}
 
     Go To           https://localhost:444
