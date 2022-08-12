@@ -119,18 +119,11 @@ class OidcService
     public function validateParams(OidcParams $params): void
     {
         $validator = Validator::make($params->toArray(), [
-            'response_type' => ['required', 'string'],
             'client_id' => ['required', 'string'],
-            'state' => ['required', 'string'],
-            'scope' => ['required', 'string'],
             'redirect_uri' => ['required', 'string'],
-            'code_challenge' => ['required', 'string'],
-            'code_challenge_method' => ['required', 'string'],
         ]);
 
         if ($validator->fails()) {
-            // Even though we are missing (some) fields, we cannot know 100% sure if the redirect uri is correct
-            // (not checked yet). So any errors here will result in a non-redirect back.
             throw OAuthValidationException::invalidRequest(false);
         }
 
@@ -142,6 +135,18 @@ class OidcService
         }
         if (!in_array($params->redirectUri, $client->getRedirectUris(), true)) {
             throw OAuthValidationException::invalidRedirectUri(false);
+        }
+
+        $validator = Validator::make($params->toArray(), [
+            'response_type' => ['required', 'string'],
+            'state' => ['required', 'string'],
+            'scope' => ['required', 'string'],
+            'code_challenge' => ['required', 'string'],
+            'code_challenge_method' => ['required', 'string'],
+        ]);
+
+        if ($validator->fails()) {
+            throw OAuthValidationException::invalidRequest(true);
         }
 
         if ($params->responseType !== "code") {
