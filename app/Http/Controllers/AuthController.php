@@ -114,10 +114,11 @@ class AuthController extends BaseController
             return Redirect::route('start_auth');
         }
 
-        $hash = $request->session()->get('hash');
-        $contactInfo = $this->infoRetrievalService->retrieve($hash);
-
-        return view('resend', ['verificationType' => $verificationType, 'contact' => $contactInfo]);
+        return view('resend', [
+            'verificationType' => $verificationType,
+            'hasPhone' => $request->session()->get('has_phone'),
+            'hasEmail' => $request->session()->get('has_email')
+        ]);
     }
 
     public function resendSubmit(Request $request): RedirectResponse
@@ -143,6 +144,9 @@ class AuthController extends BaseController
             throw new ContactInfoNotFound();
         }
 
+        $request->session()->put('has_phone', $contactInfo->hasPhone());
+        $request->session()->put('has_email', $contactInfo->hasEmail());
+
         // Generate verification code
         $code = $this->codeGeneratorService->generate($hash, false);
         if ($code->isExpired()) {
@@ -150,11 +154,8 @@ class AuthController extends BaseController
             $code = $this->codeGeneratorService->generate($hash, true);
         }
 
-        // Default verification
-        $verificationType = 'sms';
-
         // Sending to phone has priority, fallback to email if necessary
-        if ($contactInfo->phoneNumber && ($method == "phone" || $method == "")) {
+        if ($contactInfo->phoneNumber && $method !== "email") {
             $verificationType = 'sms';
             $result = $this->smsService->send($contactInfo->phoneNumber, 'template', ['code' => $code->code]);
             if (! $result) {
@@ -164,7 +165,7 @@ class AuthController extends BaseController
 
             $anonymizer = new Anonymizer();
             $request->session()->put('verification_sent_to', $anonymizer->phoneNumber($contactInfo->phoneNumber));
-        } elseif ($contactInfo->email && ($method == "email" || $method == "")) {
+        } else {
             $verificationType = 'email';
             $result = $this->emailService->send($contactInfo->email, 'template', ['code' => $code->code]);
             if (! $result) {

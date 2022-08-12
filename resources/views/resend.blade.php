@@ -12,16 +12,17 @@
                 <div>
                     <form method="POST" action="{{ route('resend.submit') }}">
                         @csrf
-                        @if ($contact->phoneNumber)
-                            <button name="method" value="phone" type="submit">@lang('resend.sms.button') <span aria-hidden="true">&gt;</span></button>
+                        <button name="method" value="{{ $verificationType }}" type="submit">@lang('resend.button') <span aria-hidden="true">&gt;</span></button>
+                        @if ($verificationType === 'sms' && $hasEmail)
+                            <button name="method" value="email" type="submit" class="ghost">@lang('resend.email.button') <span aria-hidden="true">&gt;</span></button>
                         @endif
-                        @if ($contact->email)
-                            <button name="method" value="email" type="submit">@lang('resend.email.button') <span aria-hidden="true">&gt;</span></button>
+                        @if ($verificationType === 'email' && $hasPhone)
+                            <button name="method" value="sms" type="submit" class="ghost">@lang('resend.sms.button') <span aria-hidden="true">&gt;</span></button>
                         @endif
                     </form>
                 </div>
                 <div>
-                    <a class="button ghost" href="{{ route('verify') }}">
+                    <a class="text-button" href="{{ route('verify') }}">
                         <span aria-hidden="true">&lt;</span>
                         @lang('back')
                     </a>

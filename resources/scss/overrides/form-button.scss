@@ -1,9 +1,5 @@
 form {
-  button,
-  a.button,
-  input[type="button"],
-  input[type="submit"],
-  input[type="reset"] {
+  button[type="submit"]:first-of-type {
     margin-top: 1rem;
   }
 }
