@@ -16,3 +16,6 @@ npm-debug.log
 /.idea
 /.vscode
 /tmp
+/tests/robot_framework/results
+/env
+__pycache__

@@ -28,6 +28,8 @@ class RouteServiceProvider extends ServiceProvider
         $this->routes(function () {
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
+            Route::middleware('well_known')
+                ->group(base_path('routes/well_known.php'));
         });
     }
 }

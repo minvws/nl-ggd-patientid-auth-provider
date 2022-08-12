@@ -1,0 +1,125 @@
+name: Robot Framework CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  composer-install:
+    runs-on: ubuntu-20.04
+    services:
+      postgres:
+        image: postgres:12.5
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ci_db_test
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: vendor/
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: zip
+      - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    strategy:
+      max-parallel: 3
+      matrix:
+        php-versions: [ '8.0' ]
+
+  robot-ci-tests:
+    needs:
+      - composer-install
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: vendor/
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php-versions }}
+      - name: use .env.testing
+        run: cp .env.testing .env
+      - name: echo id
+        run: echo "USER_ID="$(id -u)"" >> $GITHUB_ENV
+      - name: Add variables to .env file
+        run: |
+          echo "INFORETRIEVAL_SERVICE=dummy" >> .env
+          echo "EMAIL_SERVICE=dummy" >> .env
+          echo "SMS_SERVICE=dummy" >> .env
+          echo "WWWUSER=${{ env.USER_ID }}" >> .env
+          echo "WWWGROUP=20" >> .env
+          echo "THROTTLE_NUM_REQUESTS=60" >> .env
+          echo "THROTTLE_PERIOD_MINUTES=1" >> .env
+      - name: Fill postgres credentials
+        run: |
+          sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=pgsql/g' .env
+          sed -i 's/DB_DATABASE=laravel/DB_DATABASE=pap/g' .env
+          sed -i 's/DB_HOST=127.0.0.1/DB_HOST=pap_db/g' .env
+          sed -i 's/DB_USERNAME=root/DB_USERNAME=postgres/g' .env
+          sed -i 's/DB_PASSWORD=/DB_PASSWORD=postgres/g' .env
+          sed -i 's/DB_PORT=3306/DB_PORT=5432/g' .env
+      - name: echo .env
+        run: cat .env
+      - name: Copy clients.json
+        run: cp clients.json.example clients.json
+      - name: Generate JWT key
+        run: sh ./scripts/generate-jwt-key.sh
+      - name: Generate SSl cert
+        run: sh ./scripts/generate-certs.sh
+      - name: Generate keys and build
+        run: |
+          composer install
+          php artisan key:generate
+          npm install
+          npm run build
+      - name: Start application
+        run: docker-compose up -d
+      - name: Seed DB
+        run: docker-compose run pap php artisan migrate:fresh --seed
+      - name: logfile permissions
+        run: |
+          chmod -R o+rw storage
+          chmod -R o+rw secrets
+      - name: log secrets folder
+        run: ls -lah secrets
+      - name: Install python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tests/robot_framework/requirements.txt
+          rfbrowser init
+      - name: Robot Framework tests
+        run: python -m robot -d tests/robot_framework/results -x outputxunit.xml -i CI -v headless:true tests/robot_framework
+      - name: Upload RF test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: reports
+          path: tests/robot_framework/results
+      - name: Publish Robot Framework test results
+        uses: EnricoMi/publish-unit-test-result-action/composite@v2
+        if: ${{ always() && github.actor != 'dependabot[bot]' }}
+        with:
+          junit_files: tests/robot_framework/results/outputxunit.xml
+          check_name: Robot Framework FE tests
+    strategy:
+      matrix:
+        php-versions: [ '8.0']

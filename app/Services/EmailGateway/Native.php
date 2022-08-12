@@ -11,6 +11,6 @@ class Native implements EmailGatewayInterface
 {
     public function send(string $email, string $template, array $vars): bool
     {
-        return Mail::to($email)->send(new SendCode($vars['code'])) != null;
+        return Mail::to($email)->send(new SendCode($vars['code'])) !== null;
     }
 }

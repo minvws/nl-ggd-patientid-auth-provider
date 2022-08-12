@@ -1,0 +1,10 @@
+form {
+  > fieldset {
+    p {
+      clear: left;
+    }
+    > div {
+      margin-bottom: 0.5rem;
+    }
+  }
+}
