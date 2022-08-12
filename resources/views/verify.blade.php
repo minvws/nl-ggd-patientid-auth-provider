@@ -32,11 +32,15 @@
                         @endif
                 </div>
 
-                    <button type="submit">@lang("verify.retrieve_data") <span aria-hidden="true">&gt;</span></button>
-                    <a class="button ghost" href="{{ route('resend') }}">
-                        @lang('verify.no_code.' . $verificationType)
-                        <span aria-hidden="true">&gt;</span>
-                    </a>
+                <button type="submit">
+                    @lang("verify.retrieve_data")
+                    <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                </button>
+
+                <a class="button ghost" href="{{ route('resend') }}">
+                    @lang('verify.no_code.' . $verificationType)
+                    <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                </a>
             </form>
 
             <div class="extra-buttons">

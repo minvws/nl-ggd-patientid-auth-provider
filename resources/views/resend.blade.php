@@ -12,18 +12,27 @@
                 <div>
                     <form method="POST" action="{{ route('resend.submit') }}">
                         @csrf
-                        <button name="method" value="{{ $verificationType }}" type="submit">@lang('resend.button') <span aria-hidden="true">&gt;</span></button>
+                        <button name="method" value="{{ $verificationType }}" type="submit">
+                            @lang('resend.button')
+                            <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                        </button>
                         @if ($verificationType === 'sms' && $hasEmail)
-                            <button name="method" value="email" type="submit" class="ghost">@lang('resend.email.button') <span aria-hidden="true">&gt;</span></button>
+                            <button name="method" value="email" type="submit" class="ghost">
+                                @lang('resend.email.button')
+                                <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                            </button>
                         @endif
                         @if ($verificationType === 'email' && $hasPhone)
-                            <button name="method" value="sms" type="submit" class="ghost">@lang('resend.sms.button') <span aria-hidden="true">&gt;</span></button>
+                            <button name="method" value="sms" type="submit" class="ghost">
+                                @lang('resend.sms.button')
+                                <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                            </button>
                         @endif
                     </form>
                 </div>
                 <div>
                     <a class="text-button" href="{{ route('verify') }}">
-                        <span aria-hidden="true">&lt;</span>
+                        <span class="icon icon-chevron-left" aria-hidden="true"></span>
                         @lang('back')
                     </a>
                 </div>
