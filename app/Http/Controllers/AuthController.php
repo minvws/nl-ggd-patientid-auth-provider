@@ -84,6 +84,11 @@ class AuthController extends BaseController
     {
         $verificationType = $request->session()->get('verification_type');
         $sentTo = $request->session()->get('verification_sent_to');
+        $qs = http_build_query([
+            'state' => $request->session()->get('state'),
+            'error' => 'cancelled'
+        ]);
+        $cancel_uri = $request->session()->get('redirect_uri') . '?' . $qs;
 
         if (!$verificationType || !$sentTo) {
             return Redirect::route('start_auth');
@@ -92,6 +97,7 @@ class AuthController extends BaseController
         return view('verify', [
             'verificationType' => $verificationType,
             'sentTo' => $sentTo,
+            'cancel_uri' => $cancel_uri
         ]);
     }
 
