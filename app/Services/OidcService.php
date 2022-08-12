@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Exceptions\OAuthValidationException;
 use App\Services\Oidc\ClientResolverInterface;
 use App\Services\Oidc\StorageInterface;
 use Illuminate\Http\JsonResponse;
@@ -33,42 +34,68 @@ class OidcService
 
     public function authorize(Request $request): RedirectResponse
     {
-        $params = $this->getAuthParams($request->all());
+        $oidcParams = OidcParams::fromArray($request->all());
+
+        try {
+            $this->validateParams($oidcParams);
+        } catch (OAuthValidationException $e) {
+            // Clear current session
+            if ($request->hasSession()) {
+                $request->session()->flush();
+            }
+
+            // If the error allows us to redirect to the callback, do so
+            if ($e->canRedirect()) {
+                return $this->createErrorRedirect($request, $oidcParams, $e->getMessage());
+            }
+
+            // Otherwise, return generic enough error not to leak info
+            throw new BadRequestHttpException($e->getMessage(), $e);
+        }
 
         // Start or replace session
-        if (!array_key_exists('lang', $params)) {
-            $params['lang'] = App::getLocale();
+        if (!$oidcParams->has('lang')) {
+            $oidcParams->set('lang', App::getLocale());
         }
 
         // Store client object
-        $client = $this->clientResolver->resolve($params['client_id']);
-        $params['client'] = $client;
+        $client = $this->clientResolver->resolve($oidcParams->clientId);
+        $oidcParams->set('client', $client);
 
         $request->session()->flush();
-        foreach ($params as $key => $value) {
-            $request->session()->put($key, $value);
-        }
+        $request->session()->put('oidcparams', $oidcParams);
 
         return Redirect::route('start_auth');
     }
 
+    protected function createErrorRedirect(Request $request, OidcParams $params, string $error): RedirectResponse
+    {
+        $qs = http_build_query([
+            'state' => $params->state ?? '',
+            'error' => $error,
+        ]);
+        $redirectUri = $params->redirectUri . '?' . $qs;
+
+        return new RedirectResponse($redirectUri);
+    }
+
     public function finishAuthorize(Request $request, string $hash): RedirectResponse
     {
-        $params = $this->getAuthParams($request->session()->all());
-        $authData = array_merge($params, ['hash' => $hash]);
+        $oidcParams = $request->session()->get('oidcparams');
+        $oidcParams->set('hash', $hash);
 
         // Create authentication code and cache the request vars for when the auth code is used by the client
         $authCode = $this->generateAuthCode();
-        $this->storage->saveAuthData($authCode, $authData);
+        $this->storage->saveAuthData($authCode, $oidcParams->toArray());
 
         // Clear current session
         $request->session()->flush();
 
         $qs = http_build_query([
-            'state' => $authData['state'],
+            'state' => $oidcParams->state,
             'code' => $authCode,
         ]);
-        $redirectUri = $authData['redirect_uri'] . '?' . $qs;
+        $redirectUri = $oidcParams->redirectUri . '?' . $qs;
 
         // TODO: reset auth code expiry?
 
@@ -77,59 +104,70 @@ class OidcService
 
     public function hasAuthorizeSession(Request $request): bool
     {
-        try {
-            $this->getAuthParams($request->session()->all());
+        if ($request->session()->has('oidcparams')) {
             return true;
-        } catch (\Throwable $e) {
-            Log::warning("hasAuthorizeSession: cannot find all authorization parameters: " . $e->getMessage());
-
-            $locale = App::getLocale();
-            $request->session()->flush();
-            $request->session()->put('lang', $locale);
-            return false;
         }
+
+        Log::warning("hasAuthorizeSession: cannot find all authorization parameters");
+
+        $locale = App::getLocale();
+        $request->session()->flush();
+        $request->session()->put('lang', $locale);
+        return false;
     }
 
-    public function getAuthParams(array $params): array
+    public function validateParams(OidcParams $params): void
     {
-        $validator = Validator::make($params, [
-            'response_type' => ['required', 'string'],
+        $validator = Validator::make($params->toArray(), [
             'client_id' => ['required', 'string'],
+            'redirect_uri' => ['required', 'string'],
+        ]);
+
+        if ($validator->fails()) {
+            throw OAuthValidationException::invalidRequest(false);
+        }
+
+        // Check if the client-id matches something we can accept, and check if
+        // the redirect_uri is valid for the client_id
+        $client = $this->clientResolver->resolve($params->clientId);
+        if (!$client) {
+            throw OAuthValidationException::unauthorizedClient(false);
+        }
+        if (!in_array($params->redirectUri, $client->getRedirectUris(), true)) {
+            throw OAuthValidationException::invalidRedirectUri(false);
+        }
+
+        $validator = Validator::make($params->toArray(), [
+            'response_type' => ['required', 'string'],
             'state' => ['required', 'string'],
             'scope' => ['required', 'string'],
-            'redirect_uri' => ['required', 'string'],
             'code_challenge' => ['required', 'string'],
             'code_challenge_method' => ['required', 'string'],
         ]);
 
         if ($validator->fails()) {
-            throw new BadRequestHttpException("incomplete set of request data found");
+            throw OAuthValidationException::invalidRequest(true);
         }
 
-        if ($params['response_type'] !== "code") {
-            throw new BadRequestHttpException("code expected as response type");
+        if ($params->responseType !== "code") {
+            throw OAuthValidationException::unsupportedResponseType(true);
         }
 
-        if (empty($params['code_challenge'])) {
-            throw new BadRequestHttpException("code challenge expected");
+        if ($params->scope !== "openid") {
+            throw OAuthValidationException::invalidScope(true);
         }
 
-        if ($params['code_challenge_method'] !== "S256") {
-            throw new BadRequestHttpException("incorrect hashing method");
+        if (empty($params->codeChallenge)) {
+            throw OAuthValidationException::invalidRequest(true);
         }
 
-        if (! $this->clientResolver->exists($params['client_id'])) {
-            throw new BadRequestHttpException("incorrect client id");
+        if ($params->codeChallengeMethod !== "S256") {
+            throw OAuthValidationException::invalidRequest(true);
         }
 
-        // Check if the client-id matches something we can accept, and check if
-        // the redirect_uri is valid for the client_id
-        $client = $this->clientResolver->resolve($params['client_id']);
-        if (!$client || !in_array($params['redirect_uri'], $client->getRedirectUris(), true)) {
-            throw new BadRequestHttpException("invalid redirect uri specified");
+        if (! $this->clientResolver->exists($params->clientId)) {
+            throw OAuthValidationException::unauthorizedClient(true);
         }
-
-        return $validator->validated();
     }
 
     public function accessToken(Request $request): JsonResponse
@@ -176,8 +214,7 @@ class OidcService
         }
 
         // Verify challenge code (only support S256)
-        $codeChallenge = $this->base64url(hash('sha256', $request->get('code_verifier'), true));
-        if (! hash_equals($codeChallenge, $authData['code_challenge'])) {
+        if (! $this->verifyCodeChallenge($authData['code_challenge'], $request->get('code_verifier'))) {
             Log::error("accessToken: bad challenge");
             throw new BadRequestHttpException("bad challenge");
         }
@@ -193,17 +230,19 @@ class OidcService
         ]);
     }
 
+    protected function verifyCodeChallenge(string $targetChallenge, string $verifier): bool
+    {
+        $challenge = $this->base64url(hash('sha256', $verifier, true));
+
+        return hash_equals($challenge, $targetChallenge);
+    }
+
     protected function base64url(string $data): string
     {
         $data = base64_encode($data);
         $data = strtr($data, '+/', '-_');
 
         return rtrim($data, '=');
-    }
-
-    protected function verifyCodeChallenge(string $challenge, string $verifier): bool
-    {
-        return hash_equals($challenge, rtrim(strtr(base64_encode($verifier), '+/', '-_'), '='));
     }
 
     protected function generateAuthCode(): string

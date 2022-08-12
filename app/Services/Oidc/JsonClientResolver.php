@@ -23,7 +23,7 @@ class JsonClientResolver implements ClientResolverInterface
 
     public function resolve(string $clientId): ?Client
     {
-        return $this->clients[$clientId];
+        return $this->clients[$clientId] ?? null;
     }
 
     public function exists(string $clientId): bool

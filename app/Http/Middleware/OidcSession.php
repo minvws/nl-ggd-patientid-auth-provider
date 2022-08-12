@@ -23,6 +23,7 @@ class OidcSession implements AuthenticatesRequests
         if ($this->oidcService->hasAuthorizeSession($request)) {
             return $next($request);
         }
+
         throw new AuthenticationException('Unauthenticated');
     }
 }
