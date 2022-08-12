@@ -91,7 +91,7 @@ class OidcServiceTest extends TestCase
             'response_type' => 'code',
             'client_id' => 'client_123',
             'state' => 'newstate',
-            'scope' => 'scope',
+            'scope' => 'openid',
             'redirect_uri' => 'https://foo',
             'code_challenge' => '8juoLS5oOXU8-tJzjQdAHrqrl7QF6LlnPoC6uRtPNuE',
             'code_challenge_method' => 'plain',
