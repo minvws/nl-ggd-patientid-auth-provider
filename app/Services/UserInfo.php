@@ -25,4 +25,14 @@ class UserInfo
     {
         return empty($this->phoneNumber) && empty($this->email);
     }
+
+    public function hasPhone(): bool
+    {
+        return !empty($this->phoneNumber);
+    }
+
+    public function hasEmail(): bool
+    {
+        return !empty($this->email);
+    }
 }

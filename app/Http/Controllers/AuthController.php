@@ -114,7 +114,11 @@ class AuthController extends BaseController
             return Redirect::route('start_auth');
         }
 
-        return view('resend', ['verificationType' => $verificationType]);
+        return view('resend', [
+            'verificationType' => $verificationType,
+            'hasPhone' => $request->session()->get('has_phone'),
+            'hasEmail' => $request->session()->get('has_email')
+        ]);
     }
 
     public function resendSubmit(Request $request): RedirectResponse
@@ -128,7 +132,7 @@ class AuthController extends BaseController
         return $this->sendVerificationCodeAndRedirectToVerify($request, $hash);
     }
 
-    protected function sendVerificationCode(Request $request, string $hash): void
+    protected function sendVerificationCode(Request $request, string $hash, string $method = ""): void
     {
         // Fetch phone number and/or email address
         $contactInfo = $this->infoRetrievalService->retrieve($hash);
@@ -140,6 +144,9 @@ class AuthController extends BaseController
             throw new ContactInfoNotFound();
         }
 
+        $request->session()->put('has_phone', $contactInfo->hasPhone());
+        $request->session()->put('has_email', $contactInfo->hasEmail());
+
         // Generate verification code
         $code = $this->codeGeneratorService->generate($hash, false);
         if ($code->isExpired()) {
@@ -148,7 +155,7 @@ class AuthController extends BaseController
         }
 
         // Sending to phone has priority, fallback to email if necessary
-        if ($contactInfo->phoneNumber) {
+        if ($contactInfo->phoneNumber && $method !== "email") {
             $verificationType = 'sms';
             $result = $this->smsService->send($contactInfo->phoneNumber, 'template', ['code' => $code->code]);
             if (! $result) {
@@ -184,7 +191,8 @@ class AuthController extends BaseController
     {
         // Send verification code
         try {
-            $this->sendVerificationCode($request, $hash);
+            $method = strval($request->request->get('method'));
+            $this->sendVerificationCode($request, $hash, $method);
         } catch (SendFailure $e) {
             Log::error("authcontroller: send failure: " . $e->getMessage());
 
