@@ -38,6 +38,13 @@
                         <span aria-hidden="true">&gt;</span>
                     </a>
             </form>
+
+            <div class="extra-buttons">
+                <a href="{{ $cancel_uri }}" class="text-button">
+                    <span class="icon icon-chevron-left" aria-hidden="true"></span>
+                    @lang("cancel")
+                </a>
+            </div>
         </div>
     </section>
 @endsection
