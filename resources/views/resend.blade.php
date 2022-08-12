@@ -12,11 +12,14 @@
             <form method="POST" action="{{ route('resend.submit') }}">
                 @csrf
                 <div>
-                    <button type="submit">@lang('resend.button') <span aria-hidden="true">&gt;</span></button>
+                    <button type="submit">
+                        @lang('resend.button')
+                        <span class="icon icon-chevron-right" aria-hidden="true"></span>
+                    </button>
                 </div>
                 <div>
                     <a class="button ghost" href="{{ route('verify') }}">
-                        <span aria-hidden="true">&lt;</span>
+                        <span class="icon icon-chevron-left" aria-hidden="true"></span>
                         @lang('back')
                     </a>
                 </div>
