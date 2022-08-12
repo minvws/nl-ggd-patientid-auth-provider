@@ -42,7 +42,7 @@ class LoginRequest extends FormRequest
      */
     public function getBirthdate(): string
     {
-        $year = strtoupper($this->get('birth_year') ?? '');
+        $year = $this->get('birth_year') ?? '';
         $month = strtoupper($this->get('birth_month') ?? '01');
         $day = strtoupper($this->get('birth_day') ?? '01');
 
