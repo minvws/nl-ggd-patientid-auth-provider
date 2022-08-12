@@ -33,6 +33,11 @@ class OAuthValidationException extends Exception
         return new self('unsupported_response_type', $redirect);
     }
 
+    public static function invalidScope(bool $redirect = false): self
+    {
+        return new self('invalid_scope', $redirect);
+    }
+
     public static function invalidRequest(bool $redirect = false): self
     {
         return new self('invalid_request', $redirect);

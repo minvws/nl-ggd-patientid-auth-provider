@@ -153,6 +153,10 @@ class OidcService
             throw OAuthValidationException::unsupportedResponseType(true);
         }
 
+        if ($params->scope !== "openid") {
+            throw OAuthValidationException::invalidScope(true);
+        }
+
         if (empty($params->codeChallenge)) {
             throw OAuthValidationException::invalidRequest(true);
         }
