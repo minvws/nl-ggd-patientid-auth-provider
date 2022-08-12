@@ -53,13 +53,13 @@ class AuthController extends BaseController
 
     public function login(Request $request): ViewFactory | ViewContract
     {
+        $oidcParams = $request->session()->get('oidcparams');
         $qs = http_build_query([
-            'state' => $request->session()->get('state'),
+            'state' => $oidcParams->state,
             'error' => 'cancelled'
         ]);
-        $cancel_uri = $request->session()->get('redirect_uri') . '?' . $qs;
+        $cancel_uri = $oidcParams->redirectUri . '?' . $qs;
 
-        $oidcParams = $request->session()->get('oidcparams');
         return view('login', [
             'client_name' => $oidcParams->get('client')->getName(),
             'cancel_uri' => $cancel_uri
@@ -85,11 +85,12 @@ class AuthController extends BaseController
     {
         $verificationType = $request->session()->get('verification_type');
         $sentTo = $request->session()->get('verification_sent_to');
+        $oidcParams = $request->session()->get('oidcparams');
         $qs = http_build_query([
-            'state' => $request->session()->get('state'),
+            'state' => $oidcParams->state,
             'error' => 'cancelled'
         ]);
-        $cancel_uri = $request->session()->get('redirect_uri') . '?' . $qs;
+        $cancel_uri = $oidcParams->redirectUri . '?' . $qs;
 
         if (!$verificationType || !$sentTo) {
             return Redirect::route('start_auth');
