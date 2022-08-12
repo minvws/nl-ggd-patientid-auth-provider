@@ -18,6 +18,9 @@ class Dummy implements InfoRetrievalGateway
         $this->dummyData = [
             $this->createHash('12345678', '1976-10-16') => (new UserInfo())->withPhoneNumber('06-123456789'),
             $this->createHash('12345678', '1980-01-01') => (new UserInfo())->withEmail('user@example.org'),
+            $this->createHash('12345678', '1981-01-01') => (new UserInfo())
+                ->withEmail('user@example.org')
+                ->withPhoneNumber('06-123456789'),
         ];
     }
 
