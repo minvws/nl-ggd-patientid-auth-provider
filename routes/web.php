@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OidcController;
+use App\Http\Middleware\ResendThrottleMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -16,14 +17,20 @@ Route::post('/oidc/accesstoken', [OidcController::class, 'accessToken'])
 
 Route::middleware('oidc.session')->group(function () {
     Route::get('/login', [AuthController::class, 'login'])->name('start_auth');
-    Route::get('/verify', [AuthController::class, 'verify'])->name('verify');
-    Route::get('/resend', [AuthController::class, 'resend'])->name('resend');
+    Route::post('/login', [AuthController::class, 'loginSubmit'])
+        ->middleware('throttle:' . config('throttle.requests') . ',' . config('throttle.period'))
+        ->name('login.submit');
 
-    Route::middleware('throttle:' . config('throttle.requests') . ',' . config('throttle.period'))->group(function () {
-        Route::post('/login', [AuthController::class, 'loginSubmit'])->name('login.submit');
-        Route::post('/verify', [AuthController::class, 'verifySubmit'])->name('verify.submit');
-        Route::post('/resend', [AuthController::class, 'resendSubmit'])->name('resend.submit');
-    });
+    Route::get('/verify', [AuthController::class, 'verify'])->name('verify');
+    Route::post('/verify', [AuthController::class, 'verifySubmit'])
+        ->middleware('throttle:' . config('throttle.requests') . ',' . config('throttle.period'))
+        ->name('verify.submit');
+
+    Route::get('/resend', [AuthController::class, 'resend'])->name('resend');
+    Route::post('/resend', [AuthController::class, 'resendSubmit'])
+        ->middleware(ResendThrottleMiddleware::class)
+        ->name('resend.submit');
+
 });
 
 Route::get('/unauthenticated', function () {
