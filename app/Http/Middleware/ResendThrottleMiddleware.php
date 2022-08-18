@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use App\Exceptions\ResendThrottleMaxAttemptsException;
@@ -40,7 +42,7 @@ class ResendThrottleMiddleware
         return $session->get('resend_throttle:attempts', 0);
     }
 
-    public function getNewRetryAfter(int $attempt): string
+    public function getNewRetryAfter(int $attempt): int
     {
         $current = Carbon::now();
 
