@@ -12,6 +12,7 @@ use App\Services\CodeGeneratorService;
 use App\Services\EmailService;
 use App\Services\InfoRetrievalService;
 use App\Services\OidcService;
+use App\Services\ResendThrottleService;
 use App\Services\SmsService;
 use App\Exceptions\ContactInfoNotFound;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -36,6 +37,7 @@ class AuthController extends BaseController
     protected CodeGeneratorService $codeGeneratorService;
     protected InfoRetrievalService $infoRetrievalService;
     protected OidcService $oidcService;
+    protected ResendThrottleService $resendThrottleService;
 
     public function __construct(
         EmailService $emailService,
@@ -43,12 +45,14 @@ class AuthController extends BaseController
         CodeGeneratorService $codeGeneratorService,
         InfoRetrievalService $infoRetrievalService,
         OidcService $oidcService,
+        ResendThrottleService $resendThrottleService,
     ) {
         $this->emailService = $emailService;
         $this->smsService = $smsService;
         $this->codeGeneratorService = $codeGeneratorService;
         $this->infoRetrievalService = $infoRetrievalService;
         $this->oidcService = $oidcService;
+        $this->resendThrottleService = $resendThrottleService;
     }
 
     public function login(Request $request): ViewFactory | ViewContract
@@ -109,6 +113,8 @@ class AuthController extends BaseController
         if (!$hash) {
             return Redirect::route('start_auth');
         }
+
+        $this->resendThrottleService->reset($hash);
 
         // Authorization successful, redirect back to client application with auth code
         return $this->oidcService->finishAuthorize($request, $hash);

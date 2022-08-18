@@ -9,13 +9,13 @@ use Illuminate\Support\Carbon;
 
 class ResendThrottleRetryAfterException extends Exception
 {
-    public function __construct(protected Carbon $retryAfter)
+    public function __construct(protected int $retryAfter)
     {
         parent::__construct();
     }
 
     public function getRetryAfter(): Carbon
     {
-        return $this->retryAfter;
+        return Carbon::createFromTimestamp($this->retryAfter);
     }
 }
