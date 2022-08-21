@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Exceptions\NoPatientHashInSessionException;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -37,7 +38,12 @@ class AppServiceProvider extends ServiceProvider
 
         Request::macro('patientHash', function () {
             /** @var Request $this */
-            return $this->session()->get('hash', '');
+            $hash = $this->session()->get('hash', '');
+            if (!$hash) {
+                throw new NoPatientHashInSessionException();
+            }
+
+            return $hash;
         });
     }
 }

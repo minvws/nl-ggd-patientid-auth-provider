@@ -101,10 +101,7 @@ class AuthController extends BaseController
 
     public function verifySubmit(VerificationRequest $request): RedirectResponse | ViewFactory | ViewContract
     {
-        $hash = $request->session()->get('hash');
-        if (!$hash) {
-            return Redirect::route('start_auth');
-        }
+        $hash = $request->patientHash();
 
         $this->resendThrottleService->reset($hash);
 
@@ -129,11 +126,7 @@ class AuthController extends BaseController
 
     public function resendSubmit(Request $request): RedirectResponse
     {
-        $hash = $request->session()->get('hash');
-
-        if (!$hash) {
-            return Redirect::route('start_auth');
-        }
+        $hash = $request->patientHash();
 
         return $this->sendVerificationCodeAndRedirectToVerify($request, $hash);
     }

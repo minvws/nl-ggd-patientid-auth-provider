@@ -14,6 +14,8 @@ class VerificationRequest extends FormRequest
 
     public function __construct(CodeGeneratorService $codeGeneratorService)
     {
+        parent::__construct();
+
         $this->codeGeneratorService = $codeGeneratorService;
     }
 
@@ -46,7 +48,7 @@ class VerificationRequest extends FormRequest
 
     protected function isValidCode(): bool
     {
-        $hash = $this->session()->get('hash', '');
+        $hash = $this->patientHash();
         $code = $this->get('code', '');
         return !empty($hash) && !empty($code) && $this->codeGeneratorService->validate($hash, $code);
     }
