@@ -93,6 +93,8 @@ class AuthController extends BaseController
 
         $verificationType = $this->verificationCodeSentCacheService->getLastSentMethod($patientHash);
         $sentTo = $this->verificationCodeSentCacheService->getLastSentTo($patientHash);
+        // Can be empty when cache is cleared and the code is not expired
+        // TODO: Discuss possibilities
 
         if ($verificationType === null || $sentTo === null) {
             return Redirect::route('start_auth');
@@ -133,6 +135,8 @@ class AuthController extends BaseController
     public function resendSubmit(Request $request): RedirectResponse
     {
         $hash = $request->patientHash();
+
+        // TODO: Do the resend throttle here
 
         return $this->sendVerificationCodeAndRedirectToVerify($request, $hash);
     }
@@ -204,6 +208,8 @@ class AuthController extends BaseController
         $code = $this->codeGeneratorService->fetchCodeByHash($hash);
         if ($code !== null && !$code->isExpired()) {
             // User is redirected to /verify as if the code was just sent (no message). Code is not sent again.
+            // TODO: It is possible that has_phone or has_email is not set...
+
             return Redirect::route('verify');
         }
 

@@ -28,7 +28,6 @@ Route::middleware('oidc.session')->group(function () {
 
     Route::get('/resend', [AuthController::class, 'resend'])->name('resend');
     Route::post('/resend', [AuthController::class, 'resendSubmit'])
-        ->middleware(ResendThrottleMiddleware::class)
         ->name('resend.submit');
 });
 
