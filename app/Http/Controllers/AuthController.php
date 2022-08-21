@@ -163,7 +163,7 @@ class AuthController extends BaseController
     /**
      * @throws ContactInfoNotFound
      */
-    protected function getContactInfo(Request $request, string $hash): UserInfo
+    protected function getContactInfo(string $hash): UserInfo
     {
         // Fetch phone number and/or email address
         $contactInfo = $this->infoRetrievalService->retrieve($hash);
@@ -174,9 +174,6 @@ class AuthController extends BaseController
 
             throw new ContactInfoNotFound();
         }
-
-        $request->session()->put('has_phone', $contactInfo->hasPhone());
-        $request->session()->put('has_email', $contactInfo->hasEmail());
 
         return $contactInfo;
     }
@@ -216,7 +213,11 @@ class AuthController extends BaseController
     protected function sendVerificationCodeAndRedirectToVerify(Request $request, string $hash): RedirectResponse
     {
         try {
-            $userInfo = $this->getContactInfo($request, $hash);
+            // TODO: Check if we can and may cache contact info to prevent multiple lookups
+            $userInfo = $this->getContactInfo($hash);
+            $request->session()->put('has_phone', $userInfo->hasPhone());
+            $request->session()->put('has_email', $userInfo->hasEmail());
+
             $code = $this->generateVerificationCode($userInfo);
 
             // Send verification code
