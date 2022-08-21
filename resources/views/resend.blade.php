@@ -5,7 +5,7 @@
         <div>
             <h1>@lang('resend.header.' . $verificationType)</h1>
 
-            <p>@lang('resend.explanation.' . $verificationType)</p>
+            <p>@lang('resend.explanation.' . $verificationType, ['minutes' => config('codegenerator.expiry') / 60])</p>
 
             <p>@lang('resend.contact_ggd')</p>
 

@@ -5,7 +5,7 @@
         <div>
             <h1>@lang('verify.header')</h1>
 
-            <p>@lang('verify.explanation.' . $verificationType, ['sent_to' => $sentTo])</p>
+            <p>@lang('verify.explanation.' . $verificationType, ['sent_to' => $sentTo, 'minutes' => config('codegenerator.expiry') / 60])</p>
 
             <form method="POST" action="{{ route('verify.submit') }}">
                 @csrf
