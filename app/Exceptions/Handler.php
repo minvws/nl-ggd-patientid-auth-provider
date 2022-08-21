@@ -56,8 +56,7 @@ class Handler extends ExceptionHandler
         $this->renderable(function (TooManyRequestsHttpException $e, Request $request): mixed {
             $session = $request->session();
 
-            $locale = $session->has('lang') ? $session->get('lang') : Config::get('app.locale');
-            App::setLocale($locale);
+            App::setLocale($session->get('lang', Config::get('app.locale')));
 
             if ($session->has('redirect_uri') && $session->has('state')) {
                 $qs = http_build_query([
