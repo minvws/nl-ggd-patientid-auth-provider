@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
@@ -19,21 +21,21 @@ class ResendThrottleRetryAfterException extends Exception
     /**
      * Report the exception.
      *
-     * @return bool|null
+     * @return bool
      */
-    public function report()
+    public function report(): bool
     {
         // We don't want the exception to be shown in logs.
-        return false;
+        return true;
     }
 
     /**
      * Render the exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
-    public function render($request)
+    public function render(Request $request): Response
     {
         App::setLocale($request->session()->get('lang', Config::get('app.locale')));
 

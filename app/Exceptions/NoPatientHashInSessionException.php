@@ -17,7 +17,8 @@ class NoPatientHashInSessionException extends Exception
      */
     public function report(): bool
     {
-        return false;
+        // We don't want the exception to be shown in logs.
+        return true;
     }
 
     /**
