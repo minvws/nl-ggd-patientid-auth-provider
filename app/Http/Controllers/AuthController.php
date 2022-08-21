@@ -18,6 +18,7 @@ use App\Services\ResendThrottleService;
 use App\Services\SmsService;
 use App\Exceptions\ContactInfoNotFound;
 use App\Services\UserInfo;
+use App\Services\VerificationCodeSentCacheService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -41,6 +42,7 @@ class AuthController extends BaseController
     protected InfoRetrievalService $infoRetrievalService;
     protected OidcService $oidcService;
     protected ResendThrottleService $resendThrottleService;
+    protected VerificationCodeSentCacheService $verificationCodeSentCacheService;
 
     public function __construct(
         EmailService $emailService,
@@ -49,6 +51,7 @@ class AuthController extends BaseController
         InfoRetrievalService $infoRetrievalService,
         OidcService $oidcService,
         ResendThrottleService $resendThrottleService,
+        VerificationCodeSentCacheService $verificationCodeSentCacheService,
     ) {
         $this->emailService = $emailService;
         $this->smsService = $smsService;
@@ -56,6 +59,7 @@ class AuthController extends BaseController
         $this->infoRetrievalService = $infoRetrievalService;
         $this->oidcService = $oidcService;
         $this->resendThrottleService = $resendThrottleService;
+        $this->verificationCodeSentCacheService = $verificationCodeSentCacheService;
     }
 
     public function login(Request $request): ViewFactory | ViewContract
@@ -85,10 +89,12 @@ class AuthController extends BaseController
 
     public function verify(Request $request): RedirectResponse | ViewFactory | ViewContract
     {
-        $verificationType = $request->session()->get('verification_type');
-        $sentTo = $request->session()->get('verification_sent_to');
+        $patientHash = $request->patientHash();
 
-        if (!$verificationType || !$sentTo) {
+        $verificationType = $this->verificationCodeSentCacheService->getLastSentMethod($patientHash);
+        $sentTo = $this->verificationCodeSentCacheService->getLastSentTo($patientHash);
+
+        if ($verificationType === null || $sentTo === null) {
             return Redirect::route('start_auth');
         }
 
@@ -104,6 +110,7 @@ class AuthController extends BaseController
         $hash = $request->patientHash();
 
         $this->resendThrottleService->reset($hash);
+        $this->verificationCodeSentCacheService->clearCache($hash);
 
         // Authorization successful, redirect back to client application with auth code
         return $this->oidcService->finishAuthorize($request, $hash);
@@ -111,9 +118,8 @@ class AuthController extends BaseController
 
     public function resend(Request $request): RedirectResponse | ViewFactory | ViewContract
     {
-        $verificationType = $request->session()->get('verification_type');
-
-        if (!$verificationType) {
+        $verificationType = $this->verificationCodeSentCacheService->getLastSentMethod($request->patientHash());
+        if ($verificationType === null) {
             return Redirect::route('start_auth');
         }
 
@@ -164,7 +170,7 @@ class AuthController extends BaseController
     /**
      * @throws SendFailure
      */
-    protected function sendVerificationCode(Request $request, UserInfo $userInfo, Code $code, string $method = ""): void
+    protected function sendVerificationCode(UserInfo $userInfo, Code $code, string $method = ""): void
     {
         // Sending to phone has priority, fallback to email if necessary
         if ($userInfo->phoneNumber && $method !== "email") {
@@ -175,8 +181,9 @@ class AuthController extends BaseController
                 throw new SendFailure();
             }
 
+            // Store verification type so the view can tell the user where to look for the code
             $anonymizer = new Anonymizer();
-            $request->session()->put('verification_sent_to', $anonymizer->phoneNumber($userInfo->phoneNumber));
+            $this->verificationCodeSentCacheService->saveSentTo($userInfo->hash, $verificationType, $anonymizer->phoneNumber($userInfo->phoneNumber));
         } else {
             $verificationType = 'email';
             $result = $this->emailService->send($userInfo->email, 'template', ['code' => $code->code]);
@@ -185,12 +192,10 @@ class AuthController extends BaseController
                 throw new SendFailure();
             }
 
+            // Store verification type so the view can tell the user where to look for the code
             $anonymizer = new Anonymizer();
-            $request->session()->put('verification_sent_to', $anonymizer->email($userInfo->email));
+            $this->verificationCodeSentCacheService->saveSentTo($userInfo->hash, $verificationType, $anonymizer->email($userInfo->email));
         }
-
-        // Store verification type so the view can tell the user where to look for the code
-        $request->session()->put('verification_type', $verificationType);
     }
 
     protected function sendVerificationCodeAndRedirectToVerify(Request $request, string $hash): RedirectResponse
@@ -212,7 +217,7 @@ class AuthController extends BaseController
 
             // Send verification code
             $method = (string) $request->request->get('method');
-            $this->sendVerificationCode($request, $userInfo, $code, $method);
+            $this->sendVerificationCode($userInfo, $code, $method);
         } catch (SendFailure $e) {
             Log::error("authcontroller: send failure: " . $e->getMessage());
 
