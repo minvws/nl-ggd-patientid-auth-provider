@@ -212,6 +212,13 @@ class AuthController extends BaseController
 
     protected function sendVerificationCodeAndRedirectToVerify(Request $request, string $hash): RedirectResponse
     {
+        // User "logs in". Code is still valid.
+        $code = $this->codeGeneratorService->fetchCodeByHash($hash);
+        if ($code !== null && !$code->isExpired()) {
+            // User is redirected to /verify as if the code was just sent (no message). Code is not sent again.
+            return Redirect::route('verify');
+        }
+
         try {
             // TODO: Check if we can and may cache contact info to prevent multiple lookups
             $userInfo = $this->getContactInfo($hash);
