@@ -12,6 +12,7 @@ use App\Models\Code;
 use App\Services\CodeGeneratorService;
 use App\Services\EmailService;
 use App\Services\InfoRetrievalService;
+use App\Services\OidcParams;
 use App\Services\OidcService;
 use App\Services\ResendThrottleService;
 use App\Services\SmsService;
@@ -60,15 +61,10 @@ class AuthController extends BaseController
     public function login(Request $request): ViewFactory | ViewContract
     {
         $oidcParams = $request->session()->get('oidcparams');
-        $qs = http_build_query([
-            'state' => $oidcParams->state,
-            'error' => 'cancelled'
-        ]);
-        $cancel_uri = $oidcParams->redirectUri . '?' . $qs;
 
         return view('login', [
             'client_name' => $oidcParams->get('client')->getName(),
-            'cancel_uri' => $cancel_uri
+            'cancel_uri' => $this->getCancelUri($oidcParams)
         ]);
     }
 
@@ -91,12 +87,6 @@ class AuthController extends BaseController
     {
         $verificationType = $request->session()->get('verification_type');
         $sentTo = $request->session()->get('verification_sent_to');
-        $oidcParams = $request->session()->get('oidcparams');
-        $qs = http_build_query([
-            'state' => $oidcParams->state,
-            'error' => 'cancelled'
-        ]);
-        $cancel_uri = $oidcParams->redirectUri . '?' . $qs;
 
         if (!$verificationType || !$sentTo) {
             return Redirect::route('start_auth');
@@ -105,7 +95,7 @@ class AuthController extends BaseController
         return view('verify', [
             'verificationType' => $verificationType,
             'sentTo' => $sentTo,
-            'cancel_uri' => $cancel_uri
+            'cancel_uri' => $this->getCancelUri($request->session()->get('oidcparams')),
         ]);
     }
 
@@ -250,5 +240,14 @@ class AuthController extends BaseController
         }
 
         return Redirect::route('verify');
+    }
+
+    protected function getCancelUri(OidcParams $oidcParams): string
+    {
+        $qs = http_build_query([
+            'state' => $oidcParams->state,
+            'error' => 'cancelled'
+        ]);
+        return  $oidcParams->redirectUri . '?' . $qs;
     }
 }
