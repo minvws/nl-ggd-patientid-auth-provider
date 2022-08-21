@@ -8,6 +8,7 @@ use App\Anonymizer;
 use App\Exceptions\SendFailure;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\VerificationRequest;
+use App\Models\Code;
 use App\Services\CodeGeneratorService;
 use App\Services\EmailService;
 use App\Services\InfoRetrievalService;
@@ -15,6 +16,7 @@ use App\Services\OidcService;
 use App\Services\ResendThrottleService;
 use App\Services\SmsService;
 use App\Exceptions\ContactInfoNotFound;
+use App\Services\UserInfo;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -146,7 +148,22 @@ class AuthController extends BaseController
         return $this->sendVerificationCodeAndRedirectToVerify($request, $hash);
     }
 
-    protected function sendVerificationCode(Request $request, string $hash, string $method = ""): void
+    protected function generateVerificationCode(UserInfo $userInfo): Code
+    {
+        // Generate verification code
+        $code = $this->codeGeneratorService->generate($userInfo->hash, false);
+        if ($code->isExpired()) {
+            // When expired (when we asked to resend the code again for instance), generate a new code
+            $code = $this->codeGeneratorService->generate($userInfo->hash, true);
+        }
+
+        return $code;
+    }
+
+    /**
+     * @throws ContactInfoNotFound
+     */
+    protected function getContactInfo(Request $request, string $hash): UserInfo
     {
         // Fetch phone number and/or email address
         $contactInfo = $this->infoRetrievalService->retrieve($hash);
@@ -161,59 +178,57 @@ class AuthController extends BaseController
         $request->session()->put('has_phone', $contactInfo->hasPhone());
         $request->session()->put('has_email', $contactInfo->hasEmail());
 
-        // Generate verification code
-        $code = $this->codeGeneratorService->generate($hash, false);
-        if ($code->isExpired()) {
-            // When expired (when we asked to resend the code again for instance), generate a new code
-            $code = $this->codeGeneratorService->generate($hash, true);
-        }
+        return $contactInfo;
+    }
 
+    /**
+     * @throws SendFailure
+     */
+    protected function sendVerificationCode(Request $request, UserInfo $userInfo, Code $code, string $method = ""): void
+    {
         // Sending to phone has priority, fallback to email if necessary
-        if ($contactInfo->phoneNumber && $method !== "email") {
+        if ($userInfo->phoneNumber && $method !== "email") {
             $verificationType = 'sms';
-            $result = $this->smsService->send($contactInfo->phoneNumber, 'template', ['code' => $code->code]);
+            $result = $this->smsService->send($userInfo->phoneNumber, 'template', ['code' => $code->code]);
             if (! $result) {
                 Log::error("sendVerificationCode: send failure");
                 throw new SendFailure();
             }
 
             $anonymizer = new Anonymizer();
-            $request->session()->put('verification_sent_to', $anonymizer->phoneNumber($contactInfo->phoneNumber));
+            $request->session()->put('verification_sent_to', $anonymizer->phoneNumber($userInfo->phoneNumber));
         } else {
             $verificationType = 'email';
-            $result = $this->emailService->send($contactInfo->email, 'template', ['code' => $code->code]);
+            $result = $this->emailService->send($userInfo->email, 'template', ['code' => $code->code]);
             if (! $result) {
                 Log::error("sendVerificationCode: send failure");
                 throw new SendFailure();
             }
 
             $anonymizer = new Anonymizer();
-            $request->session()->put('verification_sent_to', $anonymizer->email($contactInfo->email));
+            $request->session()->put('verification_sent_to', $anonymizer->email($userInfo->email));
         }
 
         // Store verification type so the view can tell the user where to look for the code
         $request->session()->put('verification_type', $verificationType);
     }
 
-    protected function __(string $key): string
-    {
-        $message = __($key);
-        return is_string($message) ? $message : '';
-    }
-
     protected function sendVerificationCodeAndRedirectToVerify(Request $request, string $hash): RedirectResponse
     {
-        // Send verification code
         try {
-            $method = strval($request->request->get('method'));
-            $this->sendVerificationCode($request, $hash, $method);
+            $userInfo = $this->getContactInfo($request, $hash);
+            $code = $this->generateVerificationCode($userInfo);
+
+            // Send verification code
+            $method = (string) $request->request->get('method');
+            $this->sendVerificationCode($request, $userInfo, $code, $method);
         } catch (SendFailure $e) {
             Log::error("authcontroller: send failure: " . $e->getMessage());
 
             return Redirect::route('start_auth')
                 ->withInput()
                 ->withErrors([
-                    'global' => $this->__('send failed')
+                    'global' => __('send failed')
                 ]);
         } catch (ContactInfoNotFound $e) {
             Log::warning("authcontroller: contact not found: " . $e->getMessage());
@@ -221,8 +236,8 @@ class AuthController extends BaseController
             return Redirect::route('start_auth')
                 ->withInput()
                 ->withErrors([
-                    'patient_id' => $this->__('validation.unknown_patient_id'),
-                    'birthdate' => $this->__('validation.unknown_date_of_birth'),
+                    'patient_id' => __('validation.unknown_patient_id'),
+                    'birthdate' => __('validation.unknown_date_of_birth'),
                 ]);
         }
 
