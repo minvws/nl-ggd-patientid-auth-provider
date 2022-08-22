@@ -203,7 +203,7 @@ return [
         App\Providers\OidcProvider::class,
         App\Providers\JwtProvider::class,
         App\Providers\JsonClientResolverProvider::class,
-        App\Providers\PatientCodeGenerationThrottleServiceProvider::class,
+        App\Providers\PatientCacheServiceProvider::class,
     ],
 
     /*

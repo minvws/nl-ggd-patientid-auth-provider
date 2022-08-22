@@ -66,15 +66,9 @@ class PatientCodeGenerationThrottleService
 
     protected function getNewRetryAfter(int $attempt): int
     {
-        $current = Carbon::now();
+        $retryAftersOptions = config('codegenerator.throttle.attempt_retry_after', []);
+        $seconds = $retryAftersOptions[$attempt] ?? last($retryAftersOptions) ?: 0;
 
-        $retryAfter = match ($attempt) {
-            0, 1, 2 => $current->addMinutes(5),
-            3 => $current->addMinutes(15),
-            4 => $current->addMinutes(30),
-            default => $current->addMinutes(60),
-        };
-
-        return $retryAfter->getTimestamp();
+        return Carbon::now()->addSeconds($seconds)->getTimestamp();
     }
 }
