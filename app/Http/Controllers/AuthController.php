@@ -219,7 +219,11 @@ class AuthController extends BaseController
 
             // Store verification type so the view can tell the user where to look for the code
             $anonymizer = new Anonymizer();
-            $this->patientCacheService->saveSentTo($userInfo->hash, $verificationType, $anonymizer->phoneNumber($userInfo->phoneNumber));
+            $this->patientCacheService->saveSentTo(
+                $userInfo->hash,
+                $verificationType,
+                $anonymizer->phoneNumber($userInfo->phoneNumber)
+            );
         } else {
             $verificationType = 'email';
             $result = $this->emailService->send($userInfo->email, 'template', ['code' => $code->code]);
@@ -230,7 +234,11 @@ class AuthController extends BaseController
 
             // Store verification type so the view can tell the user where to look for the code
             $anonymizer = new Anonymizer();
-            $this->patientCacheService->saveSentTo($userInfo->hash, $verificationType, $anonymizer->email($userInfo->email));
+            $this->patientCacheService->saveSentTo(
+                $userInfo->hash,
+                $verificationType,
+                $anonymizer->email($userInfo->email)
+            );
         }
     }
 
