@@ -67,6 +67,11 @@ class CodeGeneratorService
         return Code::whereHash($hash)->first();
     }
 
+    public function expireCodeByHash(string $hash): void
+    {
+        Code::whereHash($hash)->update(['expires_at' => Carbon::now()->timestamp]);
+    }
+
     /**
      * Generates unique hash from patient-id and birthdate
      */

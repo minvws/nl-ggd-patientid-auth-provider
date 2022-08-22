@@ -5,18 +5,23 @@ declare(strict_types=1);
 namespace App\Http\Requests;
 
 use App\Services\CodeGeneratorService;
+use App\Services\PatientCacheService;
 use Illuminate\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 
 class VerificationRequest extends FormRequest
 {
     protected CodeGeneratorService $codeGeneratorService;
+    protected PatientCacheService $patientCacheService;
 
-    public function __construct(CodeGeneratorService $codeGeneratorService)
-    {
+    public function __construct(
+        CodeGeneratorService $codeGeneratorService,
+        PatientCacheService $patientCacheService,
+    ) {
         parent::__construct();
 
         $this->codeGeneratorService = $codeGeneratorService;
+        $this->patientCacheService = $patientCacheService;
     }
 
     public function rules(): array
@@ -48,9 +53,23 @@ class VerificationRequest extends FormRequest
 
     protected function isValidCode(): bool
     {
-        $hash = $this->patientHash();
+        $patientHash = $this->patientHash();
         $code = $this->get('code', '');
-        return !empty($hash) && !empty($code) && $this->codeGeneratorService->validate($hash, $code);
+
+        if (empty($code)) {
+            return false;
+        }
+
+        if (!$this->codeGeneratorService->validate($patientHash, $code)) {
+            if ($this->patientCacheService->getCodeValidationAttempts($patientHash) >= 5) {
+                $this->codeGeneratorService->expireCodeByHash($patientHash);
+            }
+
+            $this->patientCacheService->incrementCodeValidationAttempts($patientHash);
+            return false;
+        }
+
+        return true;
     }
 
     protected function __(string $key): string

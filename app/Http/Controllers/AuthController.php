@@ -178,8 +178,9 @@ class AuthController extends BaseController
             // Register code generated attempt
             $this->patientCodeGenerationThrottleService->attempt($userInfo->hash);
 
-            // Clear sent to, because it is a new code
+            // Clear sent to, because it is a new code and clear attempts
             $this->patientCacheService->clearSentCache($userInfo->hash);
+            $this->patientCacheService->clearCodeValidationAttempts($userInfo->hash);
         }
 
         return $code;
