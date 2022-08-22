@@ -8,11 +8,11 @@ return [
 
     'throttle' => [
         /**
-         * Here you can specify a specific cache driver.
-         * By default, the 'cache.default' driver is used.
-         * You can use cache options that are registered in the cache.php config file.
+         * Here you can specify a specific cache store.
+         * By default, the 'cache.default' store is used.
+         * You can use the cache stores that are registered in the cache.php config file.
          */
-        'cache_driver' => env('CODEGEN_THROTTLE_CACHE_DRIVER'),
+        'cache_store' => env('CODEGEN_THROTTLE_CACHE_STORE'),
 
         /**
          * Here you can specify a retry after seconds on a specific attempt count.
