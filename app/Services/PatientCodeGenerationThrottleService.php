@@ -23,7 +23,11 @@ class PatientCodeGenerationThrottleService
     {
         $attempts = $this->getAttempts($patientHash);
 
-        $this->cache->put(self::CACHE_KEY_RETRY_AFTER . $patientHash, $this->getNewRetryAfter($attempts), self::CACHE_TTL);
+        $this->cache->put(
+            self::CACHE_KEY_RETRY_AFTER . $patientHash,
+            $this->getNewRetryAfter($attempts),
+            self::CACHE_TTL
+        );
         $this->cache->put(self::CACHE_KEY_ATTEMPTS . $patientHash, ++$attempts, self::CACHE_TTL);
         $this->cache->put(self::CACHE_KEY_LAST_ATTEMPT . $patientHash, time(), self::CACHE_TTL);
     }
