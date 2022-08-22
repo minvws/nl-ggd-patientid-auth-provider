@@ -73,6 +73,9 @@ class AuthController extends BaseController
         ]);
     }
 
+    /**
+     * @throws ResendThrottleRetryAfterException
+     */
     public function loginSubmit(LoginRequest $request): RedirectResponse
     {
         // Generate hash
@@ -138,11 +141,14 @@ class AuthController extends BaseController
 
         return view('resend', [
             'verificationType' => $verificationType,
-            'hasPhone' => $request->session()->get('has_phone'),
-            'hasEmail' => $request->session()->get('has_email')
+            'hasPhone' => $this->patientCacheService->getHasPhone($patientHash),
+            'hasEmail' => $this->patientCacheService->getHasEmail($patientHash),
         ]);
     }
 
+    /**
+     * @throws ResendThrottleRetryAfterException
+     */
     public function resendSubmit(Request $request): RedirectResponse
     {
         $hash = $request->patientHash();
@@ -247,9 +253,8 @@ class AuthController extends BaseController
         try {
             $userInfo = $this->getContactInfo($hash);
 
-            // TODO: Move to cache
-            $request->session()->put('has_phone', $userInfo->hasPhone());
-            $request->session()->put('has_email', $userInfo->hasEmail());
+            $this->patientCacheService->setHasPhone($userInfo->hash, $userInfo->hasPhone());
+            $this->patientCacheService->setHasEmail($userInfo->hash, $userInfo->hasEmail());
 
             $code = $this->generateVerificationCode($userInfo);
 

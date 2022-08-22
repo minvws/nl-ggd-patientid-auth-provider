@@ -11,6 +11,8 @@ class PatientCacheService
     protected const CACHE_KEY_PREFIX = 'patient.';
     protected const CACHE_KEY_SENT_TO = '.verification_code.sent_to';
     protected const CACHE_KEY_LAST_SENT_METHOD = '.verification_code.last_sent_method';
+    protected const CACHE_KEY_HAS_PHONE = '.has_phone';
+    protected const CACHE_KEY_HAS_EMAIL = '.has_email';
     protected const CACHE_TTL = 60 * 60 * 24; // 1 day
 
     public function __construct(
@@ -50,10 +52,32 @@ class PatientCacheService
         $this->cache->put($this->getCacheKey(self::CACHE_KEY_LAST_SENT_METHOD, $patientHash), $method, self::CACHE_TTL);
     }
 
+    public function getHasPhone(string $patientHash): bool
+    {
+        return $this->cache->get($this->getCacheKey(self::CACHE_KEY_HAS_PHONE, $patientHash), false);
+    }
+
+    public function getHasEmail(string $patientHash): bool
+    {
+        return $this->cache->get($this->getCacheKey(self::CACHE_KEY_HAS_EMAIL, $patientHash), false);
+    }
+
+    public function setHasPhone(string $patientHash, bool $has): void
+    {
+        $this->cache->put($this->getCacheKey(self::CACHE_KEY_HAS_PHONE, $patientHash), $has, self::CACHE_TTL);
+    }
+
+    public function setHasEmail(string $patientHash, bool $has): void
+    {
+        $this->cache->put($this->getCacheKey(self::CACHE_KEY_HAS_EMAIL, $patientHash), $has, self::CACHE_TTL);
+    }
+
     public function clearCache(string $patientHash): void
     {
         $this->cache->delete($this->getCacheKey(self::CACHE_KEY_SENT_TO, $patientHash));
         $this->cache->delete($this->getCacheKey(self::CACHE_KEY_LAST_SENT_METHOD, $patientHash));
+        $this->cache->delete($this->getCacheKey(self::CACHE_KEY_HAS_PHONE, $patientHash));
+        $this->cache->delete($this->getCacheKey(self::CACHE_KEY_HAS_EMAIL, $patientHash));
     }
 
     protected function getCacheKey(string $cacheKey, string $patientHash): string
