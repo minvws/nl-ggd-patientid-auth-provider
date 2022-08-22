@@ -16,7 +16,11 @@ return [
 
         /**
          * Here you can specify a retry after seconds on a specific attempt count.
+         * For example:
+         *      300,300,300,900,1800,3600
+         * For the first 3 attempts the user needs to 300 seconds, after that he can request a new code.
+         * After the fourth attempt the user needs to wait 900 seconds, and so on.
          */
-        'attempt_retry_after' => explode(',', env('CODEGEN_THROTTLE_ATTEMPT_RETRY_AFTER', '5,5,5,15,30,60')),
+        'attempt_retry_after' => explode(',', env('CODEGEN_THROTTLE_ATTEMPT_RETRY_AFTER', '300,300,300,900,1800,3600')),
     ]
 ];
