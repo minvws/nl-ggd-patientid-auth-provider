@@ -39,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
         Request::macro('patientHash', function () {
             /** @var Request $this */
             $hash = $this->session()->get('hash', '');
-            if (!$hash) {
+            if (empty($hash)) {
                 throw new NoPatientHashInSessionException();
             }
 

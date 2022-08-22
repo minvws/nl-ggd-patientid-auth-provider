@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OidcController;
+use App\Http\Middleware\HasPatientHash;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -20,14 +21,15 @@ Route::middleware('oidc.session')->group(function () {
         ->middleware('throttle:' . config('throttle.requests') . ',' . config('throttle.period'))
         ->name('login.submit');
 
-    Route::get('/verify', [AuthController::class, 'verify'])->name('verify');
-    Route::post('/verify', [AuthController::class, 'verifySubmit'])
-        ->middleware('throttle:' . config('throttle.requests') . ',' . config('throttle.period'))
-        ->name('verify.submit');
+    Route::middleware(HasPatientHash::class)->group(function () {
+        Route::get('/verify', [AuthController::class, 'verify'])->name('verify');
+        Route::post('/verify', [AuthController::class, 'verifySubmit'])
+            ->name('verify.submit');
 
-    Route::get('/resend', [AuthController::class, 'resend'])->name('resend');
-    Route::post('/resend', [AuthController::class, 'resendSubmit'])
-        ->name('resend.submit');
+        Route::get('/resend', [AuthController::class, 'resend'])->name('resend');
+        Route::post('/resend', [AuthController::class, 'resendSubmit'])
+            ->name('resend.submit');
+    });
 });
 
 Route::get('/unauthenticated', function () {
