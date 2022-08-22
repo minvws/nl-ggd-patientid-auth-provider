@@ -62,6 +62,11 @@ class PatientCacheService
         return $this->cache->get($this->getCacheKey(self::CACHE_KEY_HAS_EMAIL, $patientHash), false);
     }
 
+    public function hasPhoneOrEmail(string $patientHash): bool
+    {
+        return $this->getHasPhone($patientHash) || $this->getHasEmail($patientHash);
+    }
+
     public function setHasPhone(string $patientHash, bool $has): void
     {
         $this->cache->put($this->getCacheKey(self::CACHE_KEY_HAS_PHONE, $patientHash), $has, self::CACHE_TTL);

@@ -233,6 +233,7 @@ class AuthController extends BaseController
 
     /**
      * @throws ResendThrottleRetryAfterException
+     * @throws ContactInfoNotFound
      */
     protected function sendVerificationCodeAndRedirectToVerify(Request $request, string $hash): RedirectResponse
     {
@@ -244,17 +245,17 @@ class AuthController extends BaseController
         // Possible to look into the PatientCacheService
 
         if ($code !== null && !$code->isExpired()) {
-            // User is redirected to /verify as if the code was just sent (no message). Code is not sent again.
-            // TODO: It is possible that has_phone or has_email is not set...
+            // Case: User is redirected to /verify as if the code was just sent (no message). Code is not sent again.
+            if (!$this->patientCacheService->hasPhoneOrEmail($hash)) {
+                // If we miss cache, then we will get the contact info and save info to cache
+                $this->getContactInfoAndSetCache($hash);
+            }
 
             return Redirect::route('verify');
         }
 
         try {
-            $userInfo = $this->getContactInfo($hash);
-
-            $this->patientCacheService->setHasPhone($userInfo->hash, $userInfo->hasPhone());
-            $this->patientCacheService->setHasEmail($userInfo->hash, $userInfo->hasEmail());
+            $userInfo = $this->getContactInfoAndSetCache($hash);
 
             $code = $this->generateVerificationCode($userInfo);
 
@@ -269,15 +270,6 @@ class AuthController extends BaseController
                 ->withErrors([
                     'global' => __('send failed')
                 ]);
-        } catch (ContactInfoNotFound $e) {
-            Log::warning("authcontroller: contact not found: " . $e->getMessage());
-
-            return Redirect::route('start_auth')
-                ->withInput()
-                ->withErrors([
-                    'patient_id' => __('validation.unknown_patient_id'),
-                    'birthdate' => __('validation.unknown_date_of_birth'),
-                ]);
         }
 
         return Redirect::route('verify');
@@ -290,5 +282,18 @@ class AuthController extends BaseController
             'error' => 'cancelled'
         ]);
         return  $oidcParams->redirectUri . '?' . $qs;
+    }
+
+    /**
+     * @throws ContactInfoNotFound
+     */
+    protected function getContactInfoAndSetCache(string $hash): UserInfo
+    {
+        $userInfo = $this->getContactInfo($hash);
+
+        $this->patientCacheService->setHasPhone($userInfo->hash, $userInfo->hasPhone());
+        $this->patientCacheService->setHasEmail($userInfo->hash, $userInfo->hasEmail());
+
+        return $userInfo;
     }
 }
