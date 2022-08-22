@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Anonymizer;
+use App\Exceptions\ResendThrottleRetryAfterException;
 use App\Exceptions\SendFailure;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\VerificationRequest;
@@ -107,6 +108,14 @@ class AuthController extends BaseController
         ]);
     }
 
+    /**
+     * Case: User enters invalid code. Handled by the VerificationRequest
+     * Case: User enters valid code. Code is no longer valid. Rate limit is inactive. Handled by the VerificationRequest
+     * Case: User enters invalid code, code is invalidated. Rate limit is inactive. Handled by the VerificationRequest
+     * Case: User enters invalid code, code is invalidated, rate limit is active. Handled by the VerificationRequest
+     * @param VerificationRequest $request
+     * @return RedirectResponse|ViewFactory|ViewContract
+     */
     public function verifySubmit(VerificationRequest $request): RedirectResponse | ViewFactory | ViewContract
     {
         $hash = $request->patientHash();
@@ -136,18 +145,30 @@ class AuthController extends BaseController
     {
         $hash = $request->patientHash();
 
-        // TODO: Do the resend throttle here
-
         return $this->sendVerificationCodeAndRedirectToVerify($request, $hash);
     }
 
+    /**
+     * @throws ResendThrottleRetryAfterException
+     */
     protected function generateVerificationCode(UserInfo $userInfo): Code
     {
         // Generate verification code
         $code = $this->codeGeneratorService->generate($userInfo->hash, false);
         if ($code->isExpired()) {
+            $retryAfter = $this->resendThrottleService->getRetryAfter($userInfo->hash);
+            if ($retryAfter !== null) {
+                // Case: User "logs in". Code is no longer valid. Rate limit is active.
+                // Case: User uses "resend" button. Code is no longer valid. Rate limit is active.
+                throw new ResendThrottleRetryAfterException($retryAfter);
+            }
+
+            // Case: User "logs in". Code is no longer valid. Rate limit is inactive.
             // When expired (when we asked to resend the code again for instance), generate a new code
             $code = $this->codeGeneratorService->generate($userInfo->hash, true);
+
+            // Register code generated attempt
+            $this->resendThrottleService->attempt($userInfo->hash);
         }
 
         return $code;
@@ -202,9 +223,13 @@ class AuthController extends BaseController
         }
     }
 
+    /**
+     * @throws ResendThrottleRetryAfterException
+     */
     protected function sendVerificationCodeAndRedirectToVerify(Request $request, string $hash): RedirectResponse
     {
-        // User "logs in". Code is still valid.
+        // Case: User "logs in". Code is still valid.
+        // Case: User uses "resend" button. Code is still valid. Rate limit is inactive
         $code = $this->codeGeneratorService->fetchCodeByHash($hash);
         if ($code !== null && !$code->isExpired()) {
             // User is redirected to /verify as if the code was just sent (no message). Code is not sent again.
