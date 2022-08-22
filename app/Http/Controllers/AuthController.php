@@ -15,7 +15,7 @@ use App\Services\EmailService;
 use App\Services\InfoRetrievalService;
 use App\Services\OidcParams;
 use App\Services\OidcService;
-use App\Services\ResendThrottleService;
+use App\Services\PatientCodeGenerationThrottleService;
 use App\Services\SmsService;
 use App\Exceptions\ContactInfoNotFound;
 use App\Services\UserInfo;
@@ -42,7 +42,7 @@ class AuthController extends BaseController
     protected CodeGeneratorService $codeGeneratorService;
     protected InfoRetrievalService $infoRetrievalService;
     protected OidcService $oidcService;
-    protected ResendThrottleService $resendThrottleService;
+    protected PatientCodeGenerationThrottleService $patientCodeGenerationThrottleService;
     protected PatientCacheService $patientCacheService;
 
     public function __construct(
@@ -51,7 +51,7 @@ class AuthController extends BaseController
         CodeGeneratorService $codeGeneratorService,
         InfoRetrievalService $infoRetrievalService,
         OidcService $oidcService,
-        ResendThrottleService $resendThrottleService,
+        PatientCodeGenerationThrottleService $patientCodeGenerationThrottleService,
         PatientCacheService $patientCacheService,
     ) {
         $this->emailService = $emailService;
@@ -59,7 +59,7 @@ class AuthController extends BaseController
         $this->codeGeneratorService = $codeGeneratorService;
         $this->infoRetrievalService = $infoRetrievalService;
         $this->oidcService = $oidcService;
-        $this->resendThrottleService = $resendThrottleService;
+        $this->patientCodeGenerationThrottleService = $patientCodeGenerationThrottleService;
         $this->patientCacheService = $patientCacheService;
     }
 
@@ -94,10 +94,9 @@ class AuthController extends BaseController
 
         $verificationType = $this->patientCacheService->getLastSentMethod($patientHash);
         $sentTo = $this->patientCacheService->getLastSentTo($patientHash);
-        // Can be empty when cache is cleared and the code is not expired
-        // TODO: Discuss possibilities
 
         if ($verificationType === null || $sentTo === null) {
+            $this->patientCacheService->clearCache($patientHash);
             return Redirect::route('start_auth');
         }
 
@@ -120,7 +119,7 @@ class AuthController extends BaseController
     {
         $hash = $request->patientHash();
 
-        $this->resendThrottleService->reset($hash);
+        $this->patientCodeGenerationThrottleService->reset($hash);
         $this->patientCacheService->clearCache($hash);
 
         // Authorization successful, redirect back to client application with auth code
@@ -129,8 +128,11 @@ class AuthController extends BaseController
 
     public function resend(Request $request): RedirectResponse | ViewFactory | ViewContract
     {
-        $verificationType = $this->patientCacheService->getLastSentMethod($request->patientHash());
+        $patientHash = $request->patientHash();
+
+        $verificationType = $this->patientCacheService->getLastSentMethod($patientHash);
         if ($verificationType === null) {
+            $this->patientCacheService->clearCache($patientHash);
             return Redirect::route('start_auth');
         }
 
@@ -156,7 +158,7 @@ class AuthController extends BaseController
         // Generate verification code
         $code = $this->codeGeneratorService->generate($userInfo->hash, false);
         if ($code->isExpired()) {
-            $retryAfter = $this->resendThrottleService->getRetryAfter($userInfo->hash);
+            $retryAfter = $this->patientCodeGenerationThrottleService->getRetryAfter($userInfo->hash);
             if ($retryAfter !== null) {
                 // Case: User "logs in". Code is no longer valid. Rate limit is active.
                 // Case: User uses "resend" button. Code is no longer valid. Rate limit is active.
@@ -168,7 +170,7 @@ class AuthController extends BaseController
             $code = $this->codeGeneratorService->generate($userInfo->hash, true);
 
             // Register code generated attempt
-            $this->resendThrottleService->attempt($userInfo->hash);
+            $this->patientCodeGenerationThrottleService->attempt($userInfo->hash);
         }
 
         return $code;

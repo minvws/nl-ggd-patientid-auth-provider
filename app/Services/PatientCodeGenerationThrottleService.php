@@ -7,11 +7,11 @@ namespace App\Services;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Carbon;
 
-class ResendThrottleService
+class PatientCodeGenerationThrottleService
 {
-    protected const CACHE_KEY_RETRY_AFTER = 'resend_throttle.resend_after.';
-    protected const CACHE_KEY_ATTEMPTS = 'resend_throttle.attempts.';
-    protected const CACHE_KEY_LAST_ATTEMPT = 'resend_throttle.last_attempt.';
+    protected const CACHE_KEY_RETRY_AFTER = 'code_generation.retry_after.';
+    protected const CACHE_KEY_ATTEMPTS = 'code_generation.attempts.';
+    protected const CACHE_KEY_LAST_ATTEMPT = 'code_generation.last_attempt.';
 
     public function __construct(
         protected Repository $cache,
@@ -54,12 +54,12 @@ class ResendThrottleService
         $this->cache->forget(self::CACHE_KEY_LAST_ATTEMPT . $patientHash);
     }
 
-    private function clearRetryAfter(string $patientHash): void
+    protected function clearRetryAfter(string $patientHash): void
     {
         $this->cache->forget(self::CACHE_KEY_RETRY_AFTER . $patientHash);
     }
 
-    private function getNewRetryAfter(int $attempt): int
+    protected function getNewRetryAfter(int $attempt): int
     {
         $current = Carbon::now();
 
