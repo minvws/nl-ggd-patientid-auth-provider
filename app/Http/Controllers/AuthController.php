@@ -231,6 +231,10 @@ class AuthController extends BaseController
         // Case: User "logs in". Code is still valid.
         // Case: User uses "resend" button. Code is still valid. Rate limit is inactive
         $code = $this->codeGeneratorService->fetchCodeByHash($hash);
+
+        // TODO: Add check if send method is the other method
+        // Possible to look into the verificationCodeSentCacheService
+
         if ($code !== null && !$code->isExpired()) {
             // User is redirected to /verify as if the code was just sent (no message). Code is not sent again.
             // TODO: It is possible that has_phone or has_email is not set...
