@@ -265,6 +265,9 @@ class AuthController extends BaseController
                 $this->getContactInfoAndSetCache($hash);
             }
 
+            // Set last sent method so that it looks like the code was just sent with that method
+            $this->patientCacheService->setLastSentTo($hash, $sendMethod);
+
             return Redirect::route('verify');
         }
 
