@@ -12,6 +12,7 @@ class PatientCodeGenerationThrottleService
     protected const CACHE_KEY_RETRY_AFTER = 'code_generation.retry_after.';
     protected const CACHE_KEY_ATTEMPTS = 'code_generation.attempts.';
     protected const CACHE_KEY_LAST_ATTEMPT = 'code_generation.last_attempt.';
+    protected const CACHE_TTL = 60 * 60 * 24; // 1 day
 
     public function __construct(
         protected Repository $cache,
@@ -22,9 +23,9 @@ class PatientCodeGenerationThrottleService
     {
         $attempts = $this->getAttempts($patientHash);
 
-        $this->cache->put(self::CACHE_KEY_RETRY_AFTER . $patientHash, $this->getNewRetryAfter($attempts));
-        $this->cache->put(self::CACHE_KEY_ATTEMPTS . $patientHash, ++$attempts);
-        $this->cache->put(self::CACHE_KEY_LAST_ATTEMPT . $patientHash, time());
+        $this->cache->put(self::CACHE_KEY_RETRY_AFTER . $patientHash, $this->getNewRetryAfter($attempts), self::CACHE_TTL);
+        $this->cache->put(self::CACHE_KEY_ATTEMPTS . $patientHash, ++$attempts, self::CACHE_TTL);
+        $this->cache->put(self::CACHE_KEY_LAST_ATTEMPT . $patientHash, time(), self::CACHE_TTL);
     }
 
     public function getAttempts(string $patientHash): int
