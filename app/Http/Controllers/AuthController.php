@@ -177,6 +177,9 @@ class AuthController extends BaseController
 
             // Register code generated attempt
             $this->patientCodeGenerationThrottleService->attempt($userInfo->hash);
+
+            // Clear sent to, because it is a new code
+            $this->patientCacheService->clearSentCache($userInfo->hash);
         }
 
         return $code;
@@ -241,10 +244,13 @@ class AuthController extends BaseController
         // Case: User uses "resend" button. Code is still valid. Rate limit is inactive
         $code = $this->codeGeneratorService->fetchCodeByHash($hash);
 
-        // TODO: Add check if send method is the other method
-        // Possible to look into the PatientCacheService
+        $sendMethod = (string) $request->request->get('method', $this->patientCacheService->getLastSentMethod($hash));
 
-        if ($code !== null && !$code->isExpired()) {
+        if (
+            $code !== null
+            && !$code->isExpired()
+            && $this->patientCacheService->codeIsSentWith($hash, $sendMethod)
+        ) {
             // Case: User is redirected to /verify as if the code was just sent (no message). Code is not sent again.
             if (!$this->patientCacheService->hasPhoneOrEmail($hash)) {
                 // If we miss cache, then we will get the contact info and save info to cache
@@ -260,8 +266,7 @@ class AuthController extends BaseController
             $code = $this->generateVerificationCode($userInfo);
 
             // Send verification code
-            $method = (string) $request->request->get('method');
-            $this->sendVerificationCode($userInfo, $code, $method);
+            $this->sendVerificationCode($userInfo, $code, $sendMethod);
         } catch (SendFailure $e) {
             Log::error("authcontroller: send failure: " . $e->getMessage());
 

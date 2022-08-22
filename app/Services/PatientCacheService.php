@@ -38,6 +38,11 @@ class PatientCacheService
         return $this->cache->get($this->getCacheKey(self::CACHE_KEY_SENT_TO, $patientHash), []);
     }
 
+    public function codeIsSentWith(string $patientHash, string $method): bool
+    {
+        return !empty($this->getSentTo($patientHash)[$method]);
+    }
+
     public function saveSentTo(string $patientHash, string $method, string $data): void
     {
         $sentTo = $this->getSentTo($patientHash);
@@ -79,10 +84,15 @@ class PatientCacheService
 
     public function clearCache(string $patientHash): void
     {
-        $this->cache->delete($this->getCacheKey(self::CACHE_KEY_SENT_TO, $patientHash));
-        $this->cache->delete($this->getCacheKey(self::CACHE_KEY_LAST_SENT_METHOD, $patientHash));
+        $this->clearSentCache($patientHash);
         $this->cache->delete($this->getCacheKey(self::CACHE_KEY_HAS_PHONE, $patientHash));
         $this->cache->delete($this->getCacheKey(self::CACHE_KEY_HAS_EMAIL, $patientHash));
+    }
+
+    public function clearSentCache(string $patientHash): void
+    {
+        $this->cache->delete($this->getCacheKey(self::CACHE_KEY_SENT_TO, $patientHash));
+        $this->cache->delete($this->getCacheKey(self::CACHE_KEY_LAST_SENT_METHOD, $patientHash));
     }
 
     protected function getCacheKey(string $cacheKey, string $patientHash): string
