@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Services\CmsService;
 use App\Services\EmailGateway;
 use App\Services\EmailService;
 use App\Services\InfoRetrievalGateway;
@@ -12,6 +11,7 @@ use App\Services\InfoRetrievalService;
 use App\Services\SmsGateway;
 use App\Services\SmsService;
 use Illuminate\Support\ServiceProvider;
+use MinVWS\Crypto\Laravel\SignatureCryptoInterface;
 
 class GatewayProvider extends ServiceProvider
 {
@@ -43,13 +43,6 @@ class GatewayProvider extends ServiceProvider
             };
         });
 
-        $this->app->singleton(CmsService::class, function () {
-            return new CmsService(
-                config('cms.cert'),
-                config('cms.chain'),
-            );
-        });
-
         $this->app->singleton(InfoRetrievalService::class, function () {
             $provider = config('gateway.info_retrieval_service');
             return match ($provider) {
@@ -60,7 +53,7 @@ class GatewayProvider extends ServiceProvider
                 ),
                 'yenlo' => new InfoRetrievalService(
                     new InfoRetrievalGateway\Yenlo(
-                        $this->app->get(CmsService::class),
+                        $this->app->get(SignatureCryptoInterface::class),
                         config('yenlo.client_id'),
                         config('yenlo.client_secret'),
                         config('yenlo.token_url'),

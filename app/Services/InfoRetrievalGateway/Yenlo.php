@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services\InfoRetrievalGateway;
 
 use Exception;
-use App\Services\CmsService;
 use App\Services\UserInfo;
 use App\Exceptions\CmsValidationException;
 use GuzzleHttp\Client;
@@ -13,25 +12,26 @@ use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use MinVWS\Crypto\Laravel\SignatureCryptoInterface;
 
 class Yenlo implements InfoRetrievalGateway
 {
     protected const CACHE_KEY = 'yenlo_accesstoken';
 
-    protected CmsService $cmsService;
+    protected SignatureCryptoInterface $signatureService;
     protected string $clientId;
     protected string $clientSecret;
     protected string $tokenUrl;
     protected string $userinfoUrl;
 
     public function __construct(
-        CmsService $cmsService,
+        SignatureCryptoInterface $signatureService,
         string $clientId,
         string $clientSecret,
         string $tokenUrl,
         string $userinfoUrl,
     ) {
-        $this->cmsService = $cmsService;
+        $this->signatureService = $signatureService;
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->tokenUrl = $tokenUrl;
@@ -126,10 +126,12 @@ class Yenlo implements InfoRetrievalGateway
     protected function decodeAndVerifyResponse(string $body): array
     {
         $json = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
-        $signature = base64_decode($json['signature']);
+        $signature = $json['signature'];
         $payload = base64_decode($json['payload']);
 
-        $this->cmsService->verify($payload, $signature);
+        if (!$this->signatureService->verify($signature, $payload, file_get_contents(config('cms.cert')) ?: '')) {
+            throw new CmsValidationException('Signature does not match payload');
+        }
 
         return json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
     }
