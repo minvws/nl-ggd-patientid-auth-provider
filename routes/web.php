@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OidcController;
-use App\Http\Middleware\ResendThrottleMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
