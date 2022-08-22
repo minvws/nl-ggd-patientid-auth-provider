@@ -19,7 +19,7 @@ use App\Services\ResendThrottleService;
 use App\Services\SmsService;
 use App\Exceptions\ContactInfoNotFound;
 use App\Services\UserInfo;
-use App\Services\VerificationCodeSentCacheService;
+use App\Services\PatientCacheService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -43,7 +43,7 @@ class AuthController extends BaseController
     protected InfoRetrievalService $infoRetrievalService;
     protected OidcService $oidcService;
     protected ResendThrottleService $resendThrottleService;
-    protected VerificationCodeSentCacheService $verificationCodeSentCacheService;
+    protected PatientCacheService $patientCacheService;
 
     public function __construct(
         EmailService $emailService,
@@ -52,7 +52,7 @@ class AuthController extends BaseController
         InfoRetrievalService $infoRetrievalService,
         OidcService $oidcService,
         ResendThrottleService $resendThrottleService,
-        VerificationCodeSentCacheService $verificationCodeSentCacheService,
+        PatientCacheService $patientCacheService,
     ) {
         $this->emailService = $emailService;
         $this->smsService = $smsService;
@@ -60,7 +60,7 @@ class AuthController extends BaseController
         $this->infoRetrievalService = $infoRetrievalService;
         $this->oidcService = $oidcService;
         $this->resendThrottleService = $resendThrottleService;
-        $this->verificationCodeSentCacheService = $verificationCodeSentCacheService;
+        $this->patientCacheService = $patientCacheService;
     }
 
     public function login(Request $request): ViewFactory | ViewContract
@@ -92,8 +92,8 @@ class AuthController extends BaseController
     {
         $patientHash = $request->patientHash();
 
-        $verificationType = $this->verificationCodeSentCacheService->getLastSentMethod($patientHash);
-        $sentTo = $this->verificationCodeSentCacheService->getLastSentTo($patientHash);
+        $verificationType = $this->patientCacheService->getLastSentMethod($patientHash);
+        $sentTo = $this->patientCacheService->getLastSentTo($patientHash);
         // Can be empty when cache is cleared and the code is not expired
         // TODO: Discuss possibilities
 
@@ -121,7 +121,7 @@ class AuthController extends BaseController
         $hash = $request->patientHash();
 
         $this->resendThrottleService->reset($hash);
-        $this->verificationCodeSentCacheService->clearCache($hash);
+        $this->patientCacheService->clearCache($hash);
 
         // Authorization successful, redirect back to client application with auth code
         return $this->oidcService->finishAuthorize($request, $hash);
@@ -129,7 +129,7 @@ class AuthController extends BaseController
 
     public function resend(Request $request): RedirectResponse | ViewFactory | ViewContract
     {
-        $verificationType = $this->verificationCodeSentCacheService->getLastSentMethod($request->patientHash());
+        $verificationType = $this->patientCacheService->getLastSentMethod($request->patientHash());
         if ($verificationType === null) {
             return Redirect::route('start_auth');
         }
@@ -208,7 +208,7 @@ class AuthController extends BaseController
 
             // Store verification type so the view can tell the user where to look for the code
             $anonymizer = new Anonymizer();
-            $this->verificationCodeSentCacheService->saveSentTo($userInfo->hash, $verificationType, $anonymizer->phoneNumber($userInfo->phoneNumber));
+            $this->patientCacheService->saveSentTo($userInfo->hash, $verificationType, $anonymizer->phoneNumber($userInfo->phoneNumber));
         } else {
             $verificationType = 'email';
             $result = $this->emailService->send($userInfo->email, 'template', ['code' => $code->code]);
@@ -219,7 +219,7 @@ class AuthController extends BaseController
 
             // Store verification type so the view can tell the user where to look for the code
             $anonymizer = new Anonymizer();
-            $this->verificationCodeSentCacheService->saveSentTo($userInfo->hash, $verificationType, $anonymizer->email($userInfo->email));
+            $this->patientCacheService->saveSentTo($userInfo->hash, $verificationType, $anonymizer->email($userInfo->email));
         }
     }
 
@@ -233,7 +233,7 @@ class AuthController extends BaseController
         $code = $this->codeGeneratorService->fetchCodeByHash($hash);
 
         // TODO: Add check if send method is the other method
-        // Possible to look into the verificationCodeSentCacheService
+        // Possible to look into the PatientCacheService
 
         if ($code !== null && !$code->isExpired()) {
             // User is redirected to /verify as if the code was just sent (no message). Code is not sent again.
@@ -243,8 +243,9 @@ class AuthController extends BaseController
         }
 
         try {
-            // TODO: Check if we can and may cache contact info to prevent multiple lookups
             $userInfo = $this->getContactInfo($hash);
+
+            // TODO: Move to cache
             $request->session()->put('has_phone', $userInfo->hasPhone());
             $request->session()->put('has_email', $userInfo->hasEmail());
 
