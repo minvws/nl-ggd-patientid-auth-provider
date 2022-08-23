@@ -124,6 +124,7 @@ class AuthController extends BaseController
 
         $this->patientCodeGenerationThrottleService->reset($hash);
         $this->patientCacheService->clearCache($hash);
+        $this->codeGeneratorService->removeCodeByHash($hash);
 
         // Authorization successful, redirect back to client application with auth code
         return $this->oidcService->finishAuthorize($request, $hash);
