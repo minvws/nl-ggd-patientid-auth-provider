@@ -11,4 +11,9 @@ return [
      */
     'cache_store' => env('PATIENT_CACHE_STORE'),
 
+    /**
+     * Here you can specify a number of code attempts
+     * after that the code will be invalidated.
+     */
+    'invalidate_code_after_attempts' => env('PATIENT_INVALIDATE_CODE_AFTER_ATTEMPTS', 5),
 ];

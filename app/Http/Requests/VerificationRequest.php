@@ -61,7 +61,8 @@ class VerificationRequest extends FormRequest
         }
 
         if (!$this->codeGeneratorService->validate($patientHash, $code)) {
-            if ($this->patientCacheService->getCodeValidationAttempts($patientHash) >= 5) {
+            $attempts = $this->patientCacheService->getCodeValidationAttempts($patientHash);
+            if ($attempts >= config('patient.invalidate_code_after_attempts')) {
                 $this->codeGeneratorService->expireCodeByHash($patientHash);
             }
 
