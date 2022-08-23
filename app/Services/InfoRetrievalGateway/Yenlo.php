@@ -45,7 +45,7 @@ class Yenlo implements InfoRetrievalGateway
     {
         $accessToken = $this->fetchAccessToken();
 
-        $userInfo = new UserInfo();
+        $userInfo = new UserInfo($userHash);
 
         try {
             $client = new Client([

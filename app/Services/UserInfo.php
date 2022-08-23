@@ -6,8 +6,14 @@ namespace App\Services;
 
 class UserInfo
 {
+    public string $hash = '';
     public string $phoneNumber = "";
     public string $email = "";
+
+    public function __construct(string $hash)
+    {
+        $this->hash = $hash;
+    }
 
     public function withPhoneNumber(string $phoneNumber): UserInfo
     {
