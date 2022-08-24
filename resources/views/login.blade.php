@@ -18,9 +18,7 @@
                         id="patient_id"
                         name="patient_id"
                         inputmode="numeric"
-                        pattern="[0-9]{1,8}"
                         autocomplete="off"
-                        required
                         value="{{ old('patient_id') }}"
                         aria-describedby="patient_id_explanation"
                         {{ $errors->has('patient_id')
@@ -44,7 +42,6 @@
                                 name="birth_day"
                                 autocomplete="off"
                                 inputmode="numeric"
-                                pattern="[xX]{1,2}|[012]?[0-9]|3[01]"
                                 maxlength="2"
                                 value="{{ old('birth_day') }}"
                                 {{ $errors->has('birthdate')
@@ -59,7 +56,6 @@
                                 name="birth_month"
                                 autocomplete="off"
                                 inputmode="numeric"
-                                pattern="[xX]{1,2}|0?[0-9]|1[012]"
                                 maxlength="2"
                                 value="{{ old('birth_month') }}"
                                 {{ $errors->has('birthdate')
@@ -74,10 +70,7 @@
                                 name="birth_year"
                                 autocomplete="off"
                                 inputmode="numeric"
-                                pattern="(18|19|20)[0-9]{2}"
-                                minlength="4"
                                 maxlength="4"
-                                required
                                 value="{{ old('birth_year') }}"
                                 {{ $errors->has('birthdate')
                                     ? 'aria-invalid=true aria-errormessage=birthdate_error'
