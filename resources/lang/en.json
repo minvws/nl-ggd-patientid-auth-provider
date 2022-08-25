@@ -49,5 +49,5 @@
   "ratelimit.header": "Too many attempts",
   "ratelimit.content": "There have been too many login attempts in a short time. Try again later.",
   "resend_throttle.header": "Can't send new code yet",
-  "resend_throttle.content": "You have requested multiple verification codes in a short time. Please try again in :minutes minutes."
+  "resend_throttle.content": "You have requested multiple verification codes in a short time. Please try again later."
 }
