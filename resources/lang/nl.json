@@ -49,5 +49,5 @@
   "ratelimit.header": "Te veel pogingen",
   "ratelimit.content": "Er zijn in korte tijd veel inlog-pogingen gedaan. Probeer het later opnieuw.",
   "resend_throttle.header": "Kan nog geen nieuwe code sturen",
-  "resend_throttle.content": "U heeft in een korte tijd meerdere verificatiecodes aangevraagd. Probeer het over :minutes minuten opnieuw."
+  "resend_throttle.content": "U heeft in een korte tijd meerdere verificatiecodes aangevraagd. Probeer het later opnieuw."
 }
