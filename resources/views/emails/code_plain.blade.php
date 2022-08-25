@@ -1,3 +1,1 @@
-Hello,
-
-your plaintext code is {{ $code }}
+@lang(':code is your verification code', ['code' => $code])

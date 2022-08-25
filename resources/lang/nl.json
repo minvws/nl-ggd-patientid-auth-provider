@@ -32,7 +32,7 @@
   "continue": "Verder",
   "back": "Terug",
   "cancel": "Annuleren",
-  ":code is your verification code": ":code is uw persoonlijke verificatiecode",
+  ":code is your verification code": ":code is uw verificatiecode.",
   "validation.invalid_patient_id": "Geen geldig patiëntnummer. Uw patiëntnummer bestaat uit minimaal 1 en maximaal 8 cijfers.",
   "validation.invalid_date_of_birth": "Geen geldige geboortedatum. Voorbeeld: 01-01-1980.",
   "validation.unknown_patient_id": "Dit patiëntnummer lijkt niet bij de ingevulde geboortedatum te horen.",

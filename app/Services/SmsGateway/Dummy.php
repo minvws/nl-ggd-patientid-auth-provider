@@ -10,7 +10,7 @@ class Dummy implements SmsGatewayInterface
 {
     public function send(string $phoneNumber, string $template, array $vars): bool
     {
-        Log::debug("Dummy SMS: " . $vars['code']);
+        Log::debug("Dummy SMS: " . strval(__(':code is your verification code', $vars)));
         return true;
     }
 }
