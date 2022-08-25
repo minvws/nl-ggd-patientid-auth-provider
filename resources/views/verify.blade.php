@@ -16,9 +16,7 @@
                         id="code"
                         name="code"
                         inputmode="numeric"
-                        pattern="[0-9]{6}"
                         autocomplete="off"
-                        required
                         placeholder="123456"
                         aria-describedby="code_explanation"
                         {{ $errors->has('code')
