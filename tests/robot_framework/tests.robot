@@ -20,7 +20,8 @@ Test One
     Click       " Verder "
 
     ${LARAVEL_LOGS}     Get File        ${EXECDIR}/storage/logs/laravel.log
-    ${SMS_CODE}         Set Variable    ${LARAVEL_LOGS.split("\n")[-2].split()[-1]}
+    ${LOG_LINE}         Set Variable    ${LARAVEL_LOGS.split("\n")[-2]}
+    ${SMS_CODE}         Get Regexp Matches  ${LOG_LINE}   [0-9]{6}
     Fill Text           id=code         ${SMS_CODE}
     ${RESPONSE_HEADERS}  Click And Get Response Headers     //button    verify
     ${LOCATION_CODE}    Set Variable    ${RESPONSE_HEADERS["location"].split("code=")[-1]}
