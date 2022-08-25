@@ -21,7 +21,7 @@ Test One
 
     ${LARAVEL_LOGS}     Get File        ${EXECDIR}/storage/logs/laravel.log
     ${LOG_LINE}         Set Variable    ${LARAVEL_LOGS.split("\n")[-2]}
-    ${SMS_CODE}         Get Regexp Matches  ${LOG_LINE}   [0-9]{6}
+    ${SMS_CODE}         Set Variable    ${LOG_LINE.split()[5]}
     Fill Text           id=code         ${SMS_CODE}
     ${RESPONSE_HEADERS}  Click And Get Response Headers     //button    verify
     ${LOCATION_CODE}    Set Variable    ${RESPONSE_HEADERS["location"].split("code=")[-1]}
