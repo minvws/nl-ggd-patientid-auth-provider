@@ -32,7 +32,7 @@
   "continue": "Continue",
   "back": "Back",
   "cancel": "Cancel",
-  ":code is your verification code": ":code is your verification code",
+  ":code is your verification code": ":code is your verification code.",
   "validation.invalid_patient_id": "Invalid patient number. Your patient number consists of a minimum of 1 and a maximum of 8 digits.",
   "validation.invalid_date_of_birth": "Invalid date of birth. For example: 01-01-1980.",
   "validation.unknown_patient_id": "This patient number doesn’t seem to match with the entered date of birth.",
