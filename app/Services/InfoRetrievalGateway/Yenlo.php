@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services\InfoRetrievalGateway;
 
 use App\Exceptions\UserInfoRetrieveException;
-use Exception;
 use App\Services\CmsService;
 use App\Services\UserInfo;
 use App\Exceptions\CmsValidationException;
