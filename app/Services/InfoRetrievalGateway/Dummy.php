@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\InfoRetrievalGateway;
 
+use App\Exceptions\UserInfoRetrieveException;
 use App\Services\UserInfo;
 
 class Dummy implements InfoRetrievalGateway
@@ -32,6 +33,10 @@ class Dummy implements InfoRetrievalGateway
 
     public function retrieve(string $userHash): UserInfo
     {
+        if ($userHash == $this->createHash('12345678', '1900-01-01')) {
+            throw new UserInfoRetrieveException();
+        }
+
         return $this->dummyData[$userHash] ?? new UserInfo($userHash);
     }
 
