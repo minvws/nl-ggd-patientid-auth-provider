@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\InfoRetrievalGateway;
 
+use App\Exceptions\UserInfoRetrieveException;
 use Exception;
 use App\Services\CmsService;
 use App\Services\UserInfo;
@@ -43,11 +44,9 @@ class Yenlo implements InfoRetrievalGateway
      */
     public function retrieve(string $userHash): UserInfo
     {
-        $accessToken = $this->fetchAccessToken();
-
-        $userInfo = new UserInfo($userHash);
-
         try {
+            $accessToken = $this->fetchAccessToken();
+
             $client = new Client([
                 'http_errors' => false,
                 'headers' => [
@@ -66,6 +65,7 @@ class Yenlo implements InfoRetrievalGateway
 
             $data = $this->decodeAndVerifyResponse((string)$response->getBody());
 
+            $userInfo = new UserInfo($userHash);
             if (isset($data['email'])) {
                 $userInfo->withEmail($data['email']);
             }
@@ -74,6 +74,7 @@ class Yenlo implements InfoRetrievalGateway
             }
         } catch (\Throwable $e) {
             Log::error("yenlo::retrieve: error while receiving data: " . $e->getMessage());
+            throw new UserInfoRetrieveException("Error parsing response from Yenlo token request");
         }
 
         return $userInfo;

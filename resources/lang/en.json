@@ -49,5 +49,8 @@
   "ratelimit.header": "Too many attempts",
   "ratelimit.content": "There have been too many login attempts in a short time. Try again later.",
   "resend_throttle.header": "Can't send new code yet",
-  "resend_throttle.content": "You have requested multiple verification codes in a short time. Please try again later."
+  "resend_throttle.content": "You have requested multiple verification codes in a short time. Please try again later.",
+  "unexpected.header": "Something went wrong",
+  "unexpected.explanation": "Your request to retrieve test or vaccination data from the GGD GHOR, can not be processed.",
+  "unexpected.try_again": "Please go back to the application or website that redirected you and try again."
 }
