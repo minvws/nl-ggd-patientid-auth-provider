@@ -63,7 +63,7 @@ class AuthController extends BaseController
         $this->patientCacheService = $patientCacheService;
     }
 
-    public function login(Request $request): ViewFactory | ViewContract
+    public function login(Request $request): ViewFactory|ViewContract
     {
         $oidcParams = $request->session()->get('oidcparams');
 
@@ -91,7 +91,7 @@ class AuthController extends BaseController
         return $this->sendVerificationCodeAndRedirectToVerify($request, $hash);
     }
 
-    public function verify(Request $request): RedirectResponse | ViewFactory | ViewContract
+    public function verify(Request $request): RedirectResponse|ViewFactory|ViewContract
     {
         $patientHash = $request->patientHash();
 
@@ -100,6 +100,7 @@ class AuthController extends BaseController
 
         if ($verificationType === null || $sentTo === null) {
             $this->patientCacheService->clearCache($patientHash);
+
             return Redirect::route('start_auth');
         }
 
@@ -118,7 +119,7 @@ class AuthController extends BaseController
      * @param VerificationRequest $request
      * @return RedirectResponse|ViewFactory|ViewContract
      */
-    public function verifySubmit(VerificationRequest $request): RedirectResponse | ViewFactory | ViewContract
+    public function verifySubmit(VerificationRequest $request): RedirectResponse|ViewFactory|ViewContract
     {
         $hash = $request->patientHash();
 
@@ -130,13 +131,14 @@ class AuthController extends BaseController
         return $this->oidcService->finishAuthorize($request, $hash);
     }
 
-    public function resend(Request $request): RedirectResponse | ViewFactory | ViewContract
+    public function resend(Request $request): RedirectResponse|ViewFactory|ViewContract
     {
         $patientHash = $request->patientHash();
 
         $verificationType = $this->patientCacheService->getLastSentMethod($patientHash);
         if ($verificationType === null) {
             $this->patientCacheService->clearCache($patientHash);
+
             return Redirect::route('start_auth');
         }
 
@@ -210,38 +212,68 @@ class AuthController extends BaseController
      */
     protected function sendVerificationCode(UserInfo $userInfo, Code $code, string $method = ""): void
     {
-        // Sending to phone has priority, fallback to email if necessary
-        if ($userInfo->phoneNumber && $method !== "email") {
-            $verificationType = 'sms';
-            $result = $this->smsService->send($userInfo->phoneNumber, 'template', ['code' => $code->code]);
-            if (! $result) {
-                Log::error("sendVerificationCode: send failure");
-                throw new SendFailure();
-            }
+        switch ($method) {
+            case "sms":
+                $result = $userInfo->phoneNumber && $this->sendVerificationBySms($userInfo, $code);
+                if ($result) {
+                    return;
+                }
 
-            // Store verification type so the view can tell the user where to look for the code
-            $anonymizer = new Anonymizer();
-            $this->patientCacheService->saveSentTo(
-                $userInfo->hash,
-                $verificationType,
-                $anonymizer->phoneNumber($userInfo->phoneNumber)
-            );
-        } else {
-            $verificationType = 'email';
-            $result = $this->emailService->send($userInfo->email, 'template', ['code' => $code->code]);
-            if (! $result) {
-                Log::error("sendVerificationCode: send failure");
-                throw new SendFailure();
-            }
-
-            // Store verification type so the view can tell the user where to look for the code
-            $anonymizer = new Anonymizer();
-            $this->patientCacheService->saveSentTo(
-                $userInfo->hash,
-                $verificationType,
-                $anonymizer->email($userInfo->email)
-            );
+                $result = $userInfo->email && $this->sendVerificationByEmail($userInfo, $code);
+                if ($result) {
+                    return;
+                }
+                break;
+            case "email":
+                $result = $userInfo->email && $this->sendVerificationByEmail($userInfo, $code);
+                if ($result) {
+                    return;
+                }
+                break;
+            default:
+                Log::error("sendVerificationCode: incorrect send method received: " . $method);
+                break;
         }
+
+        throw new SendFailure();
+    }
+
+    protected function sendVerificationBySms(UserInfo $userInfo, Code $code): bool
+    {
+        $result = $this->smsService->send($userInfo->phoneNumber, 'template', ['code' => $code->code]);
+        if (!$result) {
+            Log::error("sendVerificationBySms: send failure");
+            return false;
+        }
+
+        // Store verification type so the view can tell the user where to look for the code
+        $anonymizer = new Anonymizer();
+        $this->patientCacheService->saveSentTo(
+            $userInfo->hash,
+            'sms',
+            $anonymizer->phoneNumber($userInfo->phoneNumber)
+        );
+
+        return true;
+    }
+
+    protected function sendVerificationByEmail(UserInfo $userInfo, Code $code): bool
+    {
+        $result = $this->emailService->send($userInfo->email, 'template', ['code' => $code->code]);
+        if (! $result) {
+            Log::error("sendVerificationByEmail: send failure");
+            return false;
+        }
+
+        // Store verification type so the view can tell the user where to look for the code
+        $anonymizer = new Anonymizer();
+        $this->patientCacheService->saveSentTo(
+            $userInfo->hash,
+            'email',
+            $anonymizer->email($userInfo->email)
+        );
+
+        return true;
     }
 
     /**
@@ -255,6 +287,9 @@ class AuthController extends BaseController
         $code = $this->codeGeneratorService->fetchCodeByHash($hash);
 
         $sendMethod = (string) $request->request->get('method', $this->patientCacheService->getLastSentMethod($hash));
+        if (empty($sendMethod)) {
+            $sendMethod = "sms";
+        }
 
         if (
             $code !== null
