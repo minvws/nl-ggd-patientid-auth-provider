@@ -9,8 +9,8 @@ use Firebase\JWT\JWT;
 
 class JwtService
 {
-    protected string $privateKey;
-    protected string $certificate;
+    protected string $privateKeyPath;
+    protected string $certificatePath;
     protected string $iss;
     protected string $aud;
     protected int $expiryTime;
@@ -22,8 +22,8 @@ class JwtService
         string $aud,
         int $expiryTime
     ) {
-        $this->privateKey = (string)file_get_contents(base_path($privateKeyPath));
-        $this->certificate = (string)file_get_contents(base_path($certificatePath));
+        $this->privateKeyPath = $privateKeyPath;
+        $this->certificatePath = $certificatePath;
         $this->iss = $iss;
         $this->aud = $aud;
         $this->expiryTime = $expiryTime;
@@ -31,10 +31,13 @@ class JwtService
 
     public function generate(string $userHash): string
     {
+        $privateKey = (string)file_get_contents(base_path($this->privateKeyPath));
+        $certificate = (string)file_get_contents(base_path($this->certificatePath));
+
         $now = Carbon::now();
 
         $payload = array(
-            "kid" => hash('sha256', $this->certificate),
+            "kid" => hash('sha256', $certificate),
             "iss" => $this->iss,
             "aud" => $this->aud,
             "iat" => $now->getTimestamp(),
@@ -44,6 +47,6 @@ class JwtService
             "nonce" => hash('sha256', uniqid($userHash, true)),
         );
 
-        return JWT::encode($payload, $this->privateKey, 'RS256');
+        return JWT::encode($payload, $privateKey, 'RS256');
     }
 }
