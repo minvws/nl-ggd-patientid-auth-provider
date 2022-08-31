@@ -1,6 +1,6 @@
 <header>
     <div>
-        <img src="/logo.svg" alt="GGD GHOR" width="84px" height="39.06px">
+        <img src="/logo.svg" alt="Logo GGD GHOR" width="84px" height="39.06px">
         <div class="language">
             <a
                 href="{{ url()->current() . '?lang=nl' }}"
