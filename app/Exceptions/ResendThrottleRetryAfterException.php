@@ -10,6 +10,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
+use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
 class ResendThrottleRetryAfterException extends Exception
 {
@@ -42,7 +43,7 @@ class ResendThrottleRetryAfterException extends Exception
         return response()->view('errors.resend_throttle', [
             'retry_after' => $this->getRetryAfter(),
             'back_uri' => route('resend')
-        ], 429);
+        ], BaseResponse::HTTP_TOO_MANY_REQUESTS);
     }
 
     public function getRetryAfter(): Carbon

@@ -13,6 +13,7 @@ class Dummy implements EmailGatewayInterface
     {
         $email = new SendCode($vars['code']);
         Log::debug("Dummy e-mail: " . $email->render());
+
         return true;
     }
 }

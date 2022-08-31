@@ -20,20 +20,25 @@ class CmsVerify extends Command
         if (!is_string($json)) {
             throw new Exception("Invalid JSON");
         }
+
         $cmsService = new CmsService(
             config('cms.cert'),
             config('cms.chain'),
         );
+
         $message = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         $signature = base64_decode($message['signature']);
         $payload = base64_decode($message['payload']);
+
         try {
             $cmsService->verify($payload, $signature);
             $this->line("Verification successful");
         } catch (Exception $e) {
             $this->line("Verification FAILED");
             Log::error((string)$e);
+            return 1;
         }
-        return 1;
+
+        return 0;
     }
 }

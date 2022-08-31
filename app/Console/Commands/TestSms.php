@@ -25,9 +25,8 @@ class TestSms extends Command
 
     protected SmsService $smsService;
 
-    public function __construct(
-        SmsService $smsService,
-    ) {
+    public function __construct(SmsService $smsService)
+    {
         parent::__construct();
 
         $this->smsService = $smsService;

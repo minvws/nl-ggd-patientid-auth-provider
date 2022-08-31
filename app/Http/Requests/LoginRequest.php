@@ -75,6 +75,7 @@ class LoginRequest extends FormRequest
     protected function __(string $key): string
     {
         $message = __($key);
+
         return is_string($message) ? $message : '';
     }
 }
