@@ -166,25 +166,27 @@ class AuthController extends BaseController
     {
         // Generate verification code
         $code = $this->codeGeneratorService->generate($userInfo->hash, false);
-        if ($code->isExpired()) {
-            $retryAfter = $this->patientCodeGenerationThrottleService->getRetryAfter($userInfo->hash);
-            if ($retryAfter !== null) {
-                // Case: User "logs in". Code is no longer valid. Rate limit is active.
-                // Case: User uses "resend" button. Code is no longer valid. Rate limit is active.
-                throw new ResendThrottleRetryAfterException($retryAfter);
-            }
-
-            // Case: User "logs in". Code is no longer valid. Rate limit is inactive.
-            // When expired (when we asked to resend the code again for instance), generate a new code
-            $code = $this->codeGeneratorService->generate($userInfo->hash, true);
-
-            // Register code generated attempt
-            $this->patientCodeGenerationThrottleService->attempt($userInfo->hash);
-
-            // Clear sent to, because it is a new code and clear attempts
-            $this->patientCacheService->clearSentCache($userInfo->hash);
-            $this->patientCacheService->clearCodeValidationAttempts($userInfo->hash);
+        if (!$code->isExpired()) {
+            return $code;
         }
+
+        $retryAfter = $this->patientCodeGenerationThrottleService->getRetryAfter($userInfo->hash);
+        if ($retryAfter !== null) {
+            // Case: User "logs in". Code is no longer valid. Rate limit is active.
+            // Case: User uses "resend" button. Code is no longer valid. Rate limit is active.
+            throw new ResendThrottleRetryAfterException($retryAfter);
+        }
+
+        // Case: User "logs in". Code is no longer valid. Rate limit is inactive.
+        // When expired (when we asked to resend the code again for instance), generate a new code
+        $code = $this->codeGeneratorService->generate($userInfo->hash, true);
+
+        // Register code generated attempt
+        $this->patientCodeGenerationThrottleService->attempt($userInfo->hash);
+
+        // Clear sent to, because it is a new code and clear attempts
+        $this->patientCacheService->clearSentCache($userInfo->hash);
+        $this->patientCacheService->clearCodeValidationAttempts($userInfo->hash);
 
         return $code;
     }
@@ -310,7 +312,6 @@ class AuthController extends BaseController
 
         try {
             $userInfo = $this->getContactInfoAndSetCache($hash);
-
             $code = $this->generateVerificationCode($userInfo);
 
             // Send verification code
@@ -334,6 +335,7 @@ class AuthController extends BaseController
             'state' => $oidcParams->state,
             'error' => 'cancelled'
         ]);
+
         return  $oidcParams->redirectUri . '?' . $qs;
     }
 

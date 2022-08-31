@@ -18,7 +18,7 @@ class HasPatientHash
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        $patientHash = $request->patientHash();
+        $request->patientHash();
 
         return $next($request);
     }

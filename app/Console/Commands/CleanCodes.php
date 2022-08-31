@@ -30,8 +30,8 @@ class CleanCodes extends Command
      */
     public function handle(): int
     {
-        $deleted = DB::table('codes')->where('expires_at', '<', time())->delete();
-        print "Deleted $deleted expired codes\n";
+        $count = DB::table('codes')->where('expires_at', '<', time())->delete();
+        print "Deleted $count expired codes\n";
 
         return 0;
     }
