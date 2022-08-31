@@ -103,7 +103,7 @@
                         aria-expanded="false"
                         aria-controls="faq-no-patient-number"
                     >
-                        @lang('faq.no-patient-number.question')
+                    @lang('faq.no-patient-number.question') <span aria-hidden="true"></span>
                     </button>
                     <div
                         role="region"
@@ -119,7 +119,7 @@
                         aria-expanded="false"
                         aria-controls="faq-birthdate-unknown"
                     >
-                        @lang('faq.birthdate-unknown.question')
+                        @lang('faq.birthdate-unknown.question') <span aria-hidden="true"></span>
                     </button>
                     <div
                         role="region"
