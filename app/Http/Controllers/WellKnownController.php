@@ -64,6 +64,7 @@ class WellKnownController extends Controller
         if (Cache::has('jwks')) {
             return response()->json(Cache::get('jwks'));
         }
+
         /** @var string $certificate */
         $certificate = file_get_contents(base_path(config('jwt.certificate_path')));
         /** @var OpenSSLAsymmetricKey $publicKey */

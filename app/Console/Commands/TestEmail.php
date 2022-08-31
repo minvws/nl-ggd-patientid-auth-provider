@@ -25,9 +25,7 @@ class TestEmail extends Command
 
     protected EmailService $emailService;
 
-    public function __construct(
-        EmailService $emailService,
-    ) {
+    public function __construct(EmailService $emailService) {
         parent::__construct();
 
         $this->emailService = $emailService;
