@@ -49,19 +49,19 @@ class LoginRequest extends FormRequest
         if (!preg_match('/^\d{4}$/', $year)) {
             return '';
         }
-        if (!preg_match('/^\d{1,2}|[xX]{1,2}$/', $month)) {
+        if (!preg_match('/^(\d{1,2}|[xX]{1,2})$/', $month)) {
             return '';
         }
-        if (!preg_match('/^\d{1,2}|[xX]{1,2}$/', $day)) {
+        if (!preg_match('/^(\d{1,2}|[xX]{1,2})$/', $day)) {
             return '';
         }
-        if (preg_match('/^[xX]+|0|00$/', $month)) {
+        if (preg_match('/^([xX]+|0|00)$/', $month)) {
             $month = "01";
         }
         if (strlen($month) === 1) {
             $month = "0" . $month;
         }
-        if (preg_match('/^[xX]+|0|00$/', $day)) {
+        if (preg_match('/^([xX]+|0|00)$/', $day)) {
             $day = "01";
         }
         if (strlen($day) === 1) {
