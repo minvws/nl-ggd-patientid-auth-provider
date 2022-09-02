@@ -46,17 +46,22 @@ class LoginRequest extends FormRequest
         $month = strtoupper($this->get('birth_month') ?? '01');
         $day = strtoupper($this->get('birth_day') ?? '01');
 
-        if (strlen($year) !== 4 || strlen($month) > 2 || strlen($day) > 2) {
+        if (!preg_match('/^\d{4}$/', $year)) {
             return '';
         }
-
-        if ($month === "X" || $month === "XX" || $month === "0" || $month === "00") {
+        if (!preg_match('/^(\d{1,2}|[xX]{1,2})$/', $month)) {
+            return '';
+        }
+        if (!preg_match('/^(\d{1,2}|[xX]{1,2})$/', $day)) {
+            return '';
+        }
+        if (preg_match('/^([xX]+|0|00)$/', $month)) {
             $month = "01";
         }
         if (strlen($month) === 1) {
             $month = "0" . $month;
         }
-        if ($day === "X" || $day === "XX" || $day === "0" || $day === "00") {
+        if (preg_match('/^([xX]+|0|00)$/', $day)) {
             $day = "01";
         }
         if (strlen($day) === 1) {
