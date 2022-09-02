@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page-title', __('resend.header.' . $verificationType))
+
 @section('content')
     <section>
         <div>

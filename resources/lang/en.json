@@ -52,5 +52,6 @@
   "resend_throttle.content": "You have requested multiple verification codes in a short time. Please try again later.",
   "unexpected.header": "Something went wrong",
   "unexpected.explanation": "Your request to retrieve test or vaccination data from the GGD GHOR, can not be processed.",
-  "unexpected.try_again": "Please go back to the application or website that redirected you and try again."
+  "unexpected.try_again": "Please go back to the application or website that redirected you and try again.",
+  "page-title.errors": "form has errors"
 }

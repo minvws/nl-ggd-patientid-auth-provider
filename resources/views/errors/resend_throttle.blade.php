@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page-title', __('resend_throttle.header'))
+
 @section('content')
     <section>
         <div>

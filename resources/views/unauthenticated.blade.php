@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page-title', __('unauthenticated.header'))
+
 @section('content')
     <section>
         <div>

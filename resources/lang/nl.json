@@ -52,5 +52,6 @@
   "resend_throttle.content": "U heeft in een korte tijd meerdere verificatiecodes aangevraagd. Probeer het later opnieuw.",
   "unexpected.header": "Er is iets misgegaan",
   "unexpected.explanation": "Uw verzoek om test- of vaccinatiegegevens op te halen bij de GGD GHOR, kan niet verwerkt worden.",
-  "unexpected.try_again": "Ga a.u.b. terug naar de applicatie of website die u heeft doorgestuurd en probeer het opnieuw."
+  "unexpected.try_again": "Ga a.u.b. terug naar de applicatie of website die u heeft doorgestuurd en probeer het opnieuw.",
+  "page-title.errors": "formulier heeft fouten"
 }
