@@ -20,10 +20,8 @@
                         inputmode="numeric"
                         autocomplete="off"
                         value="{{ old('patient_id') }}"
-                        aria-describedby="patient_id_explanation"
-                        {{ $errors->has('patient_id')
-                            ? 'aria-invalid=true aria-errormessage=patient_id_error'
-                            : '' }}
+                        aria-describedby="patient_id_explanation patient_id_error"
+                        {{ $errors->has('patient_id') ? 'aria-invalid=true autofocus' : '' }}
                     >
                     @if ($errors->has('patient_id'))
                         <p class="error" id="patient_id_error">{{ $errors->first('patient_id') }}</p>
@@ -44,9 +42,8 @@
                                 inputmode="numeric"
                                 maxlength="2"
                                 value="{{ old('birth_day') }}"
-                                {{ $errors->has('birthdate')
-                                    ? 'aria-invalid=true aria-errormessage=birthdate_error'
-                                    : '' }}
+                                aria-describedby="birthdate_error"
+                                {{ $errors->has('birthdate') ? 'aria-invalid=true autofocus' : '' }}
                             >
                         </div>
                         <div>
@@ -58,9 +55,8 @@
                                 inputmode="numeric"
                                 maxlength="2"
                                 value="{{ old('birth_month') }}"
-                                {{ $errors->has('birthdate')
-                                    ? 'aria-invalid=true aria-errormessage=birthdate_error'
-                                    : '' }}
+                                aria-describedby="birthdate_error"
+                                {{ $errors->has('birthdate') ? 'aria-invalid=true autofocus' : '' }}
                             >
                         </div>
                         <div>
@@ -72,9 +68,8 @@
                                 inputmode="numeric"
                                 maxlength="4"
                                 value="{{ old('birth_year') }}"
-                                {{ $errors->has('birthdate')
-                                    ? 'aria-invalid=true aria-errormessage=birthdate_error'
-                                    : '' }}
+                                aria-describedby="birthdate_error"
+                                {{ $errors->has('birthdate') ? 'aria-invalid=true autofocus' : '' }}
                             >
                         </div>
                     </div>

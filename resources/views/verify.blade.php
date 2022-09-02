@@ -18,16 +18,14 @@
                         inputmode="numeric"
                         autocomplete="off"
                         placeholder="123456"
-                        aria-describedby="code_explanation"
-                        {{ $errors->has('code')
-                            ? 'aria-invalid=true aria-errormessage=code_error'
-                        : '' }}
-                        >
-                        @if ($errors->has('code'))
-                            <p class="error" id="code_error">{{ $errors->first('code') }}</p>
-                        @else
-                            <p class="explanation" id="code_explanation">@lang('verify.code_explanation')</p>
-                        @endif
+                        aria-describedby="code_explanation code_error"
+                        {{ $errors->has('code') ? 'aria-invalid=true autofocus' : '' }}
+                    >
+                    @if ($errors->has('code'))
+                        <p class="error" id="code_error">{{ $errors->first('code') }}</p>
+                    @else
+                        <p class="explanation" id="code_explanation">@lang('verify.code_explanation')</p>
+                    @endif
                 </div>
 
                 <button type="submit">
