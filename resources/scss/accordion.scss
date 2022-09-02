@@ -39,7 +39,7 @@ $breakpoint: 34rem !default;
 .js-accordion-loaded {
   .accordion {
     button {
-      &:after {
+      & span {
         content: "";
         background-size: 12px 7px;
         width: 12px;
@@ -49,14 +49,17 @@ $breakpoint: 34rem !default;
       }
 
       &[aria-expanded="false"] {
-        &:after {
+        & span {
           @extend %icon-text-styling;
-          content: "v";
           display: inline-flex;
           align-items: center;
           justify-content: center;
           text-align: center;
           font-size: var(--icon-base-font-size);
+
+          &:after {
+            content: "v";
+          }
         }
 
         & + div {
@@ -65,14 +68,17 @@ $breakpoint: 34rem !default;
       }
 
       &[aria-expanded="true"] {
-        &:after {
+        & span {
           @extend %icon-text-styling;
-          content: "^";
           display: inline-flex;
           align-items: center;
           justify-content: center;
           text-align: center;
           font-size: var(--icon-base-font-size);
+
+          &:after {
+            content: "^";
+          }
         }
       }
     }

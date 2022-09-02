@@ -98,18 +98,24 @@
 
             <div class="accordion">
                 <div>
-                    <button id="faq-no-patient-number" aria-expanded="false">
-                        @lang('faq.no-patient-number.question')
+                    <button
+                        aria-expanded="false"
+                        aria-controls="faq-no-patient-number"
+                    >
+                    @lang('faq.no-patient-number.question') <span aria-hidden="true"></span>
                     </button>
-                    <div aria-labelledby="faq-no-patient-number">
+                    <div id="faq-no-patient-number">
                         {!! __('faq.no-patient-number.answer') !!}
                     </div>
                 </div>
                 <div>
-                    <button id="faq-birthdate-unknown" aria-expanded="false">
-                        @lang('faq.birthdate-unknown.question')
+                    <button
+                        aria-expanded="false"
+                        aria-controls="faq-birthdate-unknown"
+                    >
+                        @lang('faq.birthdate-unknown.question') <span aria-hidden="true"></span>
                     </button>
-                    <div aria-labelledby="faq-birthdate-unknown">
+                    <div id="faq-birthdate-unknown">
                         {!! __('faq.birthdate-unknown.answer') !!}
                     </div>
                 </div>
