@@ -73,7 +73,7 @@ class LoginRequest extends FormRequest
         if (!$c || $year != $c->year || $month != $c->month || $day != $c->day) {
             return  '';
         }
-        if ($c->gt(Carbon::now())) {
+        if ($c->isAfter(Carbon::now())) {
             return '';
         }
 
