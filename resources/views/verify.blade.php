@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section(
+    'page-title',
+    __('verify.header') . ($errors->any() ? ' (' . __('page-title.errors') . ')' : '')
+)
+
 @section('content')
     <section>
         <div>

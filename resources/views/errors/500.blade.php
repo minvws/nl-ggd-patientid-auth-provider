@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page-title', __('unexpected.header'))
+
 @section('content')
     <section>
         <div>
