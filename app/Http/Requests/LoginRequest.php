@@ -49,10 +49,10 @@ class LoginRequest extends FormRequest
         if (!preg_match('/^\d{4}$/', $year)) {
             return '';
         }
-        if (!preg_match('/^(\d{1,2}|[xX]{1,2})?$/', $month)) {
+        if (!preg_match('/^\d{1,2}|[xX]{1,2}$/', $month)) {
             return '';
         }
-        if (!preg_match('/^(\d{1,2}|[xX]{1,2})?$/', $day)) {
+        if (!preg_match('/^\d{1,2}|[xX]{1,2}$/', $day)) {
             return '';
         }
         if (preg_match('/^[xX]+|0|00$/', $month)) {
