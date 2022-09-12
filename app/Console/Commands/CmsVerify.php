@@ -7,6 +7,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Exception;
 use MinVWS\Crypto\Laravel\SignatureCryptoInterface;
+use Illuminate\Support\Facades\Log;
 
 class CmsVerify extends Command
 {
@@ -26,9 +27,10 @@ class CmsVerify extends Command
 
         if (!$signatureService->verify($signature, $payload, file_get_contents(config('cms.cert')) ?: '')) {
             $this->line("Verification FAILED");
-        } else {
-            $this->line("Verification successful");
+            return 1;
         }
+
+        $this->line("Verification successful");
         return 1;
     }
 }

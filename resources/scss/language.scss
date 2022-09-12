@@ -1,7 +1,10 @@
+@use "sr-only";
+
 .language {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  margin: 0;
 
   a {
     font-size: var(--headings-h2-font-size);
@@ -18,6 +21,10 @@
 
     &:focus {
       outline-offset: 0;
+    }
+
+    span {
+      @extend .sr-only;
     }
   }
 }

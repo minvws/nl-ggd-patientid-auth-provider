@@ -26,7 +26,7 @@ class MessageBird implements SmsGatewayInterface
         $msg = new Message();
         $msg->originator = $this->sender;
         $msg->recipients = array($phoneNumber);
-        $msg->body = strval(__(':code is your confirmation code', $vars));
+        $msg->body = strval(__(':code is your verification code', $vars));
 
         try {
             $client->messages->create($msg);

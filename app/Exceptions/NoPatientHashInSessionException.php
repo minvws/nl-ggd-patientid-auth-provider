@@ -7,10 +7,8 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redirect;
 
-class ContactInfoNotFound extends Exception
+class NoPatientHashInSessionException extends Exception
 {
     /**
      * Report the exception.
@@ -31,13 +29,6 @@ class ContactInfoNotFound extends Exception
      */
     public function render(Request $request): RedirectResponse
     {
-        Log::warning("authcontroller: contact not found: " . $this->getMessage());
-
-        return Redirect::route('start_auth')
-            ->withInput()
-            ->withErrors([
-                'patient_id' => __('validation.unknown_patient_id'),
-                'birthdate' => __('validation.unknown_date_of_birth'),
-            ]);
+        return redirect()->route('start_auth');
     }
 }

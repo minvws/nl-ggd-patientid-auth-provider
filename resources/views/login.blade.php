@@ -1,5 +1,10 @@
 @extends('layouts.app')
 
+@section(
+    'page-title',
+    __('login.header') . ($errors->any() ? ' (' . __('page-title.errors') . ')' : '')
+)
+
 @section('content')
     <section>
         <div>
@@ -18,14 +23,10 @@
                         id="patient_id"
                         name="patient_id"
                         inputmode="numeric"
-                        pattern="[0-9]{1,8}"
                         autocomplete="off"
-                        required
                         value="{{ old('patient_id') }}"
-                        aria-describedby="patient_id_explanation"
-                        {{ $errors->has('patient_id')
-                            ? 'aria-invalid=true aria-errormessage=patient_id_error'
-                            : '' }}
+                        aria-describedby="patient_id_explanation patient_id_error"
+                        {{ $errors->has('patient_id') ? 'aria-invalid=true autofocus' : '' }}
                     >
                     @if ($errors->has('patient_id'))
                         <p class="error" id="patient_id_error">{{ $errors->first('patient_id') }}</p>
@@ -44,12 +45,10 @@
                                 name="birth_day"
                                 autocomplete="off"
                                 inputmode="numeric"
-                                pattern="[xX]{1,2}|[012]?[0-9]|3[01]"
                                 maxlength="2"
                                 value="{{ old('birth_day') }}"
-                                {{ $errors->has('birthdate')
-                                    ? 'aria-invalid=true aria-errormessage=birthdate_error'
-                                    : '' }}
+                                aria-describedby="birthdate_error"
+                                {{ $errors->has('birthdate') ? 'aria-invalid=true autofocus' : '' }}
                             >
                         </div>
                         <div>
@@ -59,12 +58,10 @@
                                 name="birth_month"
                                 autocomplete="off"
                                 inputmode="numeric"
-                                pattern="[xX]{1,2}|0?[0-9]|1[012]"
                                 maxlength="2"
                                 value="{{ old('birth_month') }}"
-                                {{ $errors->has('birthdate')
-                                    ? 'aria-invalid=true aria-errormessage=birthdate_error'
-                                    : '' }}
+                                aria-describedby="birthdate_error"
+                                {{ $errors->has('birthdate') ? 'aria-invalid=true autofocus' : '' }}
                             >
                         </div>
                         <div>
@@ -74,14 +71,10 @@
                                 name="birth_year"
                                 autocomplete="off"
                                 inputmode="numeric"
-                                pattern="(18|19|20)[0-9]{2}"
-                                minlength="4"
                                 maxlength="4"
-                                required
                                 value="{{ old('birth_year') }}"
-                                {{ $errors->has('birthdate')
-                                    ? 'aria-invalid=true aria-errormessage=birthdate_error'
-                                    : '' }}
+                                aria-describedby="birthdate_error"
+                                {{ $errors->has('birthdate') ? 'aria-invalid=true autofocus' : '' }}
                             >
                         </div>
                     </div>
@@ -105,18 +98,24 @@
 
             <div class="accordion">
                 <div>
-                    <button id="faq-no-patient-number" aria-expanded="false">
-                        @lang('faq.no-patient-number.question')
+                    <button
+                        aria-expanded="false"
+                        aria-controls="faq-no-patient-number"
+                    >
+                    @lang('faq.no-patient-number.question') <span aria-hidden="true"></span>
                     </button>
-                    <div aria-labelledby="faq-no-patient-number">
+                    <div id="faq-no-patient-number">
                         {!! __('faq.no-patient-number.answer') !!}
                     </div>
                 </div>
                 <div>
-                    <button id="faq-birthdate-unknown" aria-expanded="false">
-                        @lang('faq.birthdate-unknown.question')
+                    <button
+                        aria-expanded="false"
+                        aria-controls="faq-birthdate-unknown"
+                    >
+                        @lang('faq.birthdate-unknown.question') <span aria-hidden="true"></span>
                     </button>
-                    <div aria-labelledby="faq-birthdate-unknown">
+                    <div id="faq-birthdate-unknown">
                         {!! __('faq.birthdate-unknown.answer') !!}
                     </div>
                 </div>

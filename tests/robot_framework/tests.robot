@@ -1,7 +1,7 @@
 * Settings *
-Resource    page_objects/general.resource
-Force Tags  CI
-
+Resource            page_objects/general.resource
+Force Tags          CI
+Suite Teardown      Suite Teardown Steps
 * Variables *
 ${START_AUTH}       https://localhost:444/oidc/authorize?response_type=code&client_id=client-123&state=a&scope=openid&redirect_uri=https%3A%2F%2Flocalhost%3A445%2Fcallback.html&code_challenge=oAh_MAHECKHJUmXa9iWFWSybV45sm-pUQPSG5-BB_xc&code_challenge_method=S256
 ${USER_HASH}        96fd493d72041b6b8794d8a3a7b60e39999b76bac06694aaaffa414af5a1158a
@@ -20,7 +20,8 @@ Test One
     Click       " Verder "
 
     ${LARAVEL_LOGS}     Get File        ${EXECDIR}/storage/logs/laravel.log
-    ${SMS_CODE}         Set Variable    ${LARAVEL_LOGS.split("\n")[-2].split()[-1]}
+    ${LOG_LINE}         Set Variable    ${LARAVEL_LOGS.split("\n")[-2]}
+    ${SMS_CODE}         Set Variable    ${LOG_LINE.split()[5]}
     Fill Text           id=code         ${SMS_CODE}
     ${RESPONSE_HEADERS}  Click And Get Response Headers     //button    verify
     ${LOCATION_CODE}    Set Variable    ${RESPONSE_HEADERS["location"].split("code=")[-1]}

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\InfoRetrievalGateway;
 
 use Exception;
+use App\Exceptions\UserInfoRetrieveException;
 use App\Services\UserInfo;
 use App\Exceptions\CmsValidationException;
 use GuzzleHttp\Client;
@@ -43,11 +44,9 @@ class Yenlo implements InfoRetrievalGateway
      */
     public function retrieve(string $userHash): UserInfo
     {
-        $accessToken = $this->fetchAccessToken();
-
-        $userInfo = new UserInfo();
-
         try {
+            $accessToken = $this->fetchAccessToken();
+
             $client = new Client([
                 'http_errors' => false,
                 'headers' => [
@@ -66,6 +65,7 @@ class Yenlo implements InfoRetrievalGateway
 
             $data = $this->decodeAndVerifyResponse((string)$response->getBody());
 
+            $userInfo = new UserInfo($userHash);
             if (isset($data['email'])) {
                 $userInfo->withEmail($data['email']);
             }
@@ -73,7 +73,8 @@ class Yenlo implements InfoRetrievalGateway
                 $userInfo->withPhoneNumber($data['phoneNumber']);
             }
         } catch (\Throwable $e) {
-            Log::error("yenlo::retrieve: error while receiving data: " . $e->getMessage());
+            Log::error("yenlo::retrieve: error while receiving or processing data: " . $e->getMessage());
+            throw new UserInfoRetrieveException($e->getMessage());
         }
 
         return $userInfo;
@@ -111,7 +112,7 @@ class Yenlo implements InfoRetrievalGateway
         ]);
         if ($validator->fails()) {
             Log::error("yenlo::fetchAccessToken: error while validating body: " . json_encode($body));
-            throw new Exception("Error parsing response from Yenlo token request");
+            throw new UserInfoRetrieveException("Error fetching/parsing response from Yenlo access token request");
         }
 
         Cache::put(self::CACHE_KEY, $body, $body['expires_in'] - 10);

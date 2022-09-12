@@ -15,7 +15,6 @@ class InfoRetrievalService
         $this->gateway = $gateway;
     }
 
-
     public function retrieve(string $hash): UserInfo
     {
         return $this->gateway->retrieve($hash);
