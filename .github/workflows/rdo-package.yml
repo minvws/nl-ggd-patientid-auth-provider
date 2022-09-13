@@ -1,4 +1,4 @@
-name: Create release package
+name: Create RDO release package
 
 on:
   push:
