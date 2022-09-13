@@ -13,20 +13,20 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use MinVWS\Crypto\Laravel\Service\Signature\SignatureVerifyConfig;
-use MinVWS\Crypto\Laravel\SignatureCryptoInterface;
+use MinVWS\Crypto\Laravel\SignatureVerifyCryptoInterface;
 
 class Yenlo implements InfoRetrievalGateway
 {
     protected const CACHE_KEY = 'yenlo_accesstoken';
 
-    protected SignatureCryptoInterface $signatureService;
+    protected SignatureVerifyCryptoInterface $signatureService;
     protected string $clientId;
     protected string $clientSecret;
     protected string $tokenUrl;
     protected string $userinfoUrl;
 
     public function __construct(
-        SignatureCryptoInterface $signatureService,
+        SignatureVerifyCryptoInterface $signatureService,
         string $clientId,
         string $clientSecret,
         string $tokenUrl,

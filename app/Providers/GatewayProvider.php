@@ -11,7 +11,7 @@ use App\Services\InfoRetrievalService;
 use App\Services\SmsGateway;
 use App\Services\SmsService;
 use Illuminate\Support\ServiceProvider;
-use MinVWS\Crypto\Laravel\SignatureCryptoInterface;
+use MinVWS\Crypto\Laravel\SignatureVerifyCryptoInterface;
 
 class GatewayProvider extends ServiceProvider
 {
@@ -53,7 +53,7 @@ class GatewayProvider extends ServiceProvider
                 ),
                 'yenlo' => new InfoRetrievalService(
                     new InfoRetrievalGateway\Yenlo(
-                        $this->app->get(SignatureCryptoInterface::class),
+                        $this->app->get(SignatureVerifyCryptoInterface::class),
                         config('yenlo.client_id'),
                         config('yenlo.client_secret'),
                         config('yenlo.token_url'),
