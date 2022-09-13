@@ -6,8 +6,8 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Exception;
+use MinVWS\Crypto\Laravel\Service\Signature\SignatureVerifyConfig;
 use MinVWS\Crypto\Laravel\SignatureCryptoInterface;
-use Illuminate\Support\Facades\Log;
 
 class CmsVerify extends Command
 {
@@ -25,12 +25,18 @@ class CmsVerify extends Command
         $signature = $message['signature'];
         $payload = base64_decode($message['payload']);
 
-        if (!$signatureService->verify($signature, $payload, file_get_contents(config('cms.cert')) ?: '')) {
+        $cert = file_get_contents(config('cms.cert')) ?: '';
+        if (!$signatureService->verify($signature, $payload, $cert, $this->getSignatureVerifyConfig())) {
             $this->line("Verification FAILED");
             return 1;
         }
 
         $this->line("Verification successful");
         return 1;
+    }
+
+    public function getSignatureVerifyConfig(): SignatureVerifyConfig
+    {
+        return (new SignatureVerifyConfig())->setBinary(true);
     }
 }

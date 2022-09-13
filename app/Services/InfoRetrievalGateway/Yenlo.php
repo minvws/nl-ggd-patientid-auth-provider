@@ -12,6 +12,7 @@ use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use MinVWS\Crypto\Laravel\Service\Signature\SignatureVerifyConfig;
 use MinVWS\Crypto\Laravel\SignatureCryptoInterface;
 
 class Yenlo implements InfoRetrievalGateway
@@ -129,10 +130,16 @@ class Yenlo implements InfoRetrievalGateway
         $signature = $json['signature'];
         $payload = base64_decode($json['payload']);
 
-        if (!$this->signatureService->verify($signature, $payload, file_get_contents(config('cms.cert')) ?: '')) {
+        $cert = file_get_contents(config('cms.cert')) ?: '';
+        if (!$this->signatureService->verify($signature, $payload, $cert, $this->getSignatureVerifyConfig())) {
             throw new CmsValidationException('Signature does not match payload');
         }
 
         return json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
+    }
+
+    public function getSignatureVerifyConfig(): SignatureVerifyConfig
+    {
+        return (new SignatureVerifyConfig())->setBinary(true);
     }
 }

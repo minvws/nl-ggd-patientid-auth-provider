@@ -204,6 +204,7 @@ return [
         App\Providers\JwtProvider::class,
         App\Providers\JsonClientResolverProvider::class,
         App\Providers\PatientCacheServiceProvider::class,
+        App\Providers\SignatureVerifyProvider::class,
     ],
 
     /*
