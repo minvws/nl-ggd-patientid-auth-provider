@@ -4,5 +4,7 @@ First - The work that is created in the Covid19 context, such as the notificatio
 
 However - that does not mean that all (derived) work is solely under that single license. For example - where appropriate certain (open source) modules may be required and included. These will remain under their original Copyright and License (though some may be released under the EUPL/1.2 if they are unsuitable to be contributed back upstream).
 
+Finally – The EUPL 1.2 and the CC0 do not apply to photos, videos, infographics or other forms of images. It is therefore not permitted to reuse or transfer the image, unless the image explicitly states that it is permitted or you have received written permission of the Municipal Health Service. Such permission will not be withheld on unreasonable grounds.
+
 --
 v1.02 / 2020-09-14
