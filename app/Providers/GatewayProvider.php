@@ -11,6 +11,7 @@ use App\Services\InfoRetrievalGateway;
 use App\Services\InfoRetrievalService;
 use App\Services\SmsGateway;
 use App\Services\SmsService;
+use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 
 class GatewayProvider extends ServiceProvider
@@ -61,6 +62,7 @@ class GatewayProvider extends ServiceProvider
                 'yenlo' => new InfoRetrievalService(
                     new InfoRetrievalGateway\Yenlo(
                         $this->app->get(CmsService::class),
+                        new Client(),
                         config('yenlo.client_id'),
                         config('yenlo.client_secret'),
                         config('yenlo.token_url'),
