@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Services\SmsGateway;
+namespace Tests\Feature\Services\SmsGateway;
 
 use App\Services\SmsGateway\Dummy;
 use Tests\TestCase;

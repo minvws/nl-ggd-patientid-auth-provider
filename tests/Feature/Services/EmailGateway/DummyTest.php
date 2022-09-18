@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Services\EmailGateway;
+namespace Tests\Feature\Services\EmailGateway;
 
 use App\Services\EmailGateway\Dummy;
 use Tests\TestCase;
