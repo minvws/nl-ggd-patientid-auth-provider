@@ -55,7 +55,7 @@ jobs:
         run: php artisan key:generate --env=testing
 
       - name: Execute tests with Code Coverage
-        run: vendor/bin/phpunit --configuration phpunit.xml --coverage-clover tests/coverage.xml
+        run: vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-clover tests/coverage.xml
 
       - if: ${{ github.event_name == 'pull_request' }}
         name: Download artifact
