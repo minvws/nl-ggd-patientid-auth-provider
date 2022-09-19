@@ -10,7 +10,7 @@ class Anonymizer
     {
         // Split user @ domain
         $parts = explode('@', $email, 2);
-        if (count($parts) != 2) {
+        if (count($parts) !== 2) {
             return '***';
         }
 
