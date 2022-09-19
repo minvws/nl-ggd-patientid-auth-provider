@@ -8,6 +8,7 @@ use App\Services\Oidc\ArrayClientResolver;
 use App\Services\Oidc\StorageInterface;
 use App\Services\OidcService;
 use App\Services\JwtService;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Mockery;
@@ -307,6 +308,35 @@ class OidcServiceTest extends TestCase
         $this->assertEquals('bearer', $token['token_type']);
     }
 
+    public function testHasAuthorizeSessionWithOidcParamsInSession(): void
+    {
+        $oidcService = $this->setupService();
+
+        $sessionMock = Mockery::mock(Session::class);
+        $sessionMock->shouldReceive('has')->with('oidcparams')->once()->andReturn(true);
+
+        $requestMock = Mockery::mock(Request::class);
+        $requestMock->shouldReceive('session')->andReturn($sessionMock);
+
+        $response = $oidcService->hasAuthorizeSession($requestMock);
+        $this->assertTrue($response);
+    }
+
+    public function testHasAuthorizeSession(): void
+    {
+        $oidcService = $this->setupService();
+
+        $sessionMock = Mockery::mock(Session::class);
+        $sessionMock->shouldReceive('has')->with('oidcparams')->once()->andReturn(false);
+        $sessionMock->shouldReceive('flush')->once();
+        $sessionMock->shouldReceive('put')->withArgs(['lang', 'nl'])->once();
+
+        $requestMock = Mockery::mock(Request::class);
+        $requestMock->shouldReceive('session')->andReturn($sessionMock);
+
+        $response = $oidcService->hasAuthorizeSession($requestMock);
+        $this->assertFalse($response);
+    }
 
     protected function setupService()
     {
