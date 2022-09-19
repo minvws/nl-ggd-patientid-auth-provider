@@ -6,7 +6,7 @@ namespace Tests\Unit\Services\Oidc;
 
 use App\Services\Oidc\ArrayClientResolver;
 use App\Services\Oidc\Client;
-use Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class ArrayClientResolverTest extends TestCase
 {
