@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Services\EmailGateway;
 
 use App\Mail\SendCode;
@@ -29,6 +31,4 @@ class NativeTest extends TestCase
             return $mail->hasTo($email);
         });
     }
-
-
 }
