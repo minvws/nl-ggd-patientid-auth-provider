@@ -1653,16 +1653,16 @@
         },
         {
             "name": "minvws/laravel-crypto",
-            "version": "v2.0.0",
+            "version": "v2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/minvws/laravel-crypto.git",
-                "reference": "719c5c1d790c463f08ee36999f9fd5c5f0d61677"
+                "reference": "81bc46a4d4268f6e4d64fbf982295cbfb56d5ea7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minvws/laravel-crypto/zipball/719c5c1d790c463f08ee36999f9fd5c5f0d61677",
-                "reference": "719c5c1d790c463f08ee36999f9fd5c5f0d61677",
+                "url": "https://api.github.com/repos/minvws/laravel-crypto/zipball/81bc46a4d4268f6e4d64fbf982295cbfb56d5ea7",
+                "reference": "81bc46a4d4268f6e4d64fbf982295cbfb56d5ea7",
                 "shasum": ""
             },
             "require": {
@@ -1729,9 +1729,9 @@
             ],
             "support": {
                 "issues": "https://github.com/minvws/laravel-crypto/issues",
-                "source": "https://github.com/minvws/laravel-crypto/tree/v2.0.0"
+                "source": "https://github.com/minvws/laravel-crypto/tree/v2.0.3"
             },
-            "time": "2022-09-09T12:56:57+00:00"
+            "time": "2022-09-27T08:45:45+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -10525,5 +10525,5 @@
     "platform-overrides": {
         "php": "8.0.2"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.2.0"
 }
