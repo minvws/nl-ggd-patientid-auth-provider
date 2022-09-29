@@ -39,4 +39,9 @@ class JsonClientResolver implements ClientResolverInterface
     {
         return isset($this->clients[$clientId]);
     }
+
+    public function getClients(): array
+    {
+        return $this->clients;
+    }
 }

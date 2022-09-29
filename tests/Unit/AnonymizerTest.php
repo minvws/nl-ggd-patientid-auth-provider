@@ -12,7 +12,7 @@ class AnonymizerTest extends TestCase
     /**
      * @dataProvider emails
      */
-    public function testEmail(string $has, string $want)
+    public function testEmail(string $has, string $want): void
     {
         $anonymizer = new Anonymizer();
 
@@ -22,16 +22,17 @@ class AnonymizerTest extends TestCase
     /**
      * @dataProvider phoneNumbers
      */
-    public function testPhoneNumber(string $has, string $want)
+    public function testPhoneNumber(string $has, string $want): void
     {
         $anonymizer = new Anonymizer();
 
         $this->assertEquals($want, $anonymizer->phoneNumber($has));
     }
 
-    public function emails()
+    public function emails(): array
     {
         return [
+            [ '', '***' ],
             [ 'a@example.org', '*@example.org' ],
             [ 'john@example.org', '****@example.org' ],
             [ 'foobar@example.org', 'fo**ar@example.org' ],
