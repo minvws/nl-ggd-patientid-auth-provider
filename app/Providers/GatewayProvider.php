@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Services\CmsService;
 use App\Services\EmailGateway;
 use App\Services\EmailService;
 use App\Services\InfoRetrievalGateway;
@@ -12,7 +11,9 @@ use App\Services\InfoRetrievalService;
 use App\Services\SmsGateway;
 use App\Services\SmsService;
 use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use Illuminate\Support\ServiceProvider;
+use MinVWS\Crypto\Laravel\Factory;
 
 class GatewayProvider extends ServiceProvider
 {
@@ -44,14 +45,19 @@ class GatewayProvider extends ServiceProvider
             };
         });
 
-        $this->app->singleton(CmsService::class, function () {
-            return new CmsService(
-                config('cms.cert'),
-                config('cms.chain'),
-            );
-        });
-
         $this->app->singleton(InfoRetrievalService::class, function () {
+            $signatureService = Factory::createSignatureCryptoService(
+                certificateChain: config('cms.chain'),
+                forceProcessSpawn: config('cms.verify_service', "native") === "process_spawn",
+            );
+
+            $client = new Client([
+                RequestOptions::AUTH => [
+                    config('yenlo.client_id'),
+                    config('yenlo.client_secret'),
+                ],
+            ]);
+
             $provider = config('gateway.info_retrieval_service');
             return match ($provider) {
                 'dummy' => new InfoRetrievalService(
@@ -61,12 +67,11 @@ class GatewayProvider extends ServiceProvider
                 ),
                 'yenlo' => new InfoRetrievalService(
                     new InfoRetrievalGateway\Yenlo(
-                        $this->app->get(CmsService::class),
-                        new Client(),
-                        config('yenlo.client_id'),
-                        config('yenlo.client_secret'),
+                        $signatureService,
+                        $client,
                         config('yenlo.token_url'),
                         config('yenlo.userinfo_url'),
+                        config('cms.cert')
                     )
                 ),
                 default => throw new \Exception("Invalid INFORETRIEVAL_SERVICE '" . $provider . "'"),

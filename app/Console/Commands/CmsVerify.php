@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
-use App\Services\CmsService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 use Exception;
+use MinVWS\Crypto\Laravel\Factory;
+use MinVWS\Crypto\Laravel\Service\Signature\SignatureVerifyConfig;
 
 class CmsVerify extends Command
 {
@@ -16,29 +16,32 @@ class CmsVerify extends Command
 
     public function handle(): int
     {
+        $signatureService = Factory::createSignatureCryptoService(
+            certificateChain: config('cms.chain'),
+            forceProcessSpawn: config('cms.verify_service', "native") === "process_spawn",
+        );
+
         $json = $this->argument("json");
         if (!is_string($json)) {
             throw new Exception("Invalid JSON");
         }
 
-        $cmsService = new CmsService(
-            config('cms.cert'),
-            config('cms.chain'),
-        );
-
         $message = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        $signature = base64_decode($message['signature']);
+        $signature = $message['signature'];
         $payload = base64_decode($message['payload']);
 
-        try {
-            $cmsService->verify($payload, $signature);
-            $this->line("Verification successful");
-        } catch (Exception $e) {
+        $cert = file_get_contents(config('cms.cert')) ?: '';
+        if (!$signatureService->verify($signature, $payload, $cert, $this->getSignatureVerifyConfig())) {
             $this->line("Verification FAILED");
-            Log::error((string)$e);
             return 1;
         }
 
-        return 0;
+        $this->line("Verification successful");
+        return 1;
+    }
+
+    public function getSignatureVerifyConfig(): SignatureVerifyConfig
+    {
+        return (new SignatureVerifyConfig())->setBinary(true);
     }
 }

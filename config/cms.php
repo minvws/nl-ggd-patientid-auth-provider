@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'cert' => env('CMS_X509_CERT', dirname(__FILE__) . '/../cms/cert.pem'),
-    'chain' => env('CMS_X509_CHAIN', dirname(__FILE__) . '/../cms/chain.pem'),
+    'verify_service' => env('CMS_VERIFY_SERVICE', 'native'), // native or process_spawn
+    'cert' => env('CMS_X509_CERT', app_path('cms/cert.pem')),
+    'chain' => env('CMS_X509_CHAIN', app_path('cms/chain.pem')),
 ];

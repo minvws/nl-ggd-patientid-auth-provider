@@ -5,40 +5,38 @@ declare(strict_types=1);
 namespace App\Services\InfoRetrievalGateway;
 
 use App\Exceptions\UserInfoRetrieveException;
-use App\Services\CmsService;
 use App\Services\UserInfo;
 use App\Exceptions\CmsValidationException;
-use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use MinVWS\Crypto\Laravel\Service\Signature\SignatureVerifyConfig;
+use MinVWS\Crypto\Laravel\SignatureCryptoInterface;
 
 class Yenlo implements InfoRetrievalGateway
 {
     protected const CACHE_KEY = 'yenlo_accesstoken';
 
-    protected CmsService $cmsService;
-    protected ClientInterface $client;
-    protected string $clientId;
-    protected string $clientSecret;
+    protected SignatureCryptoInterface $signatureService;
     protected string $tokenUrl;
     protected string $userinfoUrl;
+    protected string $signatureVerifyCert;
+    protected Client $client;
 
     public function __construct(
-        CmsService $cmsService,
-        ClientInterface $client,
-        string $clientId,
-        string $clientSecret,
+        SignatureCryptoInterface $signatureService,
+        Client $client,
         string $tokenUrl,
         string $userinfoUrl,
+        string $signatureVerifyCert
     ) {
-        $this->cmsService = $cmsService;
+        $this->signatureService = $signatureService;
         $this->client = $client;
-        $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
         $this->tokenUrl = $tokenUrl;
         $this->userinfoUrl = $userinfoUrl;
+        $this->signatureVerifyCert = $signatureVerifyCert;
     }
 
     /**
@@ -95,10 +93,7 @@ class Yenlo implements InfoRetrievalGateway
             RequestOptions::FORM_PARAMS => [
                 'grant_type' => 'client_credentials',
             ],
-            RequestOptions::AUTH => [
-                $this->clientId,
-                $this->clientSecret,
-            ],
+
         ]);
 
         $body = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
@@ -123,11 +118,26 @@ class Yenlo implements InfoRetrievalGateway
     protected function decodeAndVerifyResponse(string $body): array
     {
         $json = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
-        $signature = base64_decode($json['signature']);
+        $signature = $json['signature'];
         $payload = base64_decode($json['payload']);
 
-        $this->cmsService->verify($payload, $signature);
+        // Verify the signature against the given cert instead of using the cert inside the signature.
+        if (
+            !$this->signatureService->verify(
+                $signature,
+                $payload,
+                $this->signatureVerifyCert,
+                $this->getSignatureVerifyConfig()
+            )
+        ) {
+            throw new CmsValidationException('Signature does not match payload');
+        }
 
         return json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
+    }
+
+    public function getSignatureVerifyConfig(): SignatureVerifyConfig
+    {
+        return (new SignatureVerifyConfig())->setBinary(true);
     }
 }
