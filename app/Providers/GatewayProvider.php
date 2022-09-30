@@ -47,7 +47,7 @@ class GatewayProvider extends ServiceProvider
         $this->app->singleton(InfoRetrievalService::class, function () {
             $signatureService = Factory::createSignatureCryptoService(
                 certificateChain: config('cms.chain'),
-                forceProcessSpawn: config('cms.verify_service', false),
+                forceProcessSpawn: config('cms.verify_service', "native") === "process_spawn",
             );
 
             $provider = config('gateway.info_retrieval_service');

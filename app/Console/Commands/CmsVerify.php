@@ -18,7 +18,7 @@ class CmsVerify extends Command
     {
         $signatureService = Factory::createSignatureCryptoService(
             certificateChain: config('cms.chain'),
-            forceProcessSpawn: config('cms.verify_service', false),
+            forceProcessSpawn: config('cms.verify_service', "native") === "process_spawn",
         );
 
         $json = $this->argument("json");
