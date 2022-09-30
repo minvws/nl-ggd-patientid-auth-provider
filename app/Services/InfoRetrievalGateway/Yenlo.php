@@ -127,15 +127,13 @@ class Yenlo implements InfoRetrievalGateway
         $signature = $json['signature'];
         $payload = base64_decode($json['payload']);
 
-        // Verify the signature against the given cert instead of using the cert inside the signature
-        if (
-            !$this->signatureService->verify(
-                $signature,
-                $payload,
-                $this->signatureVerifyCert,
-                $this->getSignatureVerifyConfig()
-            )
-        ) {
+        // Verify the signature against the given cert instead of using the cert inside the signature.
+        if (!$this->signatureService->verify(
+            $signature,
+            $payload,
+            $this->signatureVerifyCert,
+            $this->getSignatureVerifyConfig()
+        )) {
             throw new CmsValidationException('Signature does not match payload');
         }
 
