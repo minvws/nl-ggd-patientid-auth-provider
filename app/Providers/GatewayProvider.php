@@ -11,6 +11,7 @@ use App\Services\InfoRetrievalService;
 use App\Services\SmsGateway;
 use App\Services\SmsService;
 use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\Crypto\Laravel\Factory;
 
@@ -50,6 +51,13 @@ class GatewayProvider extends ServiceProvider
                 forceProcessSpawn: config('cms.verify_service', "native") === "process_spawn",
             );
 
+            $client = new Client([
+                RequestOptions::AUTH => [
+                    config('yenlo.client_id'),
+                    config('yenlo.client_secret'),
+                ],
+            ]);
+
             $provider = config('gateway.info_retrieval_service');
             return match ($provider) {
                 'dummy' => new InfoRetrievalService(
@@ -60,8 +68,7 @@ class GatewayProvider extends ServiceProvider
                 'yenlo' => new InfoRetrievalService(
                     new InfoRetrievalGateway\Yenlo(
                         $signatureService,
-                        config('yenlo.client_id'),
-                        config('yenlo.client_secret'),
+                        $client,
                         config('yenlo.token_url'),
                         config('yenlo.userinfo_url'),
                         config('cms.cert')
