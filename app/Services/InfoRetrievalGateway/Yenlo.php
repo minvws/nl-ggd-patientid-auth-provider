@@ -7,7 +7,7 @@ namespace App\Services\InfoRetrievalGateway;
 use App\Exceptions\UserInfoRetrieveException;
 use App\Services\UserInfo;
 use App\Exceptions\CmsValidationException;
-use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -50,17 +50,14 @@ class Yenlo implements InfoRetrievalGateway
         try {
             $accessToken = $this->fetchAccessToken();
 
-            $client = new Client([
-                'http_errors' => false,
-                'headers' => [
+            $response = $this->client->request('POST', $this->userinfoUrl, [
+                RequestOptions::HTTP_ERRORS => false,
+                RequestOptions::HEADERS => [
                     'Accept' => 'application/json',
                     'Content-Type' => 'application/json',
                     'Authorization' => 'Bearer ' . $accessToken,
                     'CoronaCheck-Protocol-Version' => '3.0',
                 ],
-            ]);
-
-            $response = $client->post($this->userinfoUrl, [
                 RequestOptions::JSON => [
                     'userhash' => $userHash,
                 ]
@@ -94,18 +91,15 @@ class Yenlo implements InfoRetrievalGateway
             return $token['access_token'];
         }
 
-        $client = new Client([
-            'http_errors' => false,
-            'auth' => [
-                $this->clientId,
-                $this->clientSecret,
-            ]
-        ]);
-
-        $response = $client->post($this->tokenUrl, [
+        $response = $this->client->request('POST', $this->tokenUrl, [
+            RequestOptions::HTTP_ERRORS => false,
             RequestOptions::FORM_PARAMS => [
                 'grant_type' => 'client_credentials',
-            ]
+            ],
+            RequestOptions::AUTH => [
+                $this->clientId,
+                $this->clientSecret,
+            ],
         ]);
 
         $body = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);

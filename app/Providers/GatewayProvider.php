@@ -10,6 +10,7 @@ use App\Services\InfoRetrievalGateway;
 use App\Services\InfoRetrievalService;
 use App\Services\SmsGateway;
 use App\Services\SmsService;
+use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 use MinVWS\Crypto\Laravel\Factory;
 

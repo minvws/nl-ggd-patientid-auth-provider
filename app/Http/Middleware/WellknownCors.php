@@ -8,7 +8,7 @@ use App\Services\Oidc\JsonClientResolver;
 use Closure;
 use Illuminate\Http\Request;
 
-class Cors
+class WellknownCors
 {
     protected JsonClientResolver $clientResolver;
 
@@ -27,16 +27,12 @@ class Cors
                 return $response;
             }
 
-            $client_id = $request->get('client_id');
-            $client = $this->clientResolver->resolve($client_id);
-            if (!$client) {
-                return $response;
-            }
-
-            foreach ($client->getRedirectUris() as $uri) {
-                if (str_starts_with(strtolower($uri), strtolower($origin))) {
-                    $response->headers->set('Access-Control-Allow-Origin', $origin);
-                    break;
+            foreach ($this->clientResolver->getClients() as $client) {
+                foreach ($client->getRedirectUris() as $uri) {
+                    if (str_starts_with(strtolower($uri), strtolower($origin))) {
+                        $response->headers->set('Access-Control-Allow-Origin', $origin);
+                        break;
+                    }
                 }
             }
         }
