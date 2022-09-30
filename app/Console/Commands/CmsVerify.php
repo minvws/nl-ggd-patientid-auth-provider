@@ -6,16 +6,21 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Exception;
+use MinVWS\Crypto\Laravel\Factory;
 use MinVWS\Crypto\Laravel\Service\Signature\SignatureVerifyConfig;
-use MinVWS\Crypto\Laravel\SignatureVerifyCryptoInterface;
 
 class CmsVerify extends Command
 {
     protected $signature = 'cms:verify {json}';
     protected $description = 'Verify the signature on a signed JSON message';
 
-    public function handle(SignatureVerifyCryptoInterface $signatureService): int
+    public function handle(): int
     {
+        $signatureService = Factory::createSignatureCryptoService(
+            certificateChain: config('cms.chain'),
+            forceProcessSpawn: config('cms.verify_service', false),
+        );
+
         $json = $this->argument("json");
         if (!is_string($json)) {
             throw new Exception("Invalid JSON");

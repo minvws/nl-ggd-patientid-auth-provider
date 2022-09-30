@@ -11,7 +11,7 @@ use App\Services\InfoRetrievalService;
 use App\Services\SmsGateway;
 use App\Services\SmsService;
 use Illuminate\Support\ServiceProvider;
-use MinVWS\Crypto\Laravel\SignatureVerifyCryptoInterface;
+use MinVWS\Crypto\Laravel\Factory;
 
 class GatewayProvider extends ServiceProvider
 {
@@ -44,6 +44,11 @@ class GatewayProvider extends ServiceProvider
         });
 
         $this->app->singleton(InfoRetrievalService::class, function () {
+            $signatureService = Factory::createSignatureCryptoService(
+                certificateChain: config('cms.chain'),
+                forceProcessSpawn: config('cms.verify_service', false),
+            );
+
             $provider = config('gateway.info_retrieval_service');
             return match ($provider) {
                 'dummy' => new InfoRetrievalService(
@@ -53,11 +58,12 @@ class GatewayProvider extends ServiceProvider
                 ),
                 'yenlo' => new InfoRetrievalService(
                     new InfoRetrievalGateway\Yenlo(
-                        $this->app->get(SignatureVerifyCryptoInterface::class),
+                        $signatureService,
                         config('yenlo.client_id'),
                         config('yenlo.client_secret'),
                         config('yenlo.token_url'),
                         config('yenlo.userinfo_url'),
+                        config('cms.cert')
                     )
                 ),
                 default => throw new \Exception("Invalid INFORETRIEVAL_SERVICE '" . $provider . "'"),

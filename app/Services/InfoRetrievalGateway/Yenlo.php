@@ -13,30 +13,33 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use MinVWS\Crypto\Laravel\Service\Signature\SignatureVerifyConfig;
-use MinVWS\Crypto\Laravel\SignatureVerifyCryptoInterface;
+use MinVWS\Crypto\Laravel\SignatureCryptoInterface;
 
 class Yenlo implements InfoRetrievalGateway
 {
     protected const CACHE_KEY = 'yenlo_accesstoken';
 
-    protected SignatureVerifyCryptoInterface $signatureService;
+    protected SignatureCryptoInterface $signatureService;
     protected string $clientId;
     protected string $clientSecret;
     protected string $tokenUrl;
     protected string $userinfoUrl;
+    protected string $signatureVerifyCert;
 
     public function __construct(
-        SignatureVerifyCryptoInterface $signatureService,
+        SignatureCryptoInterface $signatureService,
         string $clientId,
         string $clientSecret,
         string $tokenUrl,
         string $userinfoUrl,
+        string $signatureVerifyCert
     ) {
         $this->signatureService = $signatureService;
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->tokenUrl = $tokenUrl;
         $this->userinfoUrl = $userinfoUrl;
+        $this->signatureVerifyCert = $signatureVerifyCert;
     }
 
     /**
@@ -130,8 +133,15 @@ class Yenlo implements InfoRetrievalGateway
         $signature = $json['signature'];
         $payload = base64_decode($json['payload']);
 
-        $cert = file_get_contents(config('cms.cert')) ?: '';
-        if (!$this->signatureService->verify($signature, $payload, $cert, $this->getSignatureVerifyConfig())) {
+        // Verify the signature against the given cert instead of using the cert inside the signature
+        if (
+            !$this->signatureService->verify(
+                $signature,
+                $payload,
+                $this->signatureVerifyCert,
+                $this->getSignatureVerifyConfig()
+            )
+        ) {
             throw new CmsValidationException('Signature does not match payload');
         }
 
