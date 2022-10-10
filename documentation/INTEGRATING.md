@@ -2,7 +2,7 @@
 
 This app is an [OIDC](https://openid.net/connect/) + [PKCE](https://tools.ietf.org/html/rfc7636) authentication provider.
 
-If you are unfamiliar with OIDC and PKCE, it is highly advised and try out the demo client app. If you follow the instruction in [DEVELOPMENT.md](./DEVELOPMENT.md) to run the app with docker-compose, you can access the demo client app at [https://pap-demo-client.localdev:445](https://pap-demo-client.localdev:445).
+If you are unfamiliar with OIDC and PKCE, it is highly advised and try out the demo client app. If you follow the instruction in [DEVELOPMENT.md](DEVELOPMENT.md) to run the app with docker-compose, you can access the demo client app at [https://pap-demo-client.localdev:445](https://pap-demo-client.localdev:445).
 
 ## Authentication flow
 
