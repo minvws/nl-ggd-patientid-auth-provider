@@ -153,8 +153,8 @@ class OidcService
             throw OAuthValidationException::unsupportedResponseType(true);
         }
 
-        $scopes = explode(" ",$params->scope);
-        if (!in_array("openid",$scopes)) {
+        $scopes = explode(" ", $params->scope);
+        if (!in_array("openid", $scopes)) {
             throw OAuthValidationException::invalidScope(true);
         }
 
