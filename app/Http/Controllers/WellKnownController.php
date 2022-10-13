@@ -65,22 +65,36 @@ class WellKnownController extends Controller
             return response()->json(Cache::get('jwks'));
         }
 
-        /** @var string $certificate */
-        $certificate = file_get_contents(base_path(config('jwt.certificate_path')));
-        /** @var OpenSSLAsymmetricKey $publicKey */
-        $publicKey = openssl_pkey_get_public($certificate);
-        /** @var array $keyInfo */
-        $keyInfo = openssl_pkey_get_details($publicKey);
+        /** @var string[] $paths */
+        $paths = config('jwt.jwks_certificate_paths', []);
+        array_push($paths, config('jwt.certificate_path'));
+        $paths = array_values($paths);
+
+        $keys = [];
+        foreach ($paths as $path) {
+            if (empty($path)) {
+                continue;
+            }
+
+            /** @var string $certificate */
+            $certificate = file_get_contents(base_path($path));
+            /** @var OpenSSLAsymmetricKey $publicKey */
+            $publicKey = openssl_pkey_get_public($certificate);
+            /** @var array $keyInfo */
+            $keyInfo = openssl_pkey_get_details($publicKey);
+
+            $keys[] = [
+                "kid" => hash('sha256', $certificate),
+                'kty' => 'RSA',
+                'n' => rtrim(str_replace(['+', '/'], ['-', '_'], base64_encode($keyInfo['rsa']['n'])), '='),
+                'e' => rtrim(str_replace(['+', '/'], ['-', '_'], base64_encode($keyInfo['rsa']['e'])), '='),
+            ];
+        }
 
         $jsonData = [
             'keys' => [
-                [
-                    "kid" => hash('sha256', $certificate),
-                    'kty' => 'RSA',
-                    'n' => rtrim(str_replace(['+', '/'], ['-', '_'], base64_encode($keyInfo['rsa']['n'])), '='),
-                    'e' => rtrim(str_replace(['+', '/'], ['-', '_'], base64_encode($keyInfo['rsa']['e'])), '='),
-                ],
-            ],
+                $keys,
+            ]
         ];
 
         Cache::put('jwks', $jsonData, now()->addMinutes(5));
