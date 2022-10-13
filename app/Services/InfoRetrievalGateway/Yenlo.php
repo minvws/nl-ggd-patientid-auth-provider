@@ -22,7 +22,7 @@ class Yenlo implements InfoRetrievalGateway
     protected SignatureCryptoInterface $signatureService;
     protected string $tokenUrl;
     protected string $userinfoUrl;
-    protected string $signatureVerifyCert;
+    protected array $signatureVerifyCerts;
     protected Client $client;
 
     public function __construct(
@@ -30,13 +30,13 @@ class Yenlo implements InfoRetrievalGateway
         Client $client,
         string $tokenUrl,
         string $userinfoUrl,
-        string $signatureVerifyCert
+        array $signatureVerifyCerts
     ) {
         $this->signatureService = $signatureService;
         $this->client = $client;
         $this->tokenUrl = $tokenUrl;
         $this->userinfoUrl = $userinfoUrl;
-        $this->signatureVerifyCert = $signatureVerifyCert;
+        $this->signatureVerifyCerts = $signatureVerifyCerts;
     }
 
     /**
@@ -93,7 +93,6 @@ class Yenlo implements InfoRetrievalGateway
             RequestOptions::FORM_PARAMS => [
                 'grant_type' => 'client_credentials',
             ],
-
         ]);
 
         $body = json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
@@ -121,19 +120,21 @@ class Yenlo implements InfoRetrievalGateway
         $signature = $json['signature'];
         $payload = base64_decode($json['payload']);
 
-        // Verify the signature against the given cert instead of using the cert inside the signature.
-        if (
-            !$this->signatureService->verify(
-                $signature,
-                $payload,
-                $this->signatureVerifyCert,
-                $this->getSignatureVerifyConfig()
-            )
-        ) {
-            throw new CmsValidationException('Signature does not match payload');
+        foreach ($this->signatureVerifyCerts as $signatureVerifyCert) {
+            // Verify the signature against the given cert instead of using the cert inside the signature.
+            if (
+                $this->signatureService->verify(
+                    $signature,
+                    $payload,
+                    $signatureVerifyCert,
+                    $this->getSignatureVerifyConfig()
+                )
+            ) {
+                return json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
+            }
         }
 
-        return json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
+        throw new CmsValidationException('Signature does not match payload');
     }
 
     public function getSignatureVerifyConfig(): SignatureVerifyConfig
