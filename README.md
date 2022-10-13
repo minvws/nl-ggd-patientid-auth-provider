@@ -38,5 +38,8 @@ SMS_GATEWAY_MESSAGEBIRD_API_KEY=         # Api key for message bird text messagi
 OIDC_CLIENT_CONFIG_JSON=                 # Configuration file for oidc clients
 CMS_X509_CERT=                           # Certificate(s) for verifying Yenlo CMS signatures, comma separated
 CMS_X509_CHAIN=                          # Accompanying CA chain
-```
 
+JWKS_CERT_PATHS=                         # List of ADDITIONAL certs to list in JWKS, comma separated    
+JWT_CERT_PATH=                           # Path to certificate for JWT signing
+JWT_KEY_PATH=                            # Path to private key for JWT signing
+```
