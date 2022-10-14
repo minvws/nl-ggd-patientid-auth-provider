@@ -92,9 +92,7 @@ class WellKnownController extends Controller
         }
 
         $jsonData = [
-            'keys' => [
-                $keys,
-            ]
+            'keys' => $keys,
         ];
 
         Cache::put('jwks', $jsonData, now()->addMinutes(5));
