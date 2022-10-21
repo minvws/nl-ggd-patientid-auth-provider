@@ -22,7 +22,7 @@
     "esbuild": "^0.14.49",
     "postcss": "^8.4.13",
     "postcss-cli": "^9.1.0",
-    "postcss-custom-properties": "^12.1.7",
+    "postcss-custom-properties": "^12.1.10",
     "prettier": "^2.6.2",
     "sass": "^1.52.1"
   }
