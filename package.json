@@ -20,7 +20,7 @@
     "autoprefixer": "^10.4.7",
     "cssnano": "^5.1.14",
     "esbuild": "^0.15.12",
-    "postcss": "^8.4.13",
+    "postcss": "^8.4.19",
     "postcss-cli": "^10.0.0",
     "postcss-custom-properties": "^12.1.7",
     "prettier": "^2.6.2",
