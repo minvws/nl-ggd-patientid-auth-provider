@@ -24,6 +24,6 @@
     "postcss-cli": "^10.0.0",
     "postcss-custom-properties": "^12.1.7",
     "prettier": "^2.6.2",
-    "sass": "^1.52.1"
+    "sass": "^1.56.1"
   }
 }
