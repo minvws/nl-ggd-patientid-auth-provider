@@ -14,7 +14,7 @@
     "node": ">=16"
   },
   "dependencies": {
-    "@minvws/manon": "^1.0.0"
+    "@minvws/manon": "^1.1.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.7",
@@ -22,7 +22,7 @@
     "esbuild": "^0.15.12",
     "postcss": "^8.4.13",
     "postcss-cli": "^10.0.0",
-    "postcss-custom-properties": "^12.1.7",
+    "postcss-custom-properties": "^13.0.0",
     "prettier": "^2.6.2",
     "sass": "^1.52.1"
   }
