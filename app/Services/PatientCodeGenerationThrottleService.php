@@ -66,6 +66,7 @@ class PatientCodeGenerationThrottleService
 
     protected function getNewRetryAfter(int $attempt): int
     {
+        /** @var array<int,int> $retryAftersOptions */
         $retryAftersOptions = config('codegenerator.throttle.attempt_retry_after', []);
         $seconds = $retryAftersOptions[$attempt] ?? last($retryAftersOptions) ?: 0;
 
