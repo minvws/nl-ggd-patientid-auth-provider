@@ -1654,16 +1654,16 @@
         },
         {
             "name": "messagebird/php-rest-api",
-            "version": "v3.1.2",
+            "version": "v3.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/messagebird/php-rest-api.git",
-                "reference": "106c61a2eaa80dcaf5d52b21ddeacbd0a59c791f"
+                "reference": "fdc60068f2e45216107f8ca3fb4052f09583c6aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/messagebird/php-rest-api/zipball/106c61a2eaa80dcaf5d52b21ddeacbd0a59c791f",
-                "reference": "106c61a2eaa80dcaf5d52b21ddeacbd0a59c791f",
+                "url": "https://api.github.com/repos/messagebird/php-rest-api/zipball/fdc60068f2e45216107f8ca3fb4052f09583c6aa",
+                "reference": "fdc60068f2e45216107f8ca3fb4052f09583c6aa",
                 "shasum": ""
             },
             "require": {
@@ -1699,7 +1699,7 @@
                 "issues": "https://github.com/messagebird/php-rest-api/issues",
                 "source": "https://github.com/messagebird/php-rest-api"
             },
-            "time": "2022-07-06T08:00:34+00:00"
+            "time": "2023-01-08T21:58:05+00:00"
         },
         {
             "name": "minvws/laravel-crypto",
@@ -10739,5 +10739,5 @@
     "platform-overrides": {
         "php": "8.0.2"
     },
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
