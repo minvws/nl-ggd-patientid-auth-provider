@@ -19,7 +19,7 @@
   "devDependencies": {
     "autoprefixer": "^10.4.7",
     "cssnano": "^5.1.14",
-    "esbuild": "^0.17.7",
+    "esbuild": "^0.17.9",
     "postcss": "^8.4.13",
     "postcss-cli": "^10.1.0",
     "postcss-custom-properties": "^13.1.3",
