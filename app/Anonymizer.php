@@ -35,8 +35,8 @@ class Anonymizer
         }
 
         $s = str_repeat('*', strlen($phoneNumber) - 2) . substr($phoneNumber, -2);
-        while (strlen($s) < 4) {
-            $s = '*' . $s;
+        if (strlen($s) < 4) {
+            return str_pad($s, 4, '*', STR_PAD_LEFT);
         }
 
         return $s;
