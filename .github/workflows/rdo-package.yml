@@ -39,7 +39,7 @@ jobs:
       - name: Create tar
         run: tar -czf pap_${{ env.RELEASE_VERSION }}.tar.gz ./app ./bootstrap ./config ./database ./public ./resources ./routes ./storage ./vendor ./composer.json ./.db_requirements ./artisan ./lang
       - name: Upload release tar
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: pap_${{ env.RELEASE_VERSION }}
           path: pap_${{ env.RELEASE_VERSION }}.tar.gz
