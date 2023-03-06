@@ -55,7 +55,7 @@ jobs:
     - name: Execute tests (Unit and Feature)
       run: vendor/bin/phpunit --printer \\Tests\\ResultFilePrinter --coverage-clover pap_php_clover.xml
     - name: 'Comment PR'
-      uses: actions/github-script@v4
+      uses: actions/github-script@v6
       if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
