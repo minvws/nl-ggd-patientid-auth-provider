@@ -8,6 +8,7 @@ on:
 
 jobs:
   laravel-tests:
+    name: Laravel Tests (PHP ${{ matrix.php-versions }})
     runs-on: ubuntu-20.04
     strategy:
       max-parallel: 3
@@ -53,13 +54,31 @@ jobs:
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
     - name: Execute tests (Unit and Feature)
-      run: vendor/bin/phpunit --printer \\Tests\\ResultFilePrinter --coverage-clover pap_php_clover.xml
-    - name: 'Comment PR'
-      uses: actions/github-script@v6
-      if: ${{ github.event_name == 'pull_request' && github.actor != 'dependabot[bot]' }}
+      run: vendor/bin/phpunit --log-junit=junit.xml --coverage-clover pap_php_clover.xml
+    - name: Upload Test Results
+      if: always()
+      uses: actions/upload-artifact@v2
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        debug: true
-        script: |
-          const script = require('.github/scripts/comment-updater.js');
-          script({github, context, core, filename:"phpunit.out"});
+        name: Test Results (PHP ${{ matrix.php-versions }})
+        path: junit.xml
+
+  publish-test-results:
+    name: "Publish Tests Results"
+    needs: laravel-tests
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: read
+      issues: read
+    if: github.actor != 'dependabot[bot]' && always()
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: "artifacts/**/*.xml"
