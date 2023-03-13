@@ -57,7 +57,7 @@ jobs:
       run: vendor/bin/phpunit --log-junit=junit.xml --coverage-clover pap_php_clover.xml
     - name: Upload Test Results
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: Test Results (PHP ${{ matrix.php-versions }})
         path: junit.xml
