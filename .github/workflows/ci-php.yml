@@ -22,13 +22,11 @@ jobs:
           php-version: ${{ matrix.php-versions }}
           extensions: zip
       - name: Install Dependencies
-        env:
-          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.REPO_READ_ONLY_TOKEN }}"}}'
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
     strategy:
       max-parallel: 3
       matrix:
-        php-versions: [ '8.0', '8.1' ]
+        php-versions: [ '8.0', '8.1', '8.2' ]
 
   php-linting-psalm:
     needs:
@@ -60,7 +58,7 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        php-versions: [ '8.0', '8.1' ]
+        php-versions: [ '8.0', '8.1', '8.2' ]
 
   php-linting-psr12:
     needs:
@@ -82,7 +80,7 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        php-versions: [ '8.0', '8.1' ]
+        php-versions: [ '8.0', '8.1', '8.2' ]
 
   php-linting-stan:
     needs:
@@ -124,7 +122,7 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        php-versions: [ '8.0', '8.1' ]
+        php-versions: [ '8.0', '8.1', '8.2' ]
 
   php-linting-cve:
     needs:
@@ -154,4 +152,4 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        php-versions: [ '8.0', '8.1' ]
+        php-versions: [ '8.0', '8.1', '8.2' ]
