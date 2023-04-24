@@ -22,13 +22,10 @@ class CreateHash extends Command
 
     public function handle(): int
     {
-        $patient_id = $this->argument("patient_id");
-        $birthdate = $this->argument("birthdate");
+        $patient_id = strval($this->argument("patient_id"));
+        $birthdate = strval($this->argument("birthdate"));
 
-        $this->line($this->codeGeneratorService->createHash(
-            is_string($patient_id) ? $patient_id : "",
-            is_string($birthdate) ? $birthdate : "",
-        ));
+        $this->line($this->codeGeneratorService->createHash($patient_id, $birthdate));
 
         return 0;
     }
