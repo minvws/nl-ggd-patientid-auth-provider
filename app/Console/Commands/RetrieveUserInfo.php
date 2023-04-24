@@ -35,14 +35,10 @@ class RetrieveUserInfo extends Command
      */
     public function handle(): int
     {
-        $patient_id = $this->argument("patient_id");
-        $birthdate = $this->argument("birthdate");
+        $patient_id = strval($this->argument("patient_id"));
+        $birthdate = strval($this->argument("birthdate"));
 
-        $hash = $this->codeGeneratorService->createHash(
-            is_string($patient_id) ? $patient_id : "",
-            is_string($birthdate) ? $birthdate : "",
-        );
-
+        $hash = $this->codeGeneratorService->createHash($patient_id, $birthdate);
         $result = json_encode($this->infoRetrievalService->retrieve($hash), JSON_THROW_ON_ERROR);
 
         $this->line($result);
