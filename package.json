@@ -14,7 +14,7 @@
     "node": ">=16"
   },
   "dependencies": {
-    "@minvws/manon": "^1.1.8"
+    "@minvws/manon": "^13.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",
